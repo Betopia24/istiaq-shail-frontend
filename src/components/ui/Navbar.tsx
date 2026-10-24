@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
 import { logout } from "@/feature/user/userSlice";
-import { Menu, X, ChevronDown, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -50,14 +50,8 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* Auth / CTA Buttons & Language */}
+        {/* Auth / CTA Buttons */}
         <div className="hidden md:flex items-center gap-4">
-          {/* Language Selector (Pill from Figma) */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white text-xs font-semibold text-slate-800 shadow-sm cursor-pointer hover:bg-slate-100 transition">
-            <span className="text-sm leading-none">🇬🇧</span>
-            <span className="text-slate-900">EN</span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
-          </div>
 
           {hasToken ? (
             <div className="flex items-center gap-3">
