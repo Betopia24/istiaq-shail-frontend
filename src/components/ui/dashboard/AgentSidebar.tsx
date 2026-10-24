@@ -41,7 +41,7 @@ const navItems = [
     title: "Saved Packs",
     href: "/agent-dashboard/saved-packs",
     icon: FolderOpen,
-    badge: 6,
+    badge: 18,
   },
   {
     title: "Leads & Inquiries",
