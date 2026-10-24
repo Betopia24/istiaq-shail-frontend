@@ -22,14 +22,14 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 w-full py-1 bg-[#0A132C]/90 backdrop-blur-md text-white transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
+        <Link href="/" className="flex items-center gap-3">
           <Image
             src="/logo.svg"
             alt="Property Pack AI Logo"
             width={160}
             height={50}
             priority
-            className="w-[145px] sm:w-[160px] h-auto object-contain transition-transform group-hover:scale-[1.02]"
+            className="w-[145px] sm:w-[160px] h-auto object-contain"
           />
         </Link>
 

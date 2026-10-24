@@ -8,16 +8,16 @@ export default function Footer() {
   return (
     <footer className="bg-[#081229] text-white pt-16 pb-10 border-t border-slate-800/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-slate-800/70">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-slate-200">
           {/* Brand Info & Socials */}
           <div className="md:col-span-5 space-y-5">
             <Link href="/" className="inline-block">
               <Image
-                src="/auth-logo.svg"
+                src="/logo.svg"
                 alt="Property Pack AI"
                 width={175}
                 height={50}
-                className="w-[160px] h-auto object-contain brightness-0 invert"
+                className="w-[160px] h-auto object-contain "
               />
             </Link>
             <p className="font-sans text-xs sm:text-sm text-slate-400 max-w-sm leading-relaxed">

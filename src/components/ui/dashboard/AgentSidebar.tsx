@@ -4,122 +4,218 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/redux/store";
 import { logout } from "@/feature/user/userSlice";
 import {
-  LayoutDashboard,
-  Layers,
-  Sparkles,
-  BarChart3,
-  FileText,
-  Share2,
+  LayoutGrid,
+  Plus,
+  FolderOpen,
+  PenLine,
   Settings,
-  LogOut,
   ChevronLeft,
   ChevronRight,
-  FolderOpen,
+  LogOut,
+  X,
 } from "lucide-react";
 
-const agentNavItems = [
-  { title: "Workstation Overview", href: "/agent-dashboard", icon: LayoutDashboard },
-  { title: "My Property Packs", href: "/agent-dashboard/packs", icon: FolderOpen },
-  { title: "Generate New Pack", href: "/agent-dashboard/generator", icon: Sparkles, highlight: true },
-  { title: "Valuation & ROI Insights", href: "/agent-dashboard/valuations", icon: BarChart3 },
-  { title: "Brochures & Print Export", href: "/agent-dashboard/brochures", icon: FileText },
-  { title: "Social Teasers & Copy", href: "/agent-dashboard/social", icon: Share2 },
-  { title: "Agency Settings", href: "/agent-dashboard/settings", icon: Settings },
+interface AgentSidebarProps {
+  onClose?: () => void;
+  isMobile?: boolean;
+}
+
+const navItems = [
+  {
+    title: "Dashboard",
+    href: "/agent-dashboard",
+    icon: LayoutGrid,
+    matchExact: true,
+  },
+  {
+    title: "Create Pack",
+    href: "/agent-dashboard/create",
+    icon: Plus,
+  },
+  {
+    title: "Saved Packs",
+    href: "/agent-dashboard/saved-packs",
+    icon: FolderOpen,
+    badge: 18,
+  },
+  {
+    title: "Agency Branding",
+    href: "/agent-dashboard/branding",
+    icon: PenLine,
+  },
+  {
+    title: "Settings & Billing",
+    href: "/agent-dashboard/settings",
+    icon: Settings,
+  },
 ];
 
-export function AgentSidebar() {
+export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user?.user);
 
   const handleLogout = () => {
     dispatch(logout());
     window.location.href = "/login";
   };
 
+  const displayName = user?.name || "Ishtiaq Sohail";
+  const displayAgency = "Prestige Estates UK";
+  const initials =
+    displayName && displayName.trim().length > 0
+      ? displayName
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .slice(0, 2)
+          .toUpperCase()
+      : "IS";
+
+  const isCollapsed = !isMobile && collapsed;
+
   return (
     <aside
-      className={`h-screen bg-[#06143E] text-white flex flex-col justify-between transition-all duration-300 relative border-r border-slate-800/80 ${
-        collapsed ? "w-20" : "w-64"
+      className={`h-screen bg-[#06143E] text-white flex flex-col justify-between transition-all duration-300 relative border-r border-[#0D1D45] select-none shrink-0 ${
+        isCollapsed ? "w-20" : "w-64"
       }`}
     >
-      {/* Top Header / Logo */}
+      {/* Top Header & Brand */}
       <div>
-        <div className="h-18 flex items-center justify-between px-5 border-b border-slate-800">
-          {!collapsed ? (
-            <Link href="/" className="flex items-center gap-2">
+        <div className="h-20 flex items-center justify-between px-5">
+          {!isCollapsed ? (
+            <Link href="/" className="flex items-center gap-2.5">
               <Image
-                src="/auth-logo.svg"
-                alt="Property Pack AI"
-                width={160}
-                height={40}
-                className="w-[145px] h-auto object-contain brightness-0 invert"
+                src="/logo.svg"
+                alt="Property Pack AI Logo"
+                width={150}
+                height={46}
+                priority
+                className="w-[145px] h-auto object-contain"
               />
             </Link>
           ) : (
-            <div className="mx-auto w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#E8A808] font-bold">
+            <Link
+              href="/"
+              className="mx-auto w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#E8A808] font-bold text-lg"
+              title="Property Pack AI"
+            >
               P
-            </div>
+            </Link>
           )}
 
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-            aria-label="Toggle sidebar"
-          >
-            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button>
+          {isMobile ? (
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+              aria-label="Close sidebar"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          ) : (
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#0D1E4A] transition cursor-pointer"
+              aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            >
+              {collapsed ? (
+                <ChevronRight className="w-4 h-4" />
+              ) : (
+                <ChevronLeft className="w-4 h-4" />
+              )}
+            </button>
+          )}
         </div>
 
-        {/* Workstation Tag */}
-        {!collapsed && (
-          <div className="px-5 py-2.5 bg-[#040E2C] text-xs font-semibold text-[#E8A808] flex items-center gap-2 border-b border-slate-800/60">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span>AGENT WORKSTATION v2.4</span>
-          </div>
-        )}
-
         {/* Navigation Items */}
-        <nav className="p-3 space-y-1.5 mt-2">
-          {agentNavItems.map((item) => {
+        <nav className="p-3.5 space-y-1.5 mt-2">
+          {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive = item.matchExact
+              ? pathname === item.href
+              : pathname.startsWith(item.href);
+
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-sans text-sm font-medium transition-all ${
+                onClick={isMobile ? onClose : undefined}
+                className={`relative flex items-center justify-between px-4 py-3 rounded-xl font-sans transition-all group ${
                   isActive
-                    ? "bg-[#092167] text-white shadow-sm font-semibold border border-blue-500/20"
-                    : item.highlight
-                    ? "bg-[#E8A808]/10 text-[#E8A808] hover:bg-[#E8A808]/20 font-semibold"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800/60"
-                } ${collapsed ? "justify-center" : ""}`}
-                title={collapsed ? item.title : undefined}
+                    ? "bg-[#092167] text-white font-semibold shadow-sm"
+                    : "text-slate-300 hover:text-white hover:bg-[#092167]/40 font-medium"
+                } ${isCollapsed ? "justify-center px-2" : ""}`}
+                title={isCollapsed ? item.title : undefined}
               >
-                <Icon className={`w-5 h-5 shrink-0 ${item.highlight ? "text-[#E8A808]" : isActive ? "text-[#E8A808]" : ""}`} />
-                {!collapsed && <span>{item.title}</span>}
+                {/* Active Left Indicator Bar */}
+                {isActive && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#FFB800] rounded-full" />
+                )}
+
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <Icon
+                    className={`w-5 h-5 shrink-0 transition-colors ${
+                      isActive
+                        ? "text-[#FFB800]"
+                        : "text-slate-400 group-hover:text-slate-200"
+                    }`}
+                  />
+                  {!isCollapsed && (
+                    <span className="truncate text-[15px]">{item.title}</span>
+                  )}
+                </div>
+
+                {!isCollapsed && item.badge !== undefined && (
+                  <span className="ml-2 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#0B1A42] text-slate-300">
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             );
           })}
         </nav>
       </div>
 
-      {/* Bottom Profile & Logout */}
-      <div className="p-3 border-t border-slate-800">
-        <button
-          onClick={handleLogout}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer ${
-            collapsed ? "justify-center" : ""
+      {/* Bottom Profile Section */}
+      <div className="p-3.5">
+        <div
+          className={`bg-[#092167] rounded-xl p-2.5 flex items-center justify-between ${
+            isCollapsed ? "justify-center" : ""
           }`}
-          title="Sign Out"
         >
-          <LogOut className="w-5 h-5" />
-          {!collapsed && <span>Sign Out</span>}
-        </button>
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Avatar Pill */}
+            <div className="w-9 h-9 rounded-full bg-[#E8A808] text-[#06143E] font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
+              {initials}
+            </div>
+
+            {!isCollapsed && (
+              <div className="min-w-0 leading-tight">
+                <p className="text-sm font-semibold text-white truncate">
+                  {displayName}
+                </p>
+                <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                  {displayAgency}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {!isCollapsed && (
+            <button
+              onClick={handleLogout}
+              title="Sign Out"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer ml-1"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
     </aside>
   );

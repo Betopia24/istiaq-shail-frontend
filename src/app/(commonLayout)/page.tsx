@@ -119,7 +119,7 @@ export default function HomePage() {
 
             {/* Right Visual: Exact Figma Hero Right Visual SVG */}
             <div className="lg:col-span-6 flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-[568px] drop-shadow-2xl hover:scale-[1.01] transition-transform duration-300">
+              <div className="relative w-full max-w-[568px] drop-shadow-2xl">
                 <Image
                   src="/hero-right-image.svg"
                   alt="Property Information and Property Pack AI Transformation"
