@@ -13,6 +13,7 @@ import {
   FolderOpen,
   PenLine,
   Settings,
+  Users,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -40,7 +41,13 @@ const navItems = [
     title: "Saved Packs",
     href: "/agent-dashboard/saved-packs",
     icon: FolderOpen,
-    badge: 18,
+    badge: 6,
+  },
+  {
+    title: "Leads & Inquiries",
+    href: "/agent-dashboard/leads",
+    icon: Users,
+    badge: 4,
   },
   {
     title: "Agency Branding",
@@ -171,7 +178,13 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
                 </div>
 
                 {!isCollapsed && item.badge !== undefined && (
-                  <span className="ml-2 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#0B1A42] text-slate-300">
+                  <span
+                    className={`ml-2 px-2 py-0.5 rounded-full text-[11px] font-bold transition-colors ${
+                      isActive
+                        ? "bg-[#FFB800] text-[#06143E]"
+                        : "bg-[#0B1A42] text-slate-300"
+                    }`}
+                  >
                     {item.badge}
                   </span>
                 )}
