@@ -3,9 +3,20 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
+  const router = useRouter();
+
+  const handleGoBack = () => {
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push("/");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#06143E] text-white flex flex-col justify-between relative overflow-hidden selection:bg-[#FFB800]/30 selection:text-white">
       {/* Background Decorative Ambient Glows */}
@@ -56,15 +67,16 @@ export default function NotFound() {
           The page you are looking for doesn&apos;t exist, has been removed, or was moved to another location.
         </p>
 
-        {/* Single Simple Back to Home Button */}
+        {/* Go Back to Previous Location Button */}
         <div className="mt-8">
-          <Link
-            href="/"
+          <button
+            type="button"
+            onClick={handleGoBack}
             className="h-10 px-6 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-bold text-sm shadow-[0_2px_12px_rgba(255,184,0,0.3)] transition inline-flex items-center gap-2 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 stroke-[2.5]" />
-            <span>Back to Home</span>
-          </Link>
+            <span>Go Back</span>
+          </button>
         </div>
       </main>
 
