@@ -359,18 +359,6 @@ export default function SavedPacksPage() {
                     {/* Architectural schematic grid background */}
                     <div className="absolute inset-0 opacity-40 bg-[radial-gradient(#475569_1px,transparent_1px)] [background-size:16px_16px]" />
 
-                    {/* Schematic Blueprint Shapes */}
-                    <div className="relative w-full h-full flex items-center justify-center pt-2">
-                      <div className="relative flex items-end gap-0">
-                        {/* Checkered blueprint element */}
-                        <div className="w-28 h-28 bg-slate-100/90 border border-slate-300 relative flex items-center justify-center shadow-inner">
-                          <div className="w-16 h-12 bg-amber-100/70 border border-amber-300/80 rounded-xs" />
-                        </div>
-                        {/* Solid navy block */}
-                        <div className="w-24 h-20 bg-[#334155] border border-slate-600 shadow-sm" />
-                      </div>
-                    </div>
-
                     {/* Green ground lawn bar */}
                     <div className="w-full h-7 bg-[#1C4E2D] relative z-10 shrink-0" />
                   </div>
