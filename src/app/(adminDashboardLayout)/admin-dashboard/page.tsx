@@ -42,7 +42,7 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="h-10 px-4 rounded-xl bg-[#092167] hover:bg-[#06143E] text-white text-sm font-medium flex items-center gap-2 shadow-sm transition">
+          <button className="h-10 px-4 rounded-lg bg-[#092167] hover:bg-[#06143E] text-white text-sm font-medium flex items-center gap-2 shadow-sm transition">
             <Plus className="w-4 h-4" />
             <span>Invite New Agency</span>
           </button>
@@ -133,7 +133,7 @@ export default function AdminDashboardPage() {
                     {pack.date}
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="p-1 rounded text-slate-400 hover:text-slate-700">
+                    <button className="p-1 rounded-lg text-slate-400 hover:text-slate-700">
                       <MoreVertical className="w-4 h-4" />
                     </button>
                   </td>

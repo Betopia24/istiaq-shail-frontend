@@ -403,7 +403,7 @@ export default function CreatePackPage() {
             <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
               <Link
                 href="/agent-dashboard"
-                className="h-10 px-5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition inline-flex items-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Back</span>
@@ -412,7 +412,7 @@ export default function CreatePackPage() {
               <button
                 type="button"
                 onClick={() => setCurrentStep(2)}
-                className="h-10 px-6 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer"
+                className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer"
               >
                 <span>Continue to Photos</span>
                 <ArrowRight className="w-3.5 h-3.5 stroke-[3]" />
@@ -509,7 +509,7 @@ export default function CreatePackPage() {
                     <button
                       onClick={(e) => handleDeletePhoto(photo.id, e)}
                       title="Remove photo"
-                      className="absolute top-2 right-2 z-10 w-6 h-6 rounded-md bg-black/60 text-white opacity-0 group-hover:opacity-100 transition flex items-center justify-center hover:bg-red-600 cursor-pointer"
+                      className="absolute top-2 right-2 z-10 w-6 h-6 rounded-lg bg-black/60 text-white opacity-0 group-hover:opacity-100 transition flex items-center justify-center hover:bg-red-600 cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -536,7 +536,7 @@ export default function CreatePackPage() {
               <button
                 type="button"
                 onClick={() => setCurrentStep(1)}
-                className="h-10 px-5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition inline-flex items-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Back</span>
@@ -545,7 +545,7 @@ export default function CreatePackPage() {
               <button
                 type="button"
                 onClick={() => setCurrentStep(3)}
-                className="h-10 px-6 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer"
+                className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer"
               >
                 <span>Continue to Review</span>
                 <ArrowRight className="w-3.5 h-3.5 stroke-[3]" />
@@ -690,7 +690,7 @@ export default function CreatePackPage() {
               <button
                 type="button"
                 onClick={() => setCurrentStep(2)}
-                className="h-10 px-5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition inline-flex items-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Back</span>
@@ -700,7 +700,7 @@ export default function CreatePackPage() {
                 type="button"
                 disabled={isGenerating}
                 onClick={handleGenerate}
-                className="h-10 px-6 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer disabled:opacity-75"
+                className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer disabled:opacity-75"
               >
                 {isGenerating ? (
                   <>

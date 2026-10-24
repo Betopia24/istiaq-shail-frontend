@@ -234,7 +234,7 @@ export default function SavedPacksPage() {
           {/* New Property Pack Button */}
           <Link
             href="/agent-dashboard/create"
-            className="h-10 px-5 rounded-xl bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-bold text-xs sm:text-sm transition flex items-center gap-1.5 shadow-xs"
+            className="h-10 px-5 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-bold text-xs sm:text-sm transition flex items-center gap-1.5 shadow-xs"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>New Property Pack</span>
@@ -253,7 +253,7 @@ export default function SavedPacksPage() {
               setActiveFilter("all");
               setCurrentPage(1);
             }}
-            className={`px-4 py-2 rounded-full font-heading text-xs transition cursor-pointer shrink-0 ${
+            className={`px-4 py-2 rounded-lg font-heading text-xs transition cursor-pointer shrink-0 ${
               activeFilter === "all"
                 ? "bg-[#06143E] text-white font-bold shadow-sm"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold"
@@ -267,7 +267,7 @@ export default function SavedPacksPage() {
               setActiveFilter("ready");
               setCurrentPage(1);
             }}
-            className={`px-4 py-2 rounded-full font-heading text-xs transition cursor-pointer shrink-0 ${
+            className={`px-4 py-2 rounded-lg font-heading text-xs transition cursor-pointer shrink-0 ${
               activeFilter === "ready"
                 ? "bg-[#06143E] text-white font-bold shadow-sm"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold"
@@ -281,7 +281,7 @@ export default function SavedPacksPage() {
               setActiveFilter("draft");
               setCurrentPage(1);
             }}
-            className={`px-4 py-2 rounded-full font-heading text-xs transition cursor-pointer shrink-0 ${
+            className={`px-4 py-2 rounded-lg font-heading text-xs transition cursor-pointer shrink-0 ${
               activeFilter === "draft"
                 ? "bg-[#06143E] text-white font-bold shadow-sm"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold"
@@ -479,7 +479,7 @@ export default function SavedPacksPage() {
                   <button
                     type="button"
                     onClick={() => deletePack(pack.id)}
-                    className="ml-auto p-2 text-slate-400 hover:text-red-500 transition cursor-pointer"
+                    className="ml-auto p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition cursor-pointer"
                     title="Delete saved pack"
                   >
                     <Trash2 className="w-4 h-4" />

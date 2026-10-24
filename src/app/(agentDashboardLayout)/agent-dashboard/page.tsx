@@ -357,7 +357,7 @@ export default function AgentDashboardPage() {
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setCurrentPage(1)}
-              className={`w-7 h-7 rounded-md font-semibold text-xs flex items-center justify-center transition cursor-pointer ${
+              className={`w-7 h-7 rounded-lg font-semibold text-xs flex items-center justify-center transition cursor-pointer ${
                 currentPage === 1
                   ? "bg-[#071330] text-white shadow-2xs"
                   : "border border-slate-200 text-slate-600 hover:bg-slate-50"
@@ -367,7 +367,7 @@ export default function AgentDashboardPage() {
             </button>
             <button
               onClick={() => setCurrentPage(2)}
-              className={`w-7 h-7 rounded-md font-semibold text-xs flex items-center justify-center transition cursor-pointer ${
+              className={`w-7 h-7 rounded-lg font-semibold text-xs flex items-center justify-center transition cursor-pointer ${
                 currentPage === 2
                   ? "bg-[#071330] text-white shadow-2xs"
                   : "border border-slate-200 text-slate-600 hover:bg-slate-50"

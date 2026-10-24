@@ -109,7 +109,7 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
           ) : (
             <Link
               href="/"
-              className="mx-auto w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-[#E8A808] font-bold text-lg"
+              className="mx-auto w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-[#E8A808] font-bold text-lg"
               title="Property Pack AI"
             >
               P
@@ -152,7 +152,7 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
                 key={item.href}
                 href={item.href}
                 onClick={isMobile ? onClose : undefined}
-                className={`relative flex items-center justify-between px-4 py-3 rounded-xl font-sans transition-all group ${
+                className={`relative flex items-center justify-between px-4 py-3 rounded-lg font-sans transition-all group ${
                   isActive
                     ? "bg-[#092167] text-white font-semibold shadow-sm"
                     : "text-slate-300 hover:text-white hover:bg-[#092167]/40 font-medium"
@@ -197,7 +197,7 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
       {/* Bottom Profile Section */}
       <div className="p-3.5">
         <div
-          className={`bg-[#092167] rounded-xl p-2.5 flex items-center justify-between ${
+          className={`bg-[#092167] rounded-lg p-2.5 flex items-center justify-between ${
             isCollapsed ? "justify-center" : ""
           }`}
         >

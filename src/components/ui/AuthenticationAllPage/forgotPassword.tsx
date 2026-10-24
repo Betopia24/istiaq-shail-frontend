@@ -191,7 +191,7 @@ export default function ForgotPasswordForm() {
               <button
                 type="submit"
                 disabled={isSendingEmail || isLocalLoading}
-                className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-xl shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-75 cursor-pointer"
+                className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-75 cursor-pointer"
               >
                 {isSendingEmail || isLocalLoading ? (
                   <>
@@ -261,7 +261,7 @@ export default function ForgotPasswordForm() {
               <button
                 type="submit"
                 disabled={isVerifyingOtp || isLocalLoading}
-                className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-xl shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
               >
                 {isVerifyingOtp || isLocalLoading ? (
                   <>
@@ -367,7 +367,7 @@ export default function ForgotPasswordForm() {
               <button
                 type="submit"
                 disabled={isResettingPassword || isLocalLoading}
-                className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-xl shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
               >
                 {isResettingPassword || isLocalLoading ? (
                   <>
@@ -429,7 +429,7 @@ export default function ForgotPasswordForm() {
 
           <button
             onClick={() => router.push("/login")}
-            className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-xl shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center cursor-pointer"
+            className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center cursor-pointer"
           >
             Sign In to Workstation
           </button>

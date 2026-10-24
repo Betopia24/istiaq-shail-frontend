@@ -55,7 +55,7 @@ export function DashboardHeader({ role = "agent" }: DashboardHeaderProps) {
 
         {/* Notifications */}
         <button
-          className="relative p-2 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition"
+          className="relative p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition"
           aria-label="Notifications"
         >
           <Bell className="w-5 h-5" />

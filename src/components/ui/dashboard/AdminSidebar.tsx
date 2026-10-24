@@ -90,7 +90,7 @@ export function AdminSidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-sans text-sm font-medium transition-all ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg font-sans text-sm font-medium transition-all ${
                   isActive
                     ? "bg-[#092167] text-white shadow-sm font-semibold"
                     : "text-slate-400 hover:text-white hover:bg-slate-800/60"
@@ -109,7 +109,7 @@ export function AdminSidebar() {
       <div className="p-3 border-t border-slate-800">
         <button
           onClick={handleLogout}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer ${
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer ${
             collapsed ? "justify-center" : ""
           }`}
           title="Sign Out"

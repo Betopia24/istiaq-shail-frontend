@@ -143,10 +143,10 @@ export default function PackEditorPage() {
       {/* =========================================================================
           TAB NAVIGATION PILLS
       ========================================================================= */}
-      <div className="bg-slate-100/70 p-1.5 rounded-2xl inline-flex items-center gap-1.5 overflow-x-auto select-none border border-slate-200/40">
+      <div className="bg-slate-100/70 p-1.5 rounded-xl inline-flex items-center gap-1.5 overflow-x-auto select-none border border-slate-200/40">
         <button
           onClick={() => setActiveTab("brochure")}
-          className={`px-4 py-2 rounded-xl font-heading text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
+          className={`px-4 py-2 rounded-lg font-heading text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
             activeTab === "brochure"
               ? "bg-[#06143E] text-white font-bold shadow-sm"
               : "text-slate-600 hover:text-slate-900 font-semibold"
@@ -157,7 +157,7 @@ export default function PackEditorPage() {
 
         <button
           onClick={() => setActiveTab("social")}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl font-heading text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-heading text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
             activeTab === "social"
               ? "bg-[#06143E] text-white font-bold shadow-sm"
               : "text-slate-600 hover:text-slate-900 font-semibold"
@@ -169,7 +169,7 @@ export default function PackEditorPage() {
 
         <button
           onClick={() => setActiveTab("valuation")}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl font-heading text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-lg font-heading text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
             activeTab === "valuation"
               ? "bg-[#06143E] text-white font-bold shadow-sm"
               : "text-slate-600 hover:text-slate-900 font-semibold"
@@ -181,7 +181,7 @@ export default function PackEditorPage() {
 
         <button
           onClick={() => setActiveTab("portal")}
-          className={`px-4 py-2 rounded-xl font-heading text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
+          className={`px-4 py-2 rounded-lg font-heading text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
             activeTab === "portal"
               ? "bg-[#06143E] text-white font-bold shadow-sm"
               : "text-slate-600 hover:text-slate-900 font-semibold"
@@ -278,7 +278,7 @@ export default function PackEditorPage() {
               <button
                 type="button"
                 onClick={() => showToast("Changes saved successfully!")}
-                className="h-11 px-6 rounded-xl bg-[#06143E] hover:bg-[#0A2168] text-white font-semibold text-xs sm:text-sm transition cursor-pointer shadow-sm"
+                className="h-11 px-6 rounded-lg bg-[#06143E] hover:bg-[#0A2168] text-white font-semibold text-xs sm:text-sm transition cursor-pointer shadow-sm"
               >
                 Save Changes to Pack
               </button>
@@ -287,7 +287,7 @@ export default function PackEditorPage() {
                 onClick={() => {
                   showToast("Regenerating all marketing copy with Claude 3.5...");
                 }}
-                className="h-11 px-5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer"
+                className="h-11 px-5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer"
               >
                 <RotateCw className="w-3.5 h-3.5 text-slate-500" />
                 <span>Full Regenerate</span>
@@ -528,7 +528,7 @@ export default function PackEditorPage() {
               <button
                 type="button"
                 onClick={() => showToast("Regenerating copy with new viral hook...")}
-                className="h-10 px-5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs flex items-center gap-2 cursor-pointer"
+                className="h-10 px-5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs flex items-center gap-2 cursor-pointer"
               >
                 <RotateCw className="w-3.5 h-3.5 text-slate-500" />
                 <span>Regenerate Social Hook</span>
@@ -918,7 +918,7 @@ export default function PackEditorPage() {
                 onClick={() =>
                   showToast("Applied £745k pricing strategy to Marketing Pack!")
                 }
-                className="w-full h-11 rounded-xl bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-bold text-xs sm:text-sm transition cursor-pointer shadow-sm"
+                className="w-full h-11 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-bold text-xs sm:text-sm transition cursor-pointer shadow-sm"
               >
                 Apply £745k to Marketing Pack
               </button>
@@ -981,7 +981,7 @@ export default function PackEditorPage() {
                       "bullets"
                     )
                   }
-                  className="px-2.5 py-1 rounded-md bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs flex items-center gap-1 cursor-pointer"
+                  className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs flex items-center gap-1 cursor-pointer"
                 >
                   {copiedKey === "bullets" ? (
                     <>
@@ -1046,7 +1046,7 @@ export default function PackEditorPage() {
                         "description"
                       )
                     }
-                    className="px-2.5 py-1 rounded-md bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs flex items-center gap-1 cursor-pointer"
+                    className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs flex items-center gap-1 cursor-pointer"
                   >
                     {copiedKey === "description" ? (
                       <>
@@ -1093,7 +1093,7 @@ export default function PackEditorPage() {
                     "all-rm"
                   )
                 }
-                className="h-11 px-6 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs sm:text-sm transition cursor-pointer shadow-sm"
+                className="h-11 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs sm:text-sm transition cursor-pointer shadow-sm"
               >
                 Copy All Rightmove Data
               </button>
@@ -1101,7 +1101,7 @@ export default function PackEditorPage() {
               <button
                 type="button"
                 onClick={() => showToast("Exporting BLM / XML portal feed...")}
-                className="h-11 px-5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm transition cursor-pointer"
+                className="h-11 px-5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm transition cursor-pointer"
               >
                 Export XML / CSV
               </button>
@@ -1199,7 +1199,7 @@ export default function PackEditorPage() {
               <button
                 type="button"
                 onClick={() => showToast("Direct sync to Rightmove feed scheduled!")}
-                className="w-full h-11 rounded-xl bg-[#06143E] hover:bg-[#0A2168] text-white font-semibold text-xs sm:text-sm transition cursor-pointer shadow-sm"
+                className="w-full h-11 rounded-lg bg-[#06143E] hover:bg-[#0A2168] text-white font-semibold text-xs sm:text-sm transition cursor-pointer shadow-sm"
               >
                 Direct Sync to Rightmove & Zoopla
               </button>
