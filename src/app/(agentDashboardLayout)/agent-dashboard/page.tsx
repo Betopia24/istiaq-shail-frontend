@@ -159,13 +159,13 @@ export default function AgentDashboardPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => setShowCreateModal(true)}
+        <Link
+          href="/agent-dashboard/create"
           className="relative z-10 h-11 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-sm shadow-[0_2px_12px_rgba(232,168,8,0.35)] transition flex items-center justify-center gap-2 shrink-0 cursor-pointer self-start md:self-auto"
         >
           <Plus className="w-4 h-4 stroke-[3]" />
           <span>Create Property Pack</span>
-        </button>
+        </Link>
       </div>
 
       {/* =========================================================================
