@@ -117,8 +117,8 @@ export default function CreatePackPage() {
     showToast("Compiling specs and generating high-res brochure PDF...");
     setTimeout(() => {
       setIsGenerating(false);
-      router.push("/agent-dashboard");
-    }, 2200);
+      router.push("/agent-dashboard/editor");
+    }, 1500);
   };
 
   return (

@@ -336,13 +336,13 @@ export default function AgentDashboardPage() {
                       >
                         PDF Report
                       </button>
-                      <button
-                        onClick={() => setShowCreateModal(true)}
-                        title="Edit property details"
-                        className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                      <Link
+                        href="/agent-dashboard/editor"
+                        title="Edit property details in Live Editor"
+                        className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition cursor-pointer inline-flex items-center justify-center"
                       >
                         <Pencil className="w-3.5 h-3.5" />
-                      </button>
+                      </Link>
                     </div>
                   </td>
                 </tr>
