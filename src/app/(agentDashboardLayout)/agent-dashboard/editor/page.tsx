@@ -18,6 +18,7 @@ import {
   ChevronRight,
   FileText,
   Video,
+  ArrowDown,
 } from "lucide-react";
 
 type ActiveTab = "brochure" | "social" | "valuation" | "portal";
@@ -73,49 +74,82 @@ export default function PackEditorPage() {
           TOP HEADER
       ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
-            Pack Results & Live Editor
-          </h1>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs font-semibold text-emerald-600">
-              Generated Successfully (Claude 3.5)
+        {activeTab === "valuation" ? (
+          <div className="flex items-center gap-2 text-xs sm:text-sm font-medium">
+            <span className="text-slate-400">Saved Packs</span>
+            <span className="text-slate-400">/</span>
+            <span className="font-bold text-slate-900">
+              16 Gorse Drive, Chorlton (M21 8XQ)
             </span>
           </div>
-        </div>
+        ) : (
+          <div>
+            <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+              Pack Results & Live Editor
+            </h1>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-semibold text-emerald-600">
+                Generated Successfully (Claude 3.5)
+              </span>
+            </div>
+          </div>
+        )}
 
-        <div className="flex items-center gap-3 self-start sm:self-auto">
-          {/* Download PDF Button */}
-          <button
-            onClick={() => showToast("Downloading Property Brochure PDF...")}
-            className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition flex items-center gap-2 cursor-pointer"
-          >
-            <Download className="w-4 h-4" />
-            <span>Download PDF</span>
-          </button>
+        {activeTab === "valuation" ? (
+          <div className="flex items-center gap-3 self-start sm:self-auto">
+            {/* Present to Vendor Button */}
+            <button
+              type="button"
+              onClick={() => showToast("Opening Vendor Presentation mode...")}
+              className="h-10 px-5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-800 font-semibold text-xs transition cursor-pointer shadow-2xs"
+            >
+              Present to Vendor
+            </button>
 
-          {/* Share Link Button */}
-          <button
-            onClick={() => copyToClipboard(window.location.href, "share-link")}
-            className="h-10 px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold text-xs transition flex items-center gap-2 cursor-pointer shadow-2xs"
-          >
-            <span>Share link</span>
-            <Share2 className="w-3.5 h-3.5 text-slate-400" />
-          </button>
-        </div>
+            {/* Valuation PDF Button */}
+            <button
+              type="button"
+              onClick={() => showToast("Downloading Valuation PDF...")}
+              className="h-10 px-5 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-bold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer"
+            >
+              <ArrowDown className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>Valuation PDF</span>
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 self-start sm:self-auto">
+            {/* Download PDF Button */}
+            <button
+              onClick={() => showToast("Downloading Property Brochure PDF...")}
+              className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition flex items-center gap-2 cursor-pointer"
+            >
+              <Download className="w-4 h-4" />
+              <span>Download PDF</span>
+            </button>
+
+            {/* Share Link Button */}
+            <button
+              onClick={() => copyToClipboard(window.location.href, "share-link")}
+              className="h-10 px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold text-xs transition flex items-center gap-2 cursor-pointer shadow-2xs"
+            >
+              <span>Share link</span>
+              <Share2 className="w-3.5 h-3.5 text-slate-400" />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* =========================================================================
           TAB NAVIGATION PILLS
       ========================================================================= */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 select-none">
+      <div className="bg-slate-100/70 p-1.5 rounded-2xl inline-flex items-center gap-1.5 overflow-x-auto select-none border border-slate-200/40">
         <button
           onClick={() => setActiveTab("brochure")}
-          className={`px-4 py-2.5 rounded-xl font-sans text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
+          className={`px-4 py-2 rounded-xl font-heading text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
             activeTab === "brochure"
-              ? "bg-[#06143E] text-white font-semibold shadow-sm"
-              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
+              ? "bg-[#06143E] text-white font-bold shadow-sm"
+              : "text-slate-600 hover:text-slate-900 font-semibold"
           }`}
         >
           Property Brochure
@@ -123,10 +157,10 @@ export default function PackEditorPage() {
 
         <button
           onClick={() => setActiveTab("social")}
-          className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-sans text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl font-heading text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
             activeTab === "social"
-              ? "bg-[#06143E] text-white font-semibold shadow-sm"
-              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
+              ? "bg-[#06143E] text-white font-bold shadow-sm"
+              : "text-slate-600 hover:text-slate-900 font-semibold"
           }`}
         >
           <Sparkles className="w-3.5 h-3.5 text-[#E8A808]" />
@@ -135,22 +169,22 @@ export default function PackEditorPage() {
 
         <button
           onClick={() => setActiveTab("valuation")}
-          className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-sans text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl font-heading text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
             activeTab === "valuation"
-              ? "bg-[#06143E] text-white font-semibold shadow-sm"
-              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
+              ? "bg-[#06143E] text-white font-bold shadow-sm"
+              : "text-slate-600 hover:text-slate-900 font-semibold"
           }`}
         >
-          <span className="text-xs">📊</span>
+          <span className="p-0.5 rounded bg-blue-500/20 text-xs">📊</span>
           <span>Property Valuation</span>
         </button>
 
         <button
           onClick={() => setActiveTab("portal")}
-          className={`px-4 py-2.5 rounded-xl font-sans text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
+          className={`px-4 py-2 rounded-xl font-heading text-xs sm:text-sm transition-all cursor-pointer shrink-0 ${
             activeTab === "portal"
-              ? "bg-[#06143E] text-white font-semibold shadow-sm"
-              : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
+              ? "bg-[#06143E] text-white font-bold shadow-sm"
+              : "text-slate-600 hover:text-slate-900 font-semibold"
           }`}
         >
           Portal Specs (Rightmove)
@@ -606,52 +640,56 @@ export default function PackEditorPage() {
       {activeTab === "valuation" && (
         <div className="space-y-6">
           {/* Top Banner: Valuation Metrics Header */}
-          <div className="bg-[#07153B] rounded-2xl p-6 sm:p-7 text-white shadow-md border border-[#162758]/50 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-[#0B1536] rounded-2xl p-6 sm:p-7 text-white shadow-md border border-[#162758]/60 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
-              <span className="inline-block px-2.5 py-0.5 rounded text-[10px] font-bold bg-[#E8A808]/20 text-[#E8A808] uppercase tracking-wider mb-1">
-                AI VALUATION RANGE
-              </span>
-              <p className="font-heading font-bold text-xl sm:text-2xl text-white">
-                £720,000 – £780,000
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <span className="w-2 h-2 rounded-full bg-amber-400" />
+                <span className="text-[11px] font-bold text-[#FFB800] uppercase tracking-wider">
+                  AI VALUATION ENGINE
+                </span>
+              </div>
+              <p className="font-heading font-bold text-2xl sm:text-3xl text-white tracking-tight">
+                £720,000 – £760,000
               </p>
-              <p className="text-[11px] text-slate-300 mt-1">
-                Estimated Market Value Range based on 12 recent local transactions
+              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                Estimated Market Value Range based on 18 recent local transactions in M21
               </p>
             </div>
 
             <div>
-              <span className="inline-block px-2.5 py-0.5 rounded text-[10px] font-bold bg-white/10 text-slate-200 uppercase tracking-wider mb-1">
+              <span className="inline-block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
                 RECOMMENDED GUIDE PRICE
               </span>
-              <p className="font-heading font-bold text-xl sm:text-2xl text-[#E8A808]">
-                £749,000
+              <p className="font-heading font-bold text-2xl sm:text-3xl text-[#FFB800] tracking-tight">
+                £745,000
               </p>
-              <p className="text-[11px] text-slate-300 mt-1">
-                Aligned for optimal Rightmove portal price search banding
+              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                Optimal pricing for high buyer traction
               </p>
             </div>
 
             <div>
-              <span className="inline-block px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-400 uppercase tracking-wider mb-1">
-                CONFIDENCE SCORE
+              <span className="inline-block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                AI ACCURACY CONFIDENCE
               </span>
-              <p className="font-heading font-bold text-xl sm:text-2xl text-emerald-400">
+              <p className="font-heading font-bold text-2xl sm:text-3xl text-emerald-400 tracking-tight">
                 94% High
               </p>
-              <p className="text-[11px] text-slate-300 mt-1">
-                Verified with 7 RICS local comparable sales
+              <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+                Land Registry + EPC verified
               </p>
             </div>
 
             <div>
-              <span className="inline-block px-2.5 py-0.5 rounded text-[10px] font-bold bg-white/10 text-slate-200 uppercase tracking-wider mb-1">
-                AVG TIME TO SALE (M21)
+              <span className="inline-block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                AVG DAYS ON MARKET
               </span>
-              <p className="font-heading font-bold text-xl sm:text-2xl text-white">
+              <p className="font-heading font-bold text-2xl sm:text-3xl text-white tracking-tight">
                 24 Days
               </p>
-              <p className="text-[11px] text-emerald-400 mt-1">
-                ▲ 12% faster than regional avg
+              <p className="text-xs text-emerald-400 mt-1.5 flex items-center gap-1 font-medium">
+                <span>▲</span>
+                <span>4.2% YoY Growth in Chorlton</span>
               </p>
             </div>
           </div>
@@ -661,89 +699,95 @@ export default function PackEditorPage() {
             {/* Left: Recent Comparable Sales (Comps Analysis) */}
             <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 space-y-5 shadow-2xs">
               <div>
-                <h3 className="font-heading font-bold text-lg text-slate-900">
+                <h3 className="font-heading font-bold text-base sm:text-lg text-slate-900">
                   Recent Comparable Sales (Comps Analysis)
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Verified local property sales and market estimates within 0.5 miles
+                  Verified land registry and portal transactions within 0.75 miles
                 </p>
               </div>
 
               <div className="overflow-x-auto -mx-6 sm:mx-0">
                 <table className="w-full text-left min-w-[560px]">
                   <thead>
-                    <tr className="border-b border-slate-100 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                      <th className="py-2.5 px-4 sm:px-2">Comparable Property</th>
+                    <tr className="bg-slate-50/80 border-b border-slate-100 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                      <th className="py-2.5 px-4 rounded-l-lg">Comparable Property</th>
                       <th className="py-2.5 px-3">Distance</th>
                       <th className="py-2.5 px-3">Sale Date</th>
                       <th className="py-2.5 px-3">Sold Price</th>
-                      <th className="py-2.5 px-4 sm:px-2">£/Sq Ft</th>
+                      <th className="py-2.5 px-4 rounded-r-lg">£/Sq Ft</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-xs sm:text-sm">
+                    {/* Row 1 */}
                     <tr className="hover:bg-slate-50/60 transition">
-                      <td className="py-3.5 px-4 sm:px-2">
-                        <p className="font-semibold text-slate-900">
-                          14 Gorse Drive, Chorlton
+                      <td className="py-3.5 px-4">
+                        <p className="font-bold text-slate-900 text-sm">
+                          22 Gorse Drive, Chorlton
                         </p>
-                        <p className="text-xs text-slate-500">
-                          4 Bed • 2 Bath • 2,100 sq ft (Detached)
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          4 Beds • 2 Baths • 2,100 sq ft (Detached)
                         </p>
-                        <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700">
-                          Direct Neighbour Comp
-                        </span>
+                        <div className="flex items-center gap-1.5 mt-1 text-emerald-600 text-xs font-semibold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          <span>98% Match to subject property</span>
+                        </div>
                       </td>
-                      <td className="py-3.5 px-3 text-slate-600">0.02 mi</td>
-                      <td className="py-3.5 px-3 text-slate-600">Aug 2026</td>
-                      <td className="py-3.5 px-3 font-semibold text-slate-900">
+                      <td className="py-3.5 px-3 text-slate-600 font-medium">0.05 mi</td>
+                      <td className="py-3.5 px-3 text-slate-600 font-medium">Aug 2026</td>
+                      <td className="py-3.5 px-3 font-bold text-slate-900">
                         £755,000
                       </td>
-                      <td className="py-3.5 px-4 sm:px-2 font-mono text-slate-700">
+                      <td className="py-3.5 px-4 font-mono text-slate-700">
                         £359
                       </td>
                     </tr>
 
+                    {/* Row 2 */}
                     <tr className="hover:bg-slate-50/60 transition">
-                      <td className="py-3.5 px-4 sm:px-2">
-                        <p className="font-semibold text-slate-900">
-                          19 Beech Avenue, Chorlton
+                      <td className="py-3.5 px-4">
+                        <p className="font-bold text-slate-900 text-sm">
+                          9 Beech Avenue, Chorlton
                         </p>
-                        <p className="text-xs text-slate-500">
-                          4 Bed • 3 Bath • 2,250 sq ft (Detached)
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          4 Beds • 2 Baths • 2,050 sq ft (Detached)
                         </p>
-                        <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-50 text-blue-700">
-                          Similar Spec & Garden
-                        </span>
+                        <div className="flex items-center gap-1.5 mt-1 text-emerald-600 text-xs font-semibold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          <span>94% Match to subject property</span>
+                        </div>
                       </td>
-                      <td className="py-3.5 px-3 text-slate-600">0.18 mi</td>
-                      <td className="py-3.5 px-3 text-slate-600">Jul 2026</td>
-                      <td className="py-3.5 px-3 font-semibold text-slate-900">
-                        £765,000
+                      <td className="py-3.5 px-3 text-slate-600 font-medium">0.32 mi</td>
+                      <td className="py-3.5 px-3 text-slate-600 font-medium">Jul 2026</td>
+                      <td className="py-3.5 px-3 font-bold text-slate-900">
+                        £735,000
                       </td>
-                      <td className="py-3.5 px-4 sm:px-2 font-mono text-slate-700">
-                        £340
+                      <td className="py-3.5 px-4 font-mono text-slate-700">
+                        £358
                       </td>
                     </tr>
 
+                    {/* Row 3 */}
                     <tr className="hover:bg-slate-50/60 transition">
-                      <td className="py-3.5 px-4 sm:px-2">
-                        <p className="font-semibold text-slate-900">
-                          8 Wilbraham Road, Chorlton
+                      <td className="py-3.5 px-4">
+                        <p className="font-bold text-slate-900 text-sm">
+                          14 Brookburn Road, Chorlton
                         </p>
-                        <p className="text-xs text-slate-500">
-                          4 Bed • 2 Bath • 2,040 sq ft (Detached)
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          5 Beds • 3 Baths • 2,340 sq ft (Detached)
                         </p>
-                        <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-700">
-                          Recent Renovation Comp
-                        </span>
+                        <div className="flex items-center gap-1.5 mt-1 text-amber-600 text-xs font-semibold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                          <span>88% Match (Larger footprint)</span>
+                        </div>
                       </td>
-                      <td className="py-3.5 px-3 text-slate-600">0.35 mi</td>
-                      <td className="py-3.5 px-3 text-slate-600">Jun 2026</td>
-                      <td className="py-3.5 px-3 font-semibold text-slate-900">
-                        £740,000
+                      <td className="py-3.5 px-3 text-slate-600 font-medium">0.58 mi</td>
+                      <td className="py-3.5 px-3 text-slate-600 font-medium">Jun 2026</td>
+                      <td className="py-3.5 px-3 font-bold text-slate-900">
+                        £785,000
                       </td>
-                      <td className="py-3.5 px-4 sm:px-2 font-mono text-slate-700">
-                        £362
+                      <td className="py-3.5 px-4 font-mono text-slate-700">
+                        £335
                       </td>
                     </tr>
                   </tbody>
@@ -751,18 +795,17 @@ export default function PackEditorPage() {
               </div>
 
               {/* Valuation Methodology Note */}
-              <div className="bg-slate-50 rounded-xl p-4 border border-slate-200/80 space-y-1.5 text-xs text-slate-600 leading-relaxed">
-                <p className="font-bold text-slate-800">
+              <div className="bg-white rounded-xl p-5 border border-slate-200/80 space-y-2 text-xs text-slate-600 leading-relaxed shadow-2xs">
+                <p className="font-bold text-slate-900 text-xs sm:text-sm">
                   AI Valuation Methodology & CPR Compliance Note
                 </p>
-                <p>
-                  1. RICS red-book compliant comparable adjustments applied for square footage, condition, and location.
-                </p>
-                <p>
-                  2. Incorporates Land Registry sold price data and active Zoopla/Rightmove competition.
-                </p>
-                <p>
-                  3. Fully compliant with UK Consumer Protection Regulations for CPR-valid guidelines.
+                <ol className="list-decimal list-inside space-y-1 text-slate-600 text-xs pl-0.5">
+                  <li>Calculates local square footage averages adjusted for detached executive condition.</li>
+                  <li>Incorporates seasonal market demand indices for South Manchester suburbs.</li>
+                  <li>Fully compliant with UK Consumer Protection Regulations (CPR 2008) guidance.</li>
+                </ol>
+                <p className="text-[11px] text-slate-400 pt-1 border-t border-slate-100">
+                  Comps updated daily from HM Land Registry and official regional exchanges.
                 </p>
               </div>
             </div>
@@ -774,7 +817,7 @@ export default function PackEditorPage() {
                   Vendor Pricing Strategies
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Tailor the proposed asking price before pitching to the vendor.
+                  Tailor the presentation pitch before meeting the owner
                 </p>
               </div>
 
@@ -783,26 +826,26 @@ export default function PackEditorPage() {
                 onClick={() => setPricingStrategy("realistic")}
                 className={`p-4 rounded-xl border-2 transition cursor-pointer ${
                   pricingStrategy === "realistic"
-                    ? "border-emerald-500 bg-emerald-50/20 shadow-xs"
-                    : "border-slate-200 hover:border-slate-300"
+                    ? "border-[#FFB800] bg-white shadow-xs"
+                    : "border-slate-200 bg-white hover:border-slate-300"
                 }`}
               >
-                <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center justify-between mb-0.5">
                   <span className="font-bold text-sm text-slate-900">
                     Realistic Market Guide
                   </span>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                    BEST FIT
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-600 text-white tracking-wide">
+                    BEST PITCH
                   </span>
                 </div>
                 <p className="text-xs text-slate-500">
-                  Recommended for high winning probability
+                  Recommended for high viewing conversions
                 </p>
-                <div className="flex items-baseline justify-between mt-2">
-                  <span className="font-heading font-bold text-lg text-slate-900">
-                    £749,000
+                <div className="flex items-baseline justify-between mt-2.5">
+                  <span className="font-heading font-bold text-xl text-slate-900">
+                    £745,000
                   </span>
-                  <span className="text-[11px] text-slate-400">Est. 18-24 days</span>
+                  <span className="text-xs text-slate-400 font-medium">Est. 2-4 wks</span>
                 </div>
               </div>
 
@@ -811,21 +854,21 @@ export default function PackEditorPage() {
                 onClick={() => setPricingStrategy("premium")}
                 className={`p-4 rounded-xl border-2 transition cursor-pointer ${
                   pricingStrategy === "premium"
-                    ? "border-[#06143E] bg-slate-50 shadow-xs"
-                    : "border-slate-200 hover:border-slate-300"
+                    ? "border-[#FFB800] bg-white shadow-xs"
+                    : "border-slate-200 bg-white hover:border-slate-300"
                 }`}
               >
                 <p className="font-bold text-sm text-slate-900">
                   Premium Testing Guide
                 </p>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Test upper boundary of demand
+                  Target passive luxury buyers
                 </p>
-                <div className="flex items-baseline justify-between mt-2">
-                  <span className="font-heading font-bold text-lg text-slate-900">
-                    £780,000
+                <div className="flex items-baseline justify-between mt-2.5">
+                  <span className="font-heading font-bold text-xl text-slate-900">
+                    £765,000
                   </span>
-                  <span className="text-[11px] text-slate-400">Est. 35-45 days</span>
+                  <span className="text-xs text-slate-400 font-medium">Est. 6-8 wks</span>
                 </div>
               </div>
 
@@ -834,38 +877,38 @@ export default function PackEditorPage() {
                 onClick={() => setPricingStrategy("accelerated")}
                 className={`p-4 rounded-xl border-2 transition cursor-pointer ${
                   pricingStrategy === "accelerated"
-                    ? "border-[#06143E] bg-slate-50 shadow-xs"
-                    : "border-slate-200 hover:border-slate-300"
+                    ? "border-[#FFB800] bg-white shadow-xs"
+                    : "border-slate-200 bg-white hover:border-slate-300"
                 }`}
               >
                 <p className="font-bold text-sm text-slate-900">
                   Accelerated Sale Guide
                 </p>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Drive competitive bids & quick turnaround
+                  Drive competitive bidding and multiple offers
                 </p>
-                <div className="flex items-baseline justify-between mt-2">
-                  <span className="font-heading font-bold text-lg text-slate-900">
+                <div className="flex items-baseline justify-between mt-2.5">
+                  <span className="font-heading font-bold text-xl text-slate-900">
                     £725,000
                   </span>
-                  <span className="text-[11px] text-slate-400">Est. 7-14 days</span>
+                  <span className="text-xs text-slate-400 font-medium">Est. 1-2 wks</span>
                 </div>
               </div>
 
               {/* Rental Yield Card */}
-              <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200/80 space-y-1 text-xs">
-                <p className="font-semibold text-slate-800">
-                  Projected Letting Potential (AST)
+              <div className="bg-blue-50/40 rounded-xl p-4 border border-blue-200/80 space-y-1 text-xs">
+                <p className="font-bold text-blue-900">
+                  Projected Letting Potential (To Let)
                 </p>
-                <p className="text-slate-500">
+                <p className="text-blue-700">
                   Estimated Rental:{" "}
-                  <span className="font-semibold text-slate-900">
-                    £3,200 – £3,500 / month
+                  <span className="font-semibold text-blue-900">
+                    £2,650 – £2,850 / month
                   </span>
                 </p>
-                <p className="text-slate-500">
+                <p className="text-blue-700">
                   Estimated Gross Rental Yield:{" "}
-                  <span className="font-semibold text-emerald-600">5.3%</span>
+                  <span className="font-semibold text-blue-900">4.3%</span>
                 </p>
               </div>
 
@@ -873,11 +916,11 @@ export default function PackEditorPage() {
               <button
                 type="button"
                 onClick={() =>
-                  showToast("Saved chosen valuation strategy to Marketing Pack!")
+                  showToast("Applied £745k pricing strategy to Marketing Pack!")
                 }
-                className="w-full h-11 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs sm:text-sm transition cursor-pointer shadow-sm"
+                className="w-full h-11 rounded-xl bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-bold text-xs sm:text-sm transition cursor-pointer shadow-sm"
               >
-                Apply & Save to Marketing Pack
+                Apply £745k to Marketing Pack
               </button>
             </div>
           </div>
