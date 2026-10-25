@@ -1,146 +1,305 @@
-import React from "react";
-import Link from "next/link";
+"use client";
+
+import React, { useState } from "react";
 import {
-  Users,
-  Layers,
-  Clock,
   TrendingUp,
-  Shield,
-  FileCheck,
-  Search,
-  MoreVertical,
-  Plus,
+  Activity,
+  Server,
+  Zap,
+  CheckCircle2,
+  Clock,
+  Layers,
+  ArrowUpRight,
 } from "lucide-react";
 
-export default function AdminDashboardPage() {
-  const stats = [
-    { title: "Registered Agencies", value: "148", change: "+12% this month", icon: Users, color: "text-blue-600 bg-blue-50" },
-    { title: "Total Packs Generated", value: "4,280", change: "+24% vs last month", icon: Layers, color: "text-[#E8A808] bg-amber-50" },
-    { title: "Avg Generation Speed", value: "11.4s", change: "Multimodal v2.4", icon: Clock, color: "text-emerald-600 bg-emerald-50" },
-    { title: "Platform Health", value: "99.98%", change: "All systems nominal", icon: Shield, color: "text-purple-600 bg-purple-50" },
+export default function PlatformOverviewPage() {
+  const [hoveredMonth, setHoveredMonth] = useState<number | null>(null);
+  const [hoveredWeek, setHoveredWeek] = useState<number | null>(null);
+
+  // 6 months MRR data
+  const mrrData = [
+    { month: "May", value: 12200, label: "£12.2k", x: 40, y: 155 },
+    { month: "Jun", value: 14800, label: "£14.8k", x: 130, y: 140 },
+    { month: "Jul", value: 16500, label: "£16.5k", x: 220, y: 125 },
+    { month: "Aug", value: 19400, label: "£19.4k", x: 310, y: 95 },
+    { month: "Sep", value: 22100, label: "£22.1k", x: 400, y: 65 },
+    { month: "Oct '26", value: 24650, label: "£24,650", x: 490, y: 35 },
   ];
 
-  const recentPacks = [
-    { id: "PACK #110", property: "The Kensington Residences", agency: "Vance Prestige", agent: "Eleanor Vance", date: "Just now", status: "Ready PDF", price: "£3,550,000" },
-    { id: "PACK #109", property: "Mayfair Sovereign Terrace", agency: "Knight Frank London", agent: "James Sterling", date: "12m ago", status: "Ready PDF", price: "£6,200,000" },
-    { id: "PACK #108", property: "Chelsea Harbour Loft", agency: "Foxtons Prime", agent: "Sarah Jenkins", date: "38m ago", status: "Generating", price: "£1,850,000" },
-    { id: "PACK #107", property: "Belgravia Garden Square", agency: "Savills Central", agent: "David Cole", date: "2h ago", status: "Ready PDF", price: "£4,750,000" },
-    { id: "PACK #106", property: "Richmond Riverside Villa", agency: "Hamptons Premier", agent: "Liam Brooks", date: "4h ago", status: "Ready PDF", price: "£2,950,000" },
+  // Weekly packs data
+  const weeklyPacks = [
+    { week: "W1", count: 420, height: 48, color: "bg-slate-200" },
+    { week: "W2", count: 540, height: 62, color: "bg-slate-200" },
+    { week: "W3", count: 670, height: 76, color: "bg-blue-300" },
+    { week: "W4", count: 760, height: 86, color: "bg-blue-600" },
+    { week: "Current", count: 820, height: 98, color: "bg-[#06143E]" },
   ];
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto">
-      {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
-            Institutional Admin Console
-          </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Real-time overview of AI pack generations, agency licenses, and infrastructure throughput.
-          </p>
+    <div className="space-y-7 max-w-7xl mx-auto">
+      {/* Title */}
+      <div>
+        <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          Platform Performance &amp; Revenue Analytics
+        </h1>
+      </div>
+
+      {/* KPI Cards (4 in a row) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        {/* Card 1: MRR */}
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">
+            Monthly Recurring Revenue
+          </span>
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+              £24,650
+            </span>
+            <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+              ▲ +12.4%
+            </span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <button className="h-10 px-4 rounded-lg bg-[#092167] hover:bg-[#06143E] text-white text-sm font-medium flex items-center gap-2 shadow-sm transition">
-            <Plus className="w-4 h-4" />
-            <span>Invite New Agency</span>
-          </button>
+        {/* Card 2: Active Agencies */}
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">
+            Total Active Agencies
+          </span>
+          <div className="flex items-baseline gap-2">
+            <span className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+              142
+            </span>
+            <span className="text-slate-400 font-medium text-sm sm:text-base">
+              / 200 Agents
+            </span>
+          </div>
+        </div>
+
+        {/* Card 3: Packs Generated */}
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">
+            Packs Generated (Oct)
+          </span>
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+              820
+            </span>
+            <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200/60">
+              ▲ +18% MoM
+            </span>
+          </div>
+        </div>
+
+        {/* Card 4: Gross SaaS Margin */}
+        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">
+            Gross SaaS Margin
+          </span>
+          <div className="flex items-baseline justify-between gap-2">
+            <span className="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 tracking-tight">
+              88.2%
+            </span>
+            <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+              £0.42 API/PACK
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        {stats.map((s, i) => {
-          const Icon = s.icon;
-          return (
-            <div key={i} className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-                  {s.title}
-                </span>
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.color}`}>
-                  <Icon className="w-5 h-5" />
-                </div>
-              </div>
-              <div className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 mb-1">
-                {s.value}
-              </div>
-              <p className="text-xs font-medium text-slate-500">{s.change}</p>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Recent Generations Table */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
-        <div className="px-6 py-5 border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      {/* Two Main Visual Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Card: MRR Revenue Growth */}
+        <div className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between">
           <div>
             <h2 className="font-heading font-bold text-lg text-slate-900">
-              Live Property Marketing Packs
+              MRR Revenue Growth (Last 6 Months)
             </h2>
-            <p className="text-xs text-slate-500">
-              Recently generated valuation packs across all authorized agency workstations.
+            <p className="text-xs text-slate-500 mt-0.5">
+              Stripe verified recurring subscription trajectory
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-500">Filter: All Agencies</span>
+
+          {/* SVG Line Chart */}
+          <div className="relative mt-6 pt-4">
+            {/* Tooltip */}
+            {hoveredMonth !== null && (
+              <div
+                className="absolute z-10 px-2.5 py-1 rounded-lg bg-[#06143E] text-white text-xs font-bold shadow-lg pointer-events-none transform -translate-x-1/2 -translate-y-9 transition-all"
+                style={{
+                  left: `${(mrrData[hoveredMonth].x / 530) * 100}%`,
+                  top: `${(mrrData[hoveredMonth].y / 180) * 100}%`,
+                }}
+              >
+                {mrrData[hoveredMonth].month}: £{mrrData[hoveredMonth].value.toLocaleString()}
+              </div>
+            )}
+
+            <div className="w-full h-56 relative flex">
+              {/* Y-axis labels */}
+              <div className="flex flex-col justify-between text-[11px] font-medium text-slate-400 pr-3 pb-6 shrink-0 text-right select-none">
+                <span>£25k</span>
+                <span>£20k</span>
+                <span>£15k</span>
+                <span>£10k</span>
+                <span>£5k</span>
+              </div>
+
+              {/* Chart SVG */}
+              <div className="relative flex-1 h-full pb-6">
+                <svg
+                  viewBox="0 0 530 180"
+                  className="w-full h-full overflow-visible"
+                  preserveAspectRatio="none"
+                >
+                  <defs>
+                    <linearGradient id="mrrGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#E8A808" stopOpacity="0.32" />
+                      <stop offset="65%" stopColor="#E8A808" stopOpacity="0.08" />
+                      <stop offset="100%" stopColor="#E8A808" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Horizontal grid lines */}
+                  <line x1="0" y1="10" x2="530" y2="10" stroke="#F1F5F9" strokeWidth="1" strokeDasharray="3 3" />
+                  <line x1="0" y1="50" x2="530" y2="50" stroke="#F1F5F9" strokeWidth="1" strokeDasharray="3 3" />
+                  <line x1="0" y1="90" x2="530" y2="90" stroke="#F1F5F9" strokeWidth="1" strokeDasharray="3 3" />
+                  <line x1="0" y1="130" x2="530" y2="130" stroke="#F1F5F9" strokeWidth="1" strokeDasharray="3 3" />
+                  <line x1="0" y1="170" x2="530" y2="170" stroke="#F1F5F9" strokeWidth="1" strokeDasharray="3 3" />
+
+                  {/* Area fill under curve */}
+                  <path
+                    d="M 40 155 Q 110 145 130 140 T 220 125 T 310 95 T 400 65 T 490 35 L 490 170 L 40 170 Z"
+                    fill="url(#mrrGradient)"
+                  />
+
+                  {/* Stroke curve */}
+                  <path
+                    d="M 40 155 Q 110 145 130 140 T 220 125 T 310 95 T 400 65 T 490 35"
+                    fill="none"
+                    stroke="#E8A808"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                  />
+
+                  {/* Data points */}
+                  {mrrData.map((d, index) => (
+                    <g key={d.month}>
+                      <circle
+                        cx={d.x}
+                        cy={d.y}
+                        r={index === 5 ? 5 : 4}
+                        fill={index === 5 ? "#06143E" : "#E8A808"}
+                        stroke="#FFFFFF"
+                        strokeWidth="2.5"
+                        className="cursor-pointer hover:r-6 transition-all"
+                        onMouseEnter={() => setHoveredMonth(index)}
+                        onMouseLeave={() => setHoveredMonth(null)}
+                      />
+                    </g>
+                  ))}
+                </svg>
+
+                {/* X-axis labels */}
+                <div className="absolute -bottom-2 left-0 right-0 flex justify-between text-[11px] font-semibold text-slate-500 px-3">
+                  {mrrData.map((d) => (
+                    <span key={d.month}>{d.month}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50/70 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                <th className="px-6 py-3.5">Pack ID</th>
-                <th className="px-6 py-3.5">Property Subject</th>
-                <th className="px-6 py-3.5">Agency / Agent</th>
-                <th className="px-6 py-3.5">Valuation</th>
-                <th className="px-6 py-3.5">Status</th>
-                <th className="px-6 py-3.5">Timestamp</th>
-                <th className="px-6 py-3.5 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-sm">
-              {recentPacks.map((pack) => (
-                <tr key={pack.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="px-6 py-4 font-mono text-xs font-bold text-[#092167]">
-                    {pack.id}
-                  </td>
-                  <td className="px-6 py-4 font-medium text-slate-900">
-                    {pack.property}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="font-medium text-slate-800">{pack.agency}</div>
-                    <div className="text-xs text-slate-400">{pack.agent}</div>
-                  </td>
-                  <td className="px-6 py-4 font-semibold text-slate-900">
-                    {pack.price}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-                        pack.status === "Ready PDF"
-                          ? "bg-amber-50 text-[#B58306] border border-amber-200/60"
-                          : "bg-blue-50 text-blue-700 animate-pulse"
-                      }`}
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                      {pack.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-xs text-slate-500">
-                    {pack.date}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button className="p-1 rounded-lg text-slate-400 hover:text-slate-700">
-                      <MoreVertical className="w-4 h-4" />
-                    </button>
-                  </td>
-                </tr>
+        {/* Right Card: Weekly Packs Generated */}
+        <div className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="font-heading font-bold text-lg text-slate-900">
+                Weekly Packs Generated
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                AI brochure output volume across agencies
+              </p>
+            </div>
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 shrink-0">
+              ▲ +24% highest week
+            </span>
+          </div>
+
+          {/* Bar Chart Container */}
+          <div className="mt-8 pt-4">
+            <div className="flex items-end justify-between gap-4 sm:gap-6 h-52 px-4 sm:px-8 border-b border-slate-200 pb-2">
+              {weeklyPacks.map((item, index) => (
+                <div
+                  key={item.week}
+                  className="flex-1 flex flex-col items-center gap-2 group cursor-pointer relative"
+                  onMouseEnter={() => setHoveredWeek(index)}
+                  onMouseLeave={() => setHoveredWeek(null)}
+                >
+                  {/* Tooltip */}
+                  {hoveredWeek === index && (
+                    <div className="absolute -top-10 px-2.5 py-1 rounded-lg bg-[#06143E] text-white text-xs font-bold shadow-lg pointer-events-none whitespace-nowrap z-10">
+                      {item.count} packs
+                    </div>
+                  )}
+
+                  {/* Bar */}
+                  <div className="w-full max-w-[58px] bg-slate-100 rounded-t-lg h-44 flex items-end overflow-hidden p-0.5">
+                    <div
+                      className={`w-full rounded-t-lg transition-all duration-300 group-hover:opacity-90 ${item.color}`}
+                      style={{ height: `${item.height}%` }}
+                    />
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+
+            {/* X-axis labels */}
+            <div className="flex justify-between px-4 sm:px-8 text-[12px] font-semibold text-slate-500 pt-3">
+              {weeklyPacks.map((item) => (
+                <div key={item.week} className="flex-1 text-center">
+                  {item.week}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Row 3: Infrastructure / System Status Strip */}
+      <div className="bg-[#EDF4FB] rounded-2xl border border-slate-200/80 px-6 py-4 sm:py-5 shadow-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
+          {/* Item 1 */}
+          <div className="flex items-center gap-2 text-slate-700 font-medium">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <span>
+              Claude 3.5 Sonnet Latency:{" "}
+              <strong className="text-emerald-700 font-bold font-mono">
+                420ms (Optimal)
+              </strong>
+            </span>
+          </div>
+
+          {/* Item 2 */}
+          <div className="flex items-center gap-2 text-slate-700 font-medium sm:justify-center">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+            <span>
+              PDF Rendering Worker:{" "}
+              <strong className="text-emerald-700 font-bold font-mono">
+                99.98% Uptime
+              </strong>
+            </span>
+          </div>
+
+          {/* Item 3 */}
+          <div className="flex items-center gap-2 text-slate-700 font-medium sm:justify-end">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+            <span>
+              Failed Webhooks (24h):{" "}
+              <strong className="text-emerald-700 font-bold font-mono">0</strong>
+            </span>
+          </div>
         </div>
       </div>
     </div>

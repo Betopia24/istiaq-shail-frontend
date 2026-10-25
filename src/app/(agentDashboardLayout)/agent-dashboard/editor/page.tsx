@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -20,6 +20,11 @@ import {
   Video,
   ArrowDown,
 } from "lucide-react";
+import {
+  getPropertyPackById,
+  savePropertyPack,
+  DEFAULT_PROPERTY_PACK,
+} from "@/types/property";
 
 type ActiveTab = "brochure" | "social" | "valuation" | "portal";
 type SocialPlatform = "facebook" | "instagram" | "tiktok";
@@ -45,6 +50,33 @@ export default function PackEditorPage() {
   const [socialCaption, setSocialCaption] = useState(
     "🏡 NEW TO MARKET | 16 Gorse Drive, Manchester\nStunning 4-bed detached home with open-plan kitchen & sunny garden.\nGuide Price: £750,000 • DM to arrange a private viewing."
   );
+
+  useEffect(() => {
+    const pack = getPropertyPackById("16-gorse-drive");
+    if (pack) {
+      if (pack.title) setHeadline(pack.title);
+      if (pack.overview) setNarrative(pack.overview);
+      if (pack.keyFeatures && pack.keyFeatures.length > 0) {
+        setKeyFeatures(pack.keyFeatures.map((f) => `• ${f}`).join("\n"));
+      }
+    }
+  }, []);
+
+  const handleSaveChanges = () => {
+    const currentPack = getPropertyPackById("16-gorse-drive");
+    const updatedFeatures = keyFeatures
+      .split("\n")
+      .map((line) => line.replace(/^[•\-\*]\s*/, "").trim())
+      .filter(Boolean);
+
+    savePropertyPack({
+      ...currentPack,
+      title: headline,
+      overview: narrative,
+      keyFeatures: updatedFeatures.length > 0 ? updatedFeatures : currentPack.keyFeatures,
+    });
+    showToast("Saved! Live Buyer Page & 2-Page A4 PDF updated.");
+  };
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -118,23 +150,35 @@ export default function PackEditorPage() {
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-3 self-start sm:self-auto">
-            {/* Download PDF Button */}
-            <button
-              onClick={() => showToast("Downloading Property Brochure PDF...")}
+          <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
+            {/* View Buyer Public Page */}
+            <Link
+              href="/property/16-gorse-drive"
+              target="_blank"
+              className="h-10 px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+              <span>Buyer Public Page</span>
+            </Link>
+
+            {/* 2-Page A4 PDF Button */}
+            <Link
+              href="/property/16-gorse-drive/pdf"
+              target="_blank"
               className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition flex items-center gap-2 cursor-pointer"
             >
               <Download className="w-4 h-4" />
-              <span>Download PDF</span>
-            </button>
+              <span>2-Page A4 PDF</span>
+            </Link>
 
             {/* Share Link Button */}
             <button
-              onClick={() => copyToClipboard(window.location.href, "share-link")}
-              className="h-10 px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold text-xs transition flex items-center gap-2 cursor-pointer shadow-2xs"
+              onClick={() => copyToClipboard(window.location.origin + "/property/16-gorse-drive", "share-link")}
+              className="h-10 px-3.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-semibold text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+              title="Copy Public Link"
             >
-              <span>Share link</span>
               <Share2 className="w-3.5 h-3.5 text-slate-400" />
+              <span>Share</span>
             </button>
           </div>
         )}
@@ -277,7 +321,7 @@ export default function PackEditorPage() {
             <div className="pt-2 flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => showToast("Changes saved successfully!")}
+                onClick={handleSaveChanges}
                 className="h-11 px-6 rounded-lg bg-[#06143E] hover:bg-[#0A2168] text-white font-semibold text-xs sm:text-sm transition cursor-pointer shadow-sm"
               >
                 Save Changes to Pack

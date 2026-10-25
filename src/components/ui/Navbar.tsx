@@ -35,18 +35,17 @@ export default function Navbar() {
 
         {/* Desktop Navigation Links */}
         <nav className="hidden md:flex items-center gap-8 text-sm font-sans font-medium text-white/85">
-          <Link href="#how-it-works" className="relative text-white font-semibold group">
-            <span>How It Works</span>
-            <span className="absolute -bottom-1.5 left-0 w-full h-[2px] bg-[#E8A808] rounded-full" />
+          <Link href="#how-it-works" className="hover:text-[#E8A808] transition-colors">
+            How It Works
           </Link>
-          <Link href="#features" className="hover:text-white transition-colors">
-            Features
+          <Link href="#marketing-outputs" className="hover:text-[#E8A808] transition-colors">
+            10 Marketing Outputs
           </Link>
-          <Link href="#pricing" className="hover:text-white transition-colors">
+          <Link href="#pricing" className="hover:text-[#E8A808] transition-colors">
             Pricing
           </Link>
-          <Link href="#about" className="hover:text-white transition-colors">
-            About
+          <Link href="#faq" className="hover:text-[#E8A808] transition-colors">
+            FAQ
           </Link>
         </nav>
 
@@ -110,30 +109,30 @@ export default function Navbar() {
             <Link
               href="#how-it-works"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-2 py-1.5 text-[#E8A808] font-semibold"
+              className="px-2 py-1.5 hover:text-[#E8A808] transition-colors"
             >
               How It Works
             </Link>
             <Link
-              href="#features"
+              href="#marketing-outputs"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-2 py-1.5 hover:text-[#E8A808]"
+              className="px-2 py-1.5 text-[#E8A808] font-semibold"
             >
-              Features
+              10 Marketing Outputs
             </Link>
             <Link
               href="#pricing"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-2 py-1.5 hover:text-[#E8A808]"
+              className="px-2 py-1.5 hover:text-[#E8A808] transition-colors"
             >
               Pricing
             </Link>
             <Link
-              href="#about"
+              href="#faq"
               onClick={() => setMobileMenuOpen(false)}
-              className="px-2 py-1.5 hover:text-[#E8A808]"
+              className="px-2 py-1.5 hover:text-[#E8A808] transition-colors"
             >
-              About
+              FAQ
             </Link>
           </nav>
           <div className="pt-3 border-t border-white/10 flex flex-col gap-2.5">

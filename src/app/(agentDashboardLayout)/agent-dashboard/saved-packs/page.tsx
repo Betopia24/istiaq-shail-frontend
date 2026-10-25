@@ -448,32 +448,25 @@ export default function SavedPacksPage() {
                     )}
                   </button>
 
-                  {/* External View Button */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      window.open(
-                        `/agent-dashboard/editor?pack=${pack.id}`,
-                        "_blank"
-                      )
-                    }
+                  {/* External View Button (Public Buyer Page) */}
+                  <Link
+                    href="/property/16-gorse-drive"
+                    target="_blank"
                     className="h-9 w-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 flex items-center justify-center transition cursor-pointer shadow-2xs"
-                    title="Open live preview"
+                    title="Open live public buyer page"
                   >
                     <ExternalLink className="w-4 h-4" />
-                  </button>
+                  </Link>
 
-                  {/* Download PDF Button */}
-                  <button
-                    type="button"
-                    onClick={() =>
-                      showToast(`Downloading Property Pack for ${pack.address}...`)
-                    }
+                  {/* 2-Page Printable PDF Brochure */}
+                  <Link
+                    href="/property/16-gorse-drive/pdf"
+                    target="_blank"
                     className="h-9 w-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 flex items-center justify-center transition cursor-pointer shadow-2xs"
-                    title="Download brochure PDF"
+                    title="View 2-Page PDF brochure"
                   >
                     <FileText className="w-4 h-4" />
-                  </button>
+                  </Link>
 
                   {/* Delete Trash Button */}
                   <button
