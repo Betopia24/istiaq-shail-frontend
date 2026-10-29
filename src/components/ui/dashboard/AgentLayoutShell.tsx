@@ -35,7 +35,7 @@ export function AgentLayoutShell({ children }: { children: React.ReactNode }) {
         <div className="md:hidden flex items-center justify-between px-5 py-3.5 bg-[#06143E] text-white border-b border-slate-800">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/logo.svg"
+              src="/logo-light.svg"
               alt="Property Pack AI Logo"
               width={140}
               height={40}

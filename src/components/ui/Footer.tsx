@@ -13,7 +13,7 @@ export default function Footer() {
           <div className="md:col-span-5 space-y-5">
             <Link href="/" className="inline-block">
               <Image
-                src="/logo.svg"
+                src="/logo-light.svg"
                 alt="Property Pack AI"
                 width={175}
                 height={50}

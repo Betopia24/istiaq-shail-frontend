@@ -98,7 +98,7 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
           {!isCollapsed ? (
             <Link href="/" className="flex items-center gap-2.5">
               <Image
-                src="/logo.svg"
+                src="/logo-light.svg"
                 alt="Property Pack AI Logo"
                 width={150}
                 height={46}

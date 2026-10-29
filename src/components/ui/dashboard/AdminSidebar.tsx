@@ -49,7 +49,7 @@ export function AdminSidebar() {
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-[#080F24] z-40 px-4 flex items-center justify-between border-b border-[#14254D]">
         <div className="flex items-center gap-2.5">
           <Image
-            src="/logo.svg"
+            src="/logo-light.svg"
             alt="Property Pack AI"
             width={125}
             height={36}
@@ -90,7 +90,7 @@ export function AdminSidebar() {
               <div className="flex flex-col">
                 <Link href="/admin-dashboard" className="block">
                   <Image
-                    src="/logo.svg"
+                    src="/logo-light.svg"
                     alt="Property Pack AI"
                     width={155}
                     height={44}

@@ -24,7 +24,7 @@ export default function Navbar() {
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3">
           <Image
-            src="/logo.svg"
+            src="/logo-light.svg"
             alt="Property Pack AI Logo"
             width={160}
             height={50}

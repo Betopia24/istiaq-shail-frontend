@@ -249,7 +249,7 @@ export default function CreatePackPage() {
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
                 Provide factual details about your property to auto-create
-                compliant copy and brochure layout.
+                professionally structured copy and brochure layout.
               </p>
             </div>
 

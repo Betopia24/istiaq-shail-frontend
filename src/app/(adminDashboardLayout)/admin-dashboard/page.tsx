@@ -48,9 +48,14 @@ export default function PlatformOverviewPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {/* Card 1: MRR */}
         <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">
-            Monthly Recurring Revenue
-          </span>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Monthly Recurring Revenue
+            </span>
+            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+              Demo data
+            </span>
+          </div>
           <div className="flex items-baseline justify-between gap-2">
             <span className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
               £24,650
@@ -63,29 +68,39 @@ export default function PlatformOverviewPage() {
 
         {/* Card 2: Active Agencies */}
         <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">
-            Total Active Agencies
-          </span>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Total Active Agencies
+            </span>
+            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+              Demo data
+            </span>
+          </div>
           <div className="flex items-baseline gap-2">
             <span className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
               142
             </span>
             <span className="text-slate-400 font-medium text-sm sm:text-base">
-              / 200 Agents
+              / 200 Agencies
             </span>
           </div>
         </div>
 
         {/* Card 3: Packs Generated */}
         <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">
-            Packs Generated (Oct)
-          </span>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Packs Generated (Oct)
+            </span>
+            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+              Demo data
+            </span>
+          </div>
           <div className="flex items-baseline justify-between gap-2">
             <span className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
               820
             </span>
-            <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200/60">
+            <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
               ▲ +18% MoM
             </span>
           </div>
@@ -93,9 +108,14 @@ export default function PlatformOverviewPage() {
 
         {/* Card 4: Gross SaaS Margin */}
         <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">
-            Gross SaaS Margin
-          </span>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              Gross SaaS Margin
+            </span>
+            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+              Demo data
+            </span>
+          </div>
           <div className="flex items-baseline justify-between gap-2">
             <span className="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 tracking-tight">
               88.2%
@@ -111,13 +131,18 @@ export default function PlatformOverviewPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Card: MRR Revenue Growth */}
         <div className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between">
-          <div>
-            <h2 className="font-heading font-bold text-lg text-slate-900">
-              MRR Revenue Growth (Last 6 Months)
-            </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Stripe verified recurring subscription trajectory
-            </p>
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h2 className="font-heading font-bold text-lg text-slate-900">
+                MRR Revenue Growth (Last 6 Months)
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Stripe verified recurring subscription trajectory
+              </p>
+            </div>
+            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded shrink-0">
+              Demo data
+            </span>
           </div>
 
           {/* SVG Line Chart */}
@@ -222,9 +247,14 @@ export default function PlatformOverviewPage() {
                 AI brochure output volume across agencies
               </p>
             </div>
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 shrink-0">
-              ▲ +24% highest week
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded shrink-0">
+                Demo data
+              </span>
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 shrink-0">
+                ▲ +24% highest week
+              </span>
+            </div>
           </div>
 
           {/* Bar Chart Container */}

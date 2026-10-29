@@ -155,7 +155,7 @@ export default function AgentDashboardPage() {
             Market a New Property Listing
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
-            Transform property specs into compliant listing copy and high-res print brochures in seconds.
+            Turn your property details into listing copy and marketing content in seconds.
           </p>
         </div>
 
@@ -193,10 +193,10 @@ export default function AgentDashboardPage() {
         <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-slate-500">
-              Plan Pack Allocation
+              Solo Plan Allocation
             </span>
             <span className="text-xs text-slate-400 font-medium">
-              72% used
+              36% used
             </span>
           </div>
           <div className="mt-3 space-y-2.5">
@@ -205,14 +205,14 @@ export default function AgentDashboardPage() {
                 36
               </span>
               <span className="text-sm font-normal text-slate-400 ml-1.5">
-                / 50
+                / 100 packs per month
               </span>
             </div>
             {/* Progress Bar */}
             <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#07153B] rounded-full transition-all duration-500"
-                style={{ width: "72%" }}
+                className="h-full bg-[#06143E] rounded-full transition-all duration-500"
+                style={{ width: "36%" }}
               />
             </div>
           </div>
