@@ -110,7 +110,7 @@ export default function HomePage() {
         <div className="relative z-10 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-12 items-center min-h-[540px]">
             {/* Left Copy */}
-            <div className="lg:col-span-5 min-w-0 space-y-5 sm:space-y-6 text-center lg:text-left">
+            <div className="lg:col-span-7 min-w-0 space-y-6 text-center lg:text-left">
               {/* Prominent Flagship Positioning Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E8A808]/15 border border-[#E8A808]/45 text-[#FFC024] text-xs font-medium shadow-xs backdrop-blur-xs hover:border-[#E8A808] transition-colors">
                 <TrendingUp className="w-4 h-4 text-[#E8A808] shrink-0" />
@@ -121,14 +121,14 @@ export default function HomePage() {
               </div>
 
               {/* Main Headline */}
-              <h1 className="font-heading font-semibold text-3xl sm:text-4xl lg:text-[42px] text-white tracking-tight leading-[1.15] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+              <h1 className="font-heading font-bold text-3xl sm:text-4xl lg:text-[44px] xl:text-[48px] text-white tracking-tight leading-[1.14] drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
                 One Property. One Upload.
                 <br className="hidden sm:inline" /> Your Complete Marketing
                 Pack.
               </h1>
 
               {/* Subheading: Full Value Proposition highlighting Valuation Presentation */}
-              <p className="font-sans text-sm sm:text-base text-slate-200 max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal drop-shadow-sm">
+              <p className="font-sans text-sm sm:text-base lg:text-[17px] text-slate-100 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal drop-shadow-sm">
                 Turn a single property upload into all ten essential marketing
                 outputs — anchored by our flagship{" "}
                 <strong className="text-[#FFC024] font-medium">
@@ -183,7 +183,7 @@ export default function HomePage() {
             </div>
 
             {/* Right Visual: Animated PropertyPackHeroDemo */}
-            <div className="@container lg:col-span-7 min-w-0 flex justify-center lg:justify-end w-full">
+            <div className="@container lg:col-span-5 min-w-0 flex justify-center lg:justify-end w-full">
               <div className="relative w-full">
                 <PropertyPackHeroDemo />
               </div>
@@ -613,9 +613,9 @@ export default function HomePage() {
                   {/* Card Agency Footer Strip */}
                   <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-500 bg-[#092167] text-white -mx-6 -mb-6 p-4">
                     <span className="font-medium text-white">
-                      Your Agency Name
+                      Property Pack AI
                     </span>
-                    <span className="text-slate-300">Agent name</span>
+                    <span className="text-slate-300">Property Pack AI</span>
                   </div>
                 </div>
               </div>

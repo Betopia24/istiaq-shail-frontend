@@ -92,7 +92,9 @@ export default function AgenciesAndUsersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [agentToSuspend, setAgentToSuspend] = useState<AgentRecord | null>(null);
+  const [agentToSuspend, setAgentToSuspend] = useState<AgentRecord | null>(
+    null,
+  );
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -103,10 +105,12 @@ export default function AgenciesAndUsersPage() {
     if (!agentToSuspend) return;
     setAgents((prev) =>
       prev.map((a) =>
-        a.id === agentToSuspend.id ? { ...a, status: "SUSPENDED" } : a
-      )
+        a.id === agentToSuspend.id ? { ...a, status: "SUSPENDED" } : a,
+      ),
     );
-    showToast(`Access suspended for ${agentToSuspend.name} (${agentToSuspend.agency})`);
+    showToast(
+      `Access suspended for ${agentToSuspend.name} (${agentToSuspend.agency})`,
+    );
     setAgentToSuspend(null);
   };
 
@@ -179,7 +183,11 @@ export default function AgenciesAndUsersPage() {
         onConfirm={confirmSuspendAgent}
         title="Suspend Agency Account"
         description="Are you sure you want to suspend this agency user account? Their valuers and active API keys will be immediately revoked."
-        itemName={agentToSuspend ? `${agentToSuspend.name} - ${agentToSuspend.agency} (${agentToSuspend.email})` : undefined}
+        itemName={
+          agentToSuspend
+            ? `${agentToSuspend.name} - ${agentToSuspend.agency} (${agentToSuspend.email})`
+            : undefined
+        }
         confirmText="Suspend Account"
         icon="warning"
       />
@@ -195,7 +203,7 @@ export default function AgenciesAndUsersPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search agent name, email, or agency..."
+              placeholder="Search Property Pack AI, email, or agency..."
               className="w-full h-10 pl-10 pr-4 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition"
             />
           </div>
@@ -222,7 +230,7 @@ export default function AgenciesAndUsersPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-600">
-                <th className="px-6 py-4">User / Agent Name</th>
+                <th className="px-6 py-4">User / Property Pack AI</th>
                 <th className="px-6 py-4">Agency Affiliation</th>
                 <th className="px-6 py-4">Role</th>
                 <th className="px-6 py-4">Packs Created</th>
