@@ -165,14 +165,14 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
                 key={item.href}
                 href={item.href}
                 onClick={isMobile ? onClose : undefined}
-                className={`group relative flex items-center rounded-xl transition-all duration-150 ${
+                className={`group relative flex items-center rounded-xl border transition-colors duration-150 font-medium ${
                   isCollapsed
                     ? "w-11 h-11 mx-auto justify-center"
                     : "h-11 px-3 justify-between"
                 } ${
                   isActive
-                    ? "bg-[#102253] text-white font-semibold shadow-xs border border-[#E8A808]/30"
-                    : "text-slate-300 hover:text-white hover:bg-white/[0.06] font-medium"
+                    ? "bg-[#102253] text-white border-[#E8A808]/30 shadow-xs"
+                    : "border-transparent text-slate-300 hover:text-white hover:bg-white/[0.06]"
                 }`}
                 title={isCollapsed ? item.title : undefined}
               >
@@ -182,10 +182,10 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
                     isCollapsed ? "justify-center" : "gap-2.5"
                   }`}
                 >
-                  {/* Active Indicator Bar (Expanded mode) */}
+                  {/* Active Indicator Bar (Expanded mode — always in DOM to prevent layout shift) */}
                   {!isCollapsed && (
                     <span
-                      className={`w-1 h-4 rounded-full shrink-0 transition-colors ${
+                      className={`w-1 h-4 rounded-full shrink-0 transition-colors duration-150 ${
                         isActive ? "bg-[#E8A808]" : "bg-transparent"
                       }`}
                     />
