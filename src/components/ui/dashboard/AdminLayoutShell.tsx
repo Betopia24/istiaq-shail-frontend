@@ -37,7 +37,7 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
 
         {/* Scrollable Dashboard View */}
         <main className="flex-1 overflow-y-auto bg-[#F8FAFC]">
-          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 pb-12">
+          <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-6 space-y-6 pb-12">
             {children}
           </div>
         </main>

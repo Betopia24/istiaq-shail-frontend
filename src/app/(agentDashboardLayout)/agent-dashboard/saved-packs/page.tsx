@@ -358,7 +358,8 @@ export default function SavedPacksPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="@container">
+          <div className="grid grid-cols-1 @sm:grid-cols-2 @xl:grid-cols-3 @4xl:grid-cols-4 gap-6">
           {currentPacks.map((pack) => (
             <div
               key={pack.id}
@@ -502,6 +503,7 @@ export default function SavedPacksPage() {
             </div>
           ))}
         </div>
+      </div>
       )}
 
       {/* =========================================================================
