@@ -308,8 +308,8 @@ function AnimatedAIButton({
           onClick={onClick}
           whileHover={{ scale: 1.18 }}
           whileTap={{ scale: 0.9 }}
-          className="relative w-8.5 h-8.5 @[540px]:w-10 @[540px]:h-10 rounded-xl @[540px]:rounded-2xl bg-gradient-to-br from-[#FFD700] via-[#E8A808] to-[#B58306] hover:from-[#FFE033] hover:to-[#E8A808] shadow-[0_0_24px_rgba(232,168,8,0.7)] border border-[#FFF066] flex items-center justify-center text-[#06143E] cursor-pointer z-10 shrink-0"
-          title="Click to play AI generator back and forth"
+          className="relative w-8.5 h-8.5 @[540px]:w-10 @[540px]:h-10 rounded-xl @[540px]:rounded-2xl bg-gradient-to-br from-[#FFD700] via-[#E8A808] to-[#B58306] shadow-[0_0_24px_rgba(232,168,8,0.7)] border border-[#FFF066] flex items-center justify-center text-[#06143E] cursor-default z-10 shrink-0"
+          title="AI generating property pack"
         >
           {isGenerating ? (
             <Loader2 className="w-4 h-4 @[540px]:w-5 @[540px]:h-5 animate-spin text-[#06143E]" />
@@ -355,7 +355,7 @@ export default function PropertyPackHeroDemo() {
   const [stage, setStage] = useState<Stage>("idle");
   const [mobileTab, setMobileTab] = useState<"input" | "output">("input");
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-60px" });
+  const isInView = useInView(ref, { once: false, margin: "-60px" });
 
   // Initial Play Trigger when scrolled into view
   useEffect(() => {
@@ -432,10 +432,30 @@ export default function PropertyPackHeroDemo() {
   return (
     <div
       ref={ref}
-      className="@container w-full max-w-[600px] w-full mx-auto select-none min-w-0"
+      className="@container w-full max-w-[600px] w-full mx-auto select-none min-w-0 relative"
     >
       {/* ── Ambient Glow behind cards ── */}
-      <div className="absolute -inset-3 bg-[#E8A808]/8 rounded-full blur-2xl pointer-events-none" />
+      <motion.div
+        className="absolute -inset-4 rounded-3xl pointer-events-none"
+        animate={{
+          background: [
+            "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(232,168,8,0.10) 0%, transparent 70%)",
+            "radial-gradient(ellipse 90% 70% at 50% 50%, rgba(232,168,8,0.17) 0%, transparent 70%)",
+            "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(232,168,8,0.10) 0%, transparent 70%)",
+          ],
+        }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute -inset-8 pointer-events-none"
+        animate={{
+          opacity: [0.4, 0.85, 0.4],
+        }}
+        transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
+        style={{
+          background: "radial-gradient(ellipse 60% 40% at 50% 100%, rgba(14,32,90,0.35) 0%, transparent 70%)",
+        }}
+      />
 
       {/* ── Desktop & Tablet Side-by-Side Floating Layout (Shown when container >= 520px) ── */}
       <div className="hidden @[520px]:flex items-center justify-center gap-2 @[540px]:gap-3 relative z-10 w-full min-w-0">
@@ -473,7 +493,7 @@ export default function PropertyPackHeroDemo() {
           </div>
         </div>
 
-        {/* CENTER: Floating Animated AI Button (Visible Back-and-Forth Motion) */}
+        {/* CENTER: Floating Animated AI Button (pure visual indicator) */}
         <div className="w-[50px] @[540px]:w-[62px] shrink-0 flex flex-col items-center justify-center relative py-1">
           {/* Track Line between left and right cards */}
           <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[2px] bg-gradient-to-r from-white/10 via-[#E8A808]/50 to-white/10 pointer-events-none overflow-hidden">
@@ -490,7 +510,7 @@ export default function PropertyPackHeroDemo() {
           </div>
 
           {/* Animated AI Button with Back-and-Forth Waves */}
-          <AnimatedAIButton stage={stage} onClick={handleTogglePlay} />
+          <AnimatedAIButton stage={stage} onClick={() => {}} />
         </div>
 
         {/* RIGHT: Compact Property Pack Output Card */}
@@ -506,7 +526,7 @@ export default function PropertyPackHeroDemo() {
       {/* ── Mobile View (Shown when container < 520px) ── */}
       <div className="block @[520px]:hidden relative z-10 max-w-[380px] mx-auto min-w-0">
         {/* Mobile Header with Animated AI Button in center */}
-        <div className="flex items-center justify-between gap-2 mb-3 bg-[#071330]/85 backdrop-blur-md p-1.5 rounded-xl border border-white/10">
+        <div className="flex items-center justify-between gap-2 mb-3 bg-[#071330]/85 backdrop-blur-md p-1.5 rounded-xl">
           <div className="flex items-center gap-1 flex-1">
             <button
               onClick={() => setMobileTab("input")}
@@ -528,11 +548,6 @@ export default function PropertyPackHeroDemo() {
             >
               2. Pack {stage === "result" && "✓"}
             </button>
-          </div>
-
-          {/* Mini Animated AI Trigger on Mobile */}
-          <div className="shrink-0 pr-1">
-            <AnimatedAIButton stage={stage} onClick={handleTogglePlay} />
           </div>
         </div>
 
@@ -585,15 +600,7 @@ export default function PropertyPackHeroDemo() {
             ) : (
               <OutputPlaceholder stage={stage} />
             )}
-            {stage === "result" && (
-              <button
-                onClick={handleTogglePlay}
-                className="w-full py-1.5 rounded-xl bg-white/10 border border-white/15 text-[11px] text-white font-medium flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <ArrowLeftRight className="w-3 h-3 text-[#E8A808]" />
-                <span>Play Back and Forth</span>
-              </button>
-            )}
+
           </div>
         )}
       </div>
