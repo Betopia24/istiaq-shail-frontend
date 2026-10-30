@@ -73,7 +73,9 @@ function TypedField({
             : "border-white/10"
         } ${multiline ? "py-1 min-h-[34px]" : "py-1"}`}
       >
-        <span className="leading-snug flex-1 break-words">{displayed || "\u00a0"}</span>
+        <span className="leading-snug flex-1 break-words">
+          {displayed || "\u00a0"}
+        </span>
         {!done && active && (
           <span className="inline-block w-[2px] h-3 bg-[#E8A808] ml-0.5 mt-0.5 animate-pulse rounded-full shrink-0" />
         )}
@@ -82,7 +84,7 @@ function TypedField({
   );
 }
 
-/* ─── Property Output Card (Compact & Crisp) ─── */
+/* ─── Property Output Card ─── */
 function PropertyCard({ visible }: { visible: boolean }) {
   const highlights = [
     "Open-plan kitchen and dining",
@@ -141,7 +143,9 @@ function PropertyCard({ visible }: { visible: boolean }) {
                 <span className="font-heading font-bold text-sm @[540px]:text-base text-slate-900">
                   £750,000
                 </span>
-                <p className="text-[8px] text-slate-400 font-medium">Guide price</p>
+                <p className="text-[8px] text-slate-400 font-medium">
+                  Guide price
+                </p>
               </div>
             </div>
 
@@ -168,10 +172,13 @@ function PropertyCard({ visible }: { visible: boolean }) {
 
             {/* Description */}
             <div className="space-y-0.5">
-              <p className="text-[10px] font-bold text-slate-900">Description</p>
+              <p className="text-[10px] font-bold text-slate-900">
+                Description
+              </p>
               <p className="text-[10px] text-slate-600 leading-relaxed line-clamp-2">
-                A bright, extended family home on a quiet residential street, with
-                an open-plan kitchen, landscaped garden and easy access to schools.
+                A bright, extended family home on a quiet residential street,
+                with an open-plan kitchen, landscaped garden and easy access to
+                schools.
               </p>
             </div>
 
@@ -198,7 +205,9 @@ function PropertyCard({ visible }: { visible: boolean }) {
               <Building2 className="w-3 h-3 text-[#E8A808] shrink-0" />
               <span>Your Agency Name</span>
             </span>
-            <span className="text-[9px] text-slate-400 font-medium">Agent name</span>
+            <span className="text-[9px] text-slate-400 font-medium">
+              Agent name
+            </span>
           </div>
         </motion.div>
       )}
@@ -240,6 +249,107 @@ function OutputPlaceholder({ stage }: { stage: Stage }) {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+/* ─── Animated AI Shuttle Button (Moving Back and Forth with Waves) ─── */
+function AnimatedAIButton({
+  stage,
+  onClick,
+}: {
+  stage: Stage;
+  onClick: () => void;
+}) {
+  const isGenerating = stage === "generating";
+
+  return (
+    <div className="flex flex-col items-center justify-center relative py-1">
+      {/* Dynamic Back-and-Forth Traveling Container */}
+      <motion.div
+        animate={{
+          x: isGenerating ? [-12, 12, -12] : [-7, 7, -7],
+        }}
+        transition={{
+          duration: isGenerating ? 0.75 : 2.2,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+        className="relative flex items-center justify-center"
+      >
+        {/* Pulsing Concentric Gold Glow Rings */}
+        <motion.div
+          className="absolute inset-0 rounded-2xl bg-[#E8A808]"
+          animate={{
+            scale: isGenerating ? [1, 1.6, 1] : [1, 1.35, 1],
+            opacity: isGenerating ? [0.65, 0, 0.65] : [0.45, 0, 0.45],
+          }}
+          transition={{
+            duration: isGenerating ? 0.75 : 2.2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <motion.div
+          className="absolute -inset-1 rounded-2xl bg-[#FFB800]/40 blur-xs"
+          animate={{
+            scale: [0.95, 1.15, 0.95],
+            opacity: [0.4, 0.8, 0.4],
+          }}
+          transition={{
+            duration: 1.8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* The Animated Gold Sparkle Button */}
+        <motion.button
+          onClick={onClick}
+          whileHover={{ scale: 1.18 }}
+          whileTap={{ scale: 0.9 }}
+          className="relative w-8.5 h-8.5 @[540px]:w-10 @[540px]:h-10 rounded-xl @[540px]:rounded-2xl bg-gradient-to-br from-[#FFD700] via-[#E8A808] to-[#B58306] hover:from-[#FFE033] hover:to-[#E8A808] shadow-[0_0_24px_rgba(232,168,8,0.7)] border border-[#FFF066] flex items-center justify-center text-[#06143E] cursor-pointer z-10 shrink-0"
+          title="Click to play AI generator back and forth"
+        >
+          {isGenerating ? (
+            <Loader2 className="w-4 h-4 @[540px]:w-5 @[540px]:h-5 animate-spin text-[#06143E]" />
+          ) : stage === "result" ? (
+            <motion.div
+              animate={{ rotate: [0, 180, 360] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
+            >
+              <ArrowLeftRight className="w-3.5 h-3.5 @[540px]:w-4 @[540px]:h-4 stroke-[2.5] text-[#06143E]" />
+            </motion.div>
+          ) : (
+            <motion.div
+              animate={{
+                rotate: [0, 15, -15, 0],
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <Sparkles className="w-3.5 h-3.5 @[540px]:w-4 @[540px]:h-4 fill-current text-[#06143E]" />
+            </motion.div>
+          )}
+        </motion.button>
+      </motion.div>
+
+      {/* Label below button */}
+      <motion.p
+        animate={{ opacity: [0.75, 1, 0.75] }}
+        transition={{ duration: 1.8, repeat: Infinity }}
+        className="mt-1 text-[8px] @[540px]:text-[9px] font-bold text-[#FFD700] text-center leading-tight whitespace-nowrap drop-shadow-sm"
+      >
+        {/* {stage === "result"
+          ? "Play ⇄"
+          : isGenerating
+            ? "Building…"
+            : "AI builds ✦"} */}
+      </motion.p>
     </div>
   );
 }
@@ -324,7 +434,10 @@ export default function PropertyPackHeroDemo() {
   const typing = stage !== "idle";
 
   return (
-    <div ref={ref} className="@container w-full max-w-[580px] mx-auto select-none min-w-0">
+    <div
+      ref={ref}
+      className="@container w-full max-w-[600px] mx-auto select-none min-w-0"
+    >
       {/* ── Ambient Glow behind cards ── */}
       <div className="absolute -inset-3 bg-[#E8A808]/8 rounded-full blur-2xl pointer-events-none" />
 
@@ -364,58 +477,24 @@ export default function PropertyPackHeroDemo() {
           </div>
         </div>
 
-        {/* CENTER: Floating Animated AI Button (Plays Back and Forth) */}
-        <div className="w-[42px] @[540px]:w-[50px] shrink-0 flex flex-col items-center justify-center relative py-1">
+        {/* CENTER: Floating Animated AI Button (Visible Back-and-Forth Motion) */}
+        <div className="w-[50px] @[540px]:w-[62px] shrink-0 flex flex-col items-center justify-center relative py-1">
           {/* Track Line between left and right cards */}
           <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[2px] bg-gradient-to-r from-white/10 via-[#E8A808]/50 to-white/10 pointer-events-none overflow-hidden">
-            {/* Glowing Light Beam moving back and forth */}
+            {/* Glowing Light Bead shuttling back and forth */}
             <motion.div
-              className="w-4 h-full bg-[#E8A808] shadow-[0_0_10px_#E8A808]"
-              animate={{ x: ["-100%", "300%", "-100%"] }}
+              className="w-3 h-full bg-[#FFD700] shadow-[0_0_8px_#FFD700]"
+              animate={{ x: ["-100%", "280%", "-100%"] }}
               transition={{
-                duration: stage === "generating" ? 0.9 : 2.4,
+                duration: stage === "generating" ? 0.75 : 2.2,
                 repeat: Infinity,
                 ease: "easeInOut",
               }}
             />
           </div>
 
-          {/* The AI Button moving back and forth */}
-          <motion.button
-            onClick={handleTogglePlay}
-            animate={{
-              x: stage === "generating" ? [-10, 10, -10] : [-5, 5, -5],
-              scale: stage === "generating" ? [1, 1.08, 1] : [1, 1.03, 1],
-            }}
-            transition={{
-              duration: stage === "generating" ? 0.8 : 2.4,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-            whileHover={{ scale: 1.15 }}
-            whileTap={{ scale: 0.9 }}
-            className="relative w-8 h-8 @[540px]:w-10 @[540px]:h-10 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] transition-colors shadow-[0_0_20px_rgba(232,168,8,0.55)] border border-[#FFD700] flex items-center justify-center text-[#06143E] cursor-pointer z-10 shrink-0"
-            title="Click to play back and forth"
-          >
-            {stage === "generating" ? (
-              <Loader2 className="w-3.5 h-3.5 @[540px]:w-4 @[540px]:h-4 animate-spin" />
-            ) : stage === "result" ? (
-              <ArrowLeftRight className="w-3.5 h-3.5 @[540px]:w-4 @[540px]:h-4 stroke-[2.5]" />
-            ) : (
-              <Sparkles className="w-3.5 h-3.5 @[540px]:w-4 @[540px]:h-4 fill-current" />
-            )}
-          </motion.button>
-
-          {/* Label below button */}
-          <p className="mt-1 text-[8px] font-semibold text-slate-300 text-center leading-tight max-w-[48px]">
-            {stage === "result" ? (
-              <span className="text-emerald-400">Play ⇄</span>
-            ) : stage === "generating" ? (
-              "Building…"
-            ) : (
-              "AI builds"
-            )}
-          </p>
+          {/* Animated AI Button with Back-and-Forth Waves */}
+          <AnimatedAIButton stage={stage} onClick={handleTogglePlay} />
         </div>
 
         {/* RIGHT: Compact Property Pack Output Card */}
@@ -430,28 +509,35 @@ export default function PropertyPackHeroDemo() {
 
       {/* ── Mobile View (Shown when container < 520px) ── */}
       <div className="block @[520px]:hidden relative z-10 max-w-[380px] mx-auto min-w-0">
-        {/* Mobile View Toggle */}
-        <div className="flex items-center justify-between gap-1.5 mb-2.5 bg-[#071330]/85 backdrop-blur-md p-1 rounded-xl border border-white/10">
-          <button
-            onClick={() => setMobileTab("input")}
-            className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-semibold transition-all ${
-              mobileTab === "input"
-                ? "bg-[#E8A808] text-[#06143E] shadow-sm"
-                : "text-slate-300 hover:text-white"
-            }`}
-          >
-            1. Property Details
-          </button>
-          <button
-            onClick={() => setMobileTab("output")}
-            className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-semibold transition-all ${
-              mobileTab === "output"
-                ? "bg-[#E8A808] text-[#06143E] shadow-sm"
-                : "text-slate-300 hover:text-white"
-            }`}
-          >
-            2. Generated Pack {stage === "result" && "✓"}
-          </button>
+        {/* Mobile Header with Animated AI Button in center */}
+        <div className="flex items-center justify-between gap-2 mb-3 bg-[#071330]/85 backdrop-blur-md p-1.5 rounded-xl border border-white/10">
+          <div className="flex items-center gap-1 flex-1">
+            <button
+              onClick={() => setMobileTab("input")}
+              className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-semibold transition-all ${
+                mobileTab === "input"
+                  ? "bg-[#E8A808] text-[#06143E] shadow-sm"
+                  : "text-slate-300 hover:text-white"
+              }`}
+            >
+              1. Details
+            </button>
+            <button
+              onClick={() => setMobileTab("output")}
+              className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-semibold transition-all ${
+                mobileTab === "output"
+                  ? "bg-[#E8A808] text-[#06143E] shadow-sm"
+                  : "text-slate-300 hover:text-white"
+              }`}
+            >
+              2. Pack {stage === "result" && "✓"}
+            </button>
+          </div>
+
+          {/* Mini Animated AI Trigger on Mobile */}
+          <div className="shrink-0 pr-1">
+            <AnimatedAIButton stage={stage} onClick={handleTogglePlay} />
+          </div>
         </div>
 
         {mobileTab === "input" ? (

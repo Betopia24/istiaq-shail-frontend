@@ -17,12 +17,6 @@ interface NavLinkItem {
 }
 
 const navLinks: NavLinkItem[] = [
-  {
-    id: "valuation-presentation",
-    label: "Valuation Feature",
-    href: "/#valuation-presentation",
-    isSpecial: true,
-  },
   { id: "how-it-works", label: "How It Works", href: "/#how-it-works" },
   {
     id: "marketing-outputs",
