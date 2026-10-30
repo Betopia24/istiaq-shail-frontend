@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { AdminSidebar } from "./AdminSidebar";
-import { DashboardHeader } from "./DashboardHeader";
+import { Menu } from "lucide-react";
 
 export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -29,11 +31,30 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
 
       {/* Main Area */}
       <div className="flex flex-col flex-1 overflow-hidden min-w-0">
-        {/* Sticky Dashboard Header */}
-        <DashboardHeader
-          role="admin"
-          onToggleMobileMenu={() => setMobileOpen(true)}
-        />
+        {/* Mobile Header (Hidden on md and up) */}
+        <div className="md:hidden flex items-center justify-between px-5 py-3.5 bg-[#080F24] text-white border-b border-[#14254D] shrink-0">
+          <div className="flex items-center gap-2.5">
+            <Link href="/admin-dashboard" className="flex items-center">
+              <Image
+                src="/logo-light.svg"
+                alt="Property Pack AI Logo"
+                width={125}
+                height={36}
+                className="w-[115px] h-auto object-contain"
+              />
+            </Link>
+            <span className="text-[9px] font-medium px-2 py-0.5 rounded bg-[#14254D] text-[#8E9BB0] border border-[#1E356D] uppercase tracking-wider">
+              SUPER ADMIN
+            </span>
+          </div>
+          <button
+            onClick={() => setMobileOpen(true)}
+            className="p-2 text-slate-300 hover:text-white rounded-lg hover:bg-[#14254D] transition cursor-pointer"
+            aria-label="Open menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        </div>
 
         {/* Scrollable Dashboard View */}
         <main className="flex-1 overflow-y-auto bg-[#F8FAFC]">
