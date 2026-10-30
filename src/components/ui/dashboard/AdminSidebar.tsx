@@ -143,12 +143,12 @@ export function AdminSidebar({
                 key={item.href}
                 href={item.href}
                 onClick={isMobile ? onClose : undefined}
-                className={`group relative flex items-center rounded-xl transition-all duration-150 ${
+                className={`group relative flex items-center rounded-xl border transition-colors duration-150 font-medium ${
                   isCollapsed ? "w-11 h-11 mx-auto justify-center" : "h-11 px-3"
                 } ${
                   isActive
-                    ? "bg-[#14254D] text-white font-semibold shadow-xs border border-[#E8A808]/30"
-                    : "bg-transparent text-[#8E9BB0] hover:text-slate-100 hover:bg-white/[0.05] font-medium"
+                    ? "bg-[#14254D] text-white border-[#E8A808]/30 shadow-xs"
+                    : "bg-transparent border-transparent text-[#8E9BB0] hover:text-slate-100 hover:bg-white/[0.05]"
                 }`}
                 title={isCollapsed ? item.title : undefined}
               >
