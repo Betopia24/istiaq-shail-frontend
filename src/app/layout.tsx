@@ -8,6 +8,14 @@ export const metadata: Metadata = {
   title: "Property Pack AI — Professional Property Marketing with AI",
   description:
     "Generate comprehensive, high-converting property marketing packs, descriptions, visual assets, and analytics powered by AI.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico" }
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({

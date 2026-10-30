@@ -181,7 +181,7 @@ export default function AgentDashboardPage() {
                     </div>
                     <div className="pt-1.5 border-t border-slate-100 flex justify-between items-center font-bold text-slate-900 text-xs">
                       <span>Total Ready to Generate:</span>
-                      <span className="text-[#092167] font-extrabold text-sm">78 packs</span>
+                      <span className="text-[#092167] font-semibold text-sm">78 packs</span>
                     </div>
                   </div>
                   <p className="text-[10px] text-slate-400 leading-tight">

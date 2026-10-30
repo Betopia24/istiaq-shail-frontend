@@ -117,7 +117,7 @@ export default function HomePage() {
               </div>
 
               {/* Main Headline */}
-              <h1 className="font-heading font-extrabold text-3xl sm:text-5xl lg:text-[56px] text-white tracking-tight leading-[1.12] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+              <h1 className="font-heading font-semibold text-3xl sm:text-5xl lg:text-[56px] text-white tracking-tight leading-[1.12] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
                 One Property. One Upload.<br className="hidden sm:inline" /> Your Complete Marketing Pack.
               </h1>
 
@@ -314,7 +314,7 @@ export default function HomePage() {
             {/* Step 01 */}
             <div className="@container cq-card bg-slate-50/90 rounded-2xl p-6 border border-slate-200/90 hover:border-[#E8A808]/70 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
               <div>
-                <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">01</span>
+                <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">01</span>
                 <h4 className="font-heading font-bold text-sm text-slate-900 mb-2">Input Property Info</h4>
                 <p className="text-xs text-slate-600 leading-relaxed mb-4">
                   Add address, specs, highlights and high-res imagery once.
@@ -332,7 +332,7 @@ export default function HomePage() {
             {/* Step 02 */}
             <div className="@container cq-card bg-slate-50/90 rounded-2xl p-6 border border-slate-200/90 hover:border-[#E8A808]/70 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
               <div>
-                <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">02</span>
+                <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">02</span>
                 <h4 className="font-heading font-bold text-sm text-slate-900 mb-2">Full Pack or Individual</h4>
                 <p className="text-xs text-slate-600 leading-relaxed mb-4">
                   Generate all 10 marketing outputs together or select specific items.
@@ -347,7 +347,7 @@ export default function HomePage() {
             {/* Step 03 */}
             <div className="@container cq-card bg-slate-50/90 rounded-2xl p-6 border border-slate-200/90 hover:border-[#E8A808]/70 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
               <div>
-                <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">03</span>
+                <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">03</span>
                 <h4 className="font-heading font-bold text-sm text-slate-900 mb-2">Review & Refine</h4>
                 <p className="text-xs text-slate-600 leading-relaxed mb-4">
                   Review valuation appraisal, descriptions, and portal specs.
@@ -362,7 +362,7 @@ export default function HomePage() {
             {/* Step 04 */}
             <div className="@container cq-card bg-slate-50/90 rounded-2xl p-6 border border-slate-200/90 hover:border-[#E8A808]/70 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
               <div>
-                <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">04</span>
+                <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">04</span>
                 <h4 className="font-heading font-bold text-sm text-slate-900 mb-2">Generate Marketing Pack</h4>
                 <p className="text-xs text-slate-600 leading-relaxed mb-4">
                   Branded valuation report, brochures, and digital presentations.
@@ -377,7 +377,7 @@ export default function HomePage() {
             {/* Step 05 */}
             <div className="@container cq-card bg-slate-50/90 rounded-2xl p-6 border border-slate-200/90 hover:border-[#E8A808]/70 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
               <div>
-                <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">05</span>
+                <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">05</span>
                 <h4 className="font-heading font-bold text-sm text-slate-900 mb-2">Download or Share</h4>
                 <p className="text-xs text-slate-600 leading-relaxed mb-4">
                   Export PDF brochures, copy portal copy, or share live links.
@@ -417,7 +417,7 @@ export default function HomePage() {
               <div className="space-y-4 pt-2">
                 <div className="bg-white rounded-xl p-5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition">
                   <div className="flex items-center gap-3 mb-1">
-                    <span className="font-heading font-extrabold text-sm text-[#E8A808]">01</span>
+                    <span className="font-heading font-semibold text-sm text-[#E8A808]">01</span>
                     <h4 className="font-heading font-bold text-base text-slate-900">Create</h4>
                   </div>
                   <p className="text-sm text-slate-600 pl-7">
@@ -427,7 +427,7 @@ export default function HomePage() {
 
                 <div className="bg-white rounded-xl p-5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition">
                   <div className="flex items-center gap-3 mb-1">
-                    <span className="font-heading font-extrabold text-sm text-[#E8A808]">02</span>
+                    <span className="font-heading font-semibold text-sm text-[#E8A808]">02</span>
                     <h4 className="font-heading font-bold text-base text-slate-900">Review</h4>
                   </div>
                   <p className="text-sm text-slate-600 pl-7">
@@ -437,7 +437,7 @@ export default function HomePage() {
 
                 <div className="bg-white rounded-xl p-5 border border-slate-200/90 shadow-2xs hover:shadow-xs transition">
                   <div className="flex items-center gap-3 mb-1">
-                    <span className="font-heading font-extrabold text-sm text-[#E8A808]">03</span>
+                    <span className="font-heading font-semibold text-sm text-[#E8A808]">03</span>
                     <h4 className="font-heading font-bold text-base text-slate-900">Download PDF or Share Link</h4>
                   </div>
                   <p className="text-sm text-slate-600 pl-7">
@@ -479,7 +479,7 @@ export default function HomePage() {
                       <p className="text-xs text-slate-500">Richmond, Surrey</p>
                     </div>
                     <div className="text-right">
-                      <span className="font-heading font-extrabold text-base text-[#092167]">£750,000</span>
+                      <span className="font-heading font-semibold text-base text-[#092167]">£750,000</span>
                       <span className="block text-[10px] text-slate-400">Guide price (Demo)</span>
                     </div>
                   </div>
@@ -722,7 +722,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="space-y-3">
-                  <h3 className="font-heading font-extrabold text-2xl sm:text-3xl lg:text-4xl text-white tracking-tight leading-tight">
+                  <h3 className="font-heading font-semibold text-2xl sm:text-3xl lg:text-4xl text-white tracking-tight leading-tight">
                     Professional Valuation Presentation
                   </h3>
                   <p className="font-sans text-sm sm:text-base text-slate-200 leading-relaxed max-w-2xl">
@@ -859,7 +859,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <FileText className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">02</span>
+                    <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">02</span>
                   </div>
                   <h4 className="font-heading font-bold text-base sm:text-lg text-slate-900">
                     Full Property Description
@@ -882,7 +882,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <Download className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">03</span>
+                    <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">03</span>
                   </div>
                   <h4 className="font-heading font-bold text-base sm:text-lg text-slate-900">
                     Print-Ready PDF Brochure
@@ -905,7 +905,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <Globe className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">04</span>
+                    <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">04</span>
                   </div>
                   <h4 className="font-heading font-bold text-base sm:text-lg text-slate-900">
                     Portal Specifications (Rightmove &amp; Zoopla)
@@ -928,7 +928,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <CheckCircle2 className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">05</span>
+                    <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">05</span>
                   </div>
                   <h4 className="font-heading font-bold text-base sm:text-lg text-slate-900">
                     Key Highlights &amp; Features
@@ -951,7 +951,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <Share2 className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">06</span>
+                    <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">06</span>
                   </div>
                   <h4 className="font-heading font-bold text-base sm:text-lg text-slate-900">
                     Multi-Channel Social Content
@@ -974,7 +974,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <Video className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">07</span>
+                    <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">07</span>
                   </div>
                   <h4 className="font-heading font-bold text-base sm:text-lg text-slate-900">
                     Video Walkthrough &amp; Reel Scripts
@@ -997,7 +997,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <HelpCircle className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">08</span>
+                    <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">08</span>
                   </div>
                   <h4 className="font-heading font-bold text-base sm:text-lg text-slate-900">
                     Buyer FAQs &amp; Answers
@@ -1020,7 +1020,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <Mail className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">09</span>
+                    <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">09</span>
                   </div>
                   <h4 className="font-heading font-bold text-base sm:text-lg text-slate-900">
                     Email Inquiry Responses
@@ -1043,7 +1043,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <ExternalLink className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-extrabold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">10</span>
+                    <span className="font-heading font-semibold text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">10</span>
                   </div>
                   <h4 className="font-heading font-bold text-base sm:text-lg text-slate-900">
                     Digital Shareable Property Pack
@@ -1181,7 +1181,7 @@ export default function HomePage() {
                 <p className="text-xs sm:text-sm text-slate-500 mb-6">For individual agents getting started.</p>
 
                 <div className="mb-2">
-                  <span className="font-heading font-extrabold text-3xl sm:text-4xl text-slate-900">£XX</span>
+                  <span className="font-heading font-semibold text-3xl sm:text-4xl text-slate-900">£XX</span>
                   <span className="text-xs sm:text-sm text-slate-500 font-medium ml-1.5">/ month</span>
                 </div>
                 <p className="text-[11px] text-slate-400 mb-6">Pricing TBD · Billing frequency to be confirmed</p>
@@ -1230,7 +1230,7 @@ export default function HomePage() {
                 <p className="text-xs sm:text-sm text-slate-300 mb-6">For agents who create property packs regularly.</p>
 
                 <div className="mb-2">
-                  <span className="font-heading font-extrabold text-3xl sm:text-4xl text-white">£XX</span>
+                  <span className="font-heading font-semibold text-3xl sm:text-4xl text-white">£XX</span>
                   <span className="text-xs sm:text-sm text-slate-300 font-medium ml-1.5">/ month</span>
                 </div>
                 <p className="text-[11px] text-slate-400 mb-6">Pricing TBD · Billing frequency to be confirmed</p>
@@ -1274,7 +1274,7 @@ export default function HomePage() {
                 <p className="text-xs sm:text-sm text-slate-500 mb-6">For real estate teams and agencies.</p>
 
                 <div className="mb-2">
-                  <span className="font-heading font-extrabold text-3xl sm:text-4xl text-slate-900">£XX</span>
+                  <span className="font-heading font-semibold text-3xl sm:text-4xl text-slate-900">£XX</span>
                   <span className="text-xs sm:text-sm text-slate-500 font-medium ml-1.5">/ month</span>
                 </div>
                 <p className="text-[11px] text-slate-400 mb-6">Pricing TBD · Billing frequency to be confirmed</p>

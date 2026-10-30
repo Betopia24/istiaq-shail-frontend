@@ -75,7 +75,7 @@ export default function PlatformOverviewPage() {
             </span>
           </div>
           <div className="flex items-baseline justify-between gap-2">
-            <span className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            <span className="font-heading font-semibold text-2xl sm:text-3xl text-slate-900 tracking-tight">
               £24,650
             </span>
             <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
@@ -95,7 +95,7 @@ export default function PlatformOverviewPage() {
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            <span className="font-heading font-semibold text-2xl sm:text-3xl text-slate-900 tracking-tight">
               142
             </span>
             <span className="text-slate-400 font-medium text-sm sm:text-base">
@@ -115,7 +115,7 @@ export default function PlatformOverviewPage() {
             </span>
           </div>
           <div className="flex items-baseline justify-between gap-2">
-            <span className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            <span className="font-heading font-semibold text-2xl sm:text-3xl text-slate-900 tracking-tight">
               820
             </span>
             <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
@@ -135,7 +135,7 @@ export default function PlatformOverviewPage() {
             </span>
           </div>
           <div className="flex items-baseline justify-between gap-2">
-            <span className="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 tracking-tight">
+            <span className="font-heading font-semibold text-2xl sm:text-3xl text-emerald-600 tracking-tight">
               88.2%
             </span>
             <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full">
