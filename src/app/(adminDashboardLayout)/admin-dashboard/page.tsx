@@ -68,84 +68,114 @@ export default function PlatformOverviewPage() {
       </div>
 
       {/* KPI Cards (4 in a row with Container Queries & Lift Effects) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {/* Card 1: MRR */}
-        <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-              Monthly Recurring Revenue
-            </span>
-            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
-              Demo data
-            </span>
+        <div className="@container cq-card bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                Monthly Recurring Revenue
+              </span>
+              <span className="text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
+                Demo
+              </span>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="font-heading font-bold text-xl sm:text-2xl text-slate-900 tracking-tight">
+                £24,650
+              </span>
+              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                ▲ +12.4%
+              </span>
+            </div>
           </div>
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
-              £24,650
-            </span>
-            <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-              ▲ +12.4%
-            </span>
+          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-medium">
+            <span>ARR Run-rate</span>
+            <span className="font-semibold text-slate-800">£295.8k</span>
           </div>
         </div>
 
         {/* Card 2: Active Agencies */}
-        <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-              Total Active Agencies
-            </span>
-            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
-              Demo data
-            </span>
+        <div className="@container cq-card bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                Total Active Agencies
+              </span>
+              <span className="text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
+                Demo
+              </span>
+            </div>
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-heading font-bold text-xl sm:text-2xl text-slate-900 tracking-tight">
+                142
+              </span>
+              <span className="text-slate-400 font-medium text-xs sm:text-sm">
+                / 200 Target
+              </span>
+            </div>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
-              142
-            </span>
-            <span className="text-slate-400 font-medium text-sm sm:text-base">
-              / 200 Agencies
-            </span>
+          <div className="mt-3 pt-2.5 border-t border-slate-100 space-y-1.5">
+            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-full bg-[#06143E] rounded-full" style={{ width: '71%' }} />
+            </div>
+            <div className="flex items-center justify-between text-[10px] text-slate-500">
+              <span>71% capacity</span>
+              <span>58 slots open</span>
+            </div>
           </div>
         </div>
 
         {/* Card 3: Packs Generated */}
-        <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-              Packs Generated (Oct)
-            </span>
-            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
-              Demo data
-            </span>
+        <div className="@container cq-card bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                Packs Generated (Oct)
+              </span>
+              <span className="text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
+                Demo
+              </span>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="font-heading font-bold text-xl sm:text-2xl text-slate-900 tracking-tight">
+                820
+              </span>
+              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                ▲ +18% MoM
+              </span>
+            </div>
           </div>
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
-              820
-            </span>
-            <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-              ▲ +18% MoM
-            </span>
+          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-medium">
+            <span>640 Standard</span>
+            <span className="text-slate-300">·</span>
+            <span>180 Custom API</span>
           </div>
         </div>
 
         {/* Card 4: Gross SaaS Margin */}
-        <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-              Gross SaaS Margin
-            </span>
-            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
-              Demo data
-            </span>
+        <div className="@container cq-card bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/90 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                Gross SaaS Margin
+              </span>
+              <span className="text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
+                Demo
+              </span>
+            </div>
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="font-heading font-bold text-xl sm:text-2xl text-emerald-600 tracking-tight">
+                88.2%
+              </span>
+              <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
+                £0.42 API/PACK
+              </span>
+            </div>
           </div>
-          <div className="flex items-baseline justify-between gap-2">
-            <span className="font-heading font-medium text-2xl sm:text-3xl text-emerald-600 tracking-tight">
-              88.2%
-            </span>
-            <span className="text-[11px] font-medium text-slate-500 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full">
-              £0.42 API/PACK
-            </span>
+          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-medium">
+            <span>Target: &gt;85%</span>
+            <span className="text-emerald-600 font-semibold">+3.2% buffer</span>
           </div>
         </div>
       </div>

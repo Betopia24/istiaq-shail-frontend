@@ -243,100 +243,168 @@ export default function AgentDashboardPage() {
       </div>
 
       {/* =========================================================================
-          SECTION 3: STATS CARDS (3 COLUMNS WITH CONTAINER QUERIES)
+          SECTION 3: STATS CARDS (3 BALANCED RICH COLUMNS WITH CONTAINER QUERIES)
       ========================================================================= */}
-      <div className="@container"><div className="grid grid-cols-1 @sm:grid-cols-2 @xl:grid-cols-3 gap-5">
-        {/* Card 1: Total Packs Created */}
-        <div className="@container cq-card bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">
-              Total Packs Created
-            </span>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-[#DCFCE7] text-[#15803D]">
-              +6 this month
-            </span>
-          </div>
-          <div className="mt-5">
-            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
-              42
-            </span>
-          </div>
-        </div>
+      <div className="@container">
+        <div className="grid grid-cols-1 @sm:grid-cols-2 @xl:grid-cols-3 gap-4 sm:gap-5">
+          {/* Card 1: Total Packs Created */}
+          <div className="@container cq-card bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-4 sm:p-6 shadow-xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-600">
+                Total Packs Created
+              </span>
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-[#DCFCE7] text-[#15803D]">
+                +6 this month
+              </span>
+            </div>
 
-        {/* Card 2: Plan Pack Allocation & Available Credits Breakdown */}
-        <div className="@container cq-card bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">
-              Plan &amp; Credits Allocation
-            </span>
-            <span className="text-[11px] text-[#8C6605] bg-[#FEF3C7] border border-[#FDE68A] px-2.5 py-0.5 rounded-full font-medium">
-              36% Plan Quota Used
-            </span>
-          </div>
-
-          <div className="mt-4 space-y-3">
-            <div className="flex items-baseline justify-between">
-              <div>
-                <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
-                  78
-                </span>
-                <span className="text-xs font-medium text-slate-500 ml-1.5">
-                  total packs ready to use
+            <div className="mt-3.5 space-y-2.5">
+              <div className="flex items-baseline justify-between">
+                <div>
+                  <span className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+                    42
+                  </span>
+                  <span className="text-xs text-slate-500 ml-1.5">
+                    completed packs
+                  </span>
+                </div>
+                <span className="text-[11px] font-medium text-slate-500">
+                  86% published
                 </span>
               </div>
-              <span className="text-xs font-mono font-medium text-slate-400">
-                36 / 100 used
+
+              {/* Multi-segment status bar */}
+              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
+                <div
+                  className="h-full bg-emerald-500 rounded-l-full transition-all duration-500"
+                  style={{ width: "86%" }}
+                  title="36 Published"
+                />
+                <div
+                  className="h-full bg-amber-400 rounded-r-full transition-all duration-500"
+                  style={{ width: "14%" }}
+                  title="6 Drafts"
+                />
+              </div>
+
+              {/* Status Breakdown matching Card 2 */}
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-[11px] text-slate-600">
+                <span className="flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                  <span><strong>36</strong> published live</span>
+                </span>
+                <span className="flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+                  <span><strong>6</strong> in draft</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: Plan Pack Allocation & Available Credits Breakdown */}
+          <div className="@container cq-card bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-4 sm:p-6 shadow-xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-600">
+                Plan &amp; Credits Allocation
+              </span>
+              <span className="text-[10px] sm:text-[11px] text-[#8C6605] bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 rounded-full font-semibold">
+                36% Quota Used
               </span>
             </div>
 
-            {/* Progress Bar showing 36 / 100 used */}
-            <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#06143E] rounded-full transition-all duration-500"
-                style={{ width: "36%" }}
-              />
+            <div className="mt-3.5 space-y-2.5">
+              <div className="flex items-baseline justify-between">
+                <div>
+                  <span className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+                    78
+                  </span>
+                  <span className="text-xs text-slate-500 ml-1.5">
+                    packs available
+                  </span>
+                </div>
+                <span className="text-[11px] font-mono font-medium text-slate-500">
+                  36 / 100 used
+                </span>
+              </div>
+
+              {/* Progress Bar showing 36 / 100 used */}
+              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-[#06143E] rounded-full transition-all duration-500"
+                  style={{ width: "36%" }}
+                />
+              </div>
+
+              {/* Breakdown with Container Query Adaptive Layout */}
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-[11px] text-slate-600">
+                <span className="flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full bg-[#06143E] shrink-0" />
+                  <span><strong>64</strong> monthly left</span>
+                </span>
+                <span className="flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full bg-[#E8A808] shrink-0" />
+                  <span><strong>14</strong> add-on packs</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Active Market Listings */}
+          <div className="@container cq-card bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-4 sm:p-6 shadow-xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-600">
+                Active Market Listings
+              </span>
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
+                100% Synced
+              </span>
             </div>
 
-            {/* Breakdown with Container Query Adaptive Layout */}
-            <div className="pt-2.5 border-t border-slate-100 flex flex-col @sm:flex-row @sm:items-center justify-between gap-2 text-[11px] text-slate-600">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#06143E]" />
-                <span>
-                  <strong>64</strong> monthly left (from 100)
+            <div className="mt-3.5 space-y-2.5">
+              <div className="flex items-baseline justify-between">
+                <div>
+                  <span className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+                    12
+                  </span>
+                  <span className="text-xs text-slate-500 ml-1.5">
+                    live campaigns
+                  </span>
+                </div>
+                <div className="flex items-center text-[11px] font-medium text-slate-600">
+                  <span className="text-emerald-600">● 12 Live</span>
+                  <span className="mx-1 text-slate-300">/</span>
+                  <span className="text-slate-500">6 Drafts</span>
+                </div>
+              </div>
+
+              {/* Portal syndication progress bar */}
+              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
+                <div
+                  className="h-full bg-[#06143E] rounded-l-full transition-all duration-500"
+                  style={{ width: "67%" }}
+                  title="8 Rightmove"
+                />
+                <div
+                  className="h-full bg-[#E8A808] rounded-r-full transition-all duration-500"
+                  style={{ width: "33%" }}
+                  title="4 Zoopla"
+                />
+              </div>
+
+              {/* Syndication breakdown */}
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-[11px] text-slate-600">
+                <span className="flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full bg-[#06143E] shrink-0" />
+                  <span><strong>8</strong> Rightmove</span>
                 </span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#E8A808]" />
-                <span>
-                  <strong>14</strong> purchased add-ons
+                <span className="flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full bg-[#E8A808] shrink-0" />
+                  <span><strong>4</strong> Zoopla</span>
                 </span>
-              </span>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* Card 3: Active Market Listings */}
-        <div className="@container cq-card bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-medium text-slate-500">
-              Active Market Listings
-            </span>
-            <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500">
-              <FileText className="w-4 h-4 text-slate-500" />
-            </div>
-          </div>
-          <div className="mt-4 flex items-baseline gap-3">
-            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
-              12
-            </span>
-            <div className="flex items-center text-xs">
-              <span className="font-medium text-slate-800">Live</span>
-              <span className="text-emerald-500 text-[10px] mx-1.5">●</span>
-              <span className="text-slate-400 font-normal">6 Drafts</span>
-            </div>
-          </div>
-        </div>
-      </div>
       </div>
 
       {/* =========================================================================

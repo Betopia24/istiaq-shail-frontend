@@ -107,8 +107,8 @@ export default function HomePage() {
           />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center min-h-[560px]">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center min-h-[560px]">
             {/* Left Copy */}
             <div className="lg:col-span-6 space-y-7 text-center lg:text-left">
               {/* Prominent Flagship Positioning Badge */}
@@ -184,7 +184,7 @@ export default function HomePage() {
 
             {/* Right Visual: Animated PropertyPackHeroDemo */}
             <div className="@container lg:col-span-6 flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-[540px]">
+              <div className="relative w-full">
                 <PropertyPackHeroDemo />
               </div>
             </div>
