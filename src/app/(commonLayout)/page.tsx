@@ -74,7 +74,7 @@ export default function HomePage() {
       {/* =========================================================================
           SECTION 1: HERO SECTION (Exact Figma Implementation)
       ========================================================================= */}
-      <section className="relative overflow-hidden bg-[#0A132C] text-white pt-12 pb-24 lg:pt-20 lg:pb-50 section-breathable">
+      <section className="relative overflow-hidden bg-[#0A132C] text-white min-h-[calc(100vh-88px)] min-h-[calc(100dvh-88px)] flex items-center py-6 sm:py-8 lg:py-10 section-breathable">
         {/* Figma Background Image & Multi-Breakpoint Gradient Overlay for 100% Readability on All Screens */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -107,8 +107,8 @@ export default function HomePage() {
           />
         </div>
 
-        <div className="relative z-10 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-12 items-center min-h-[540px]">
+        <div className="relative z-10 max-w-[1340px] w-full mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-12 items-center min-h-0">
             {/* Left Copy */}
             <div className="lg:col-span-7 min-w-0 space-y-6 text-center lg:text-left">
               {/* Prominent Flagship Positioning Badge */}

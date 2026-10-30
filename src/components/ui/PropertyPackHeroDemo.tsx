@@ -16,6 +16,7 @@ import {
   RefreshCw,
   Layers,
   ArrowRight,
+  ArrowLeftRight,
 } from "lucide-react";
 
 type Stage = "idle" | "typing" | "generating" | "result";
@@ -94,9 +95,9 @@ function PropertyCard({ visible }: { visible: boolean }) {
       {visible && (
         <motion.div
           key="card"
-          initial={{ opacity: 0, scale: 0.96, y: 8 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0 }}
+          initial={{ opacity: 0, scale: 0.96, x: 10 }}
+          animate={{ opacity: 1, scale: 1, x: 0 }}
+          exit={{ opacity: 0, scale: 0.96, x: -10 }}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className="bg-white rounded-2xl shadow-xl border border-white/20 overflow-hidden flex flex-col w-full min-w-0 text-slate-900"
         >
@@ -250,6 +251,7 @@ export default function PropertyPackHeroDemo() {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: "-60px" });
 
+  // Initial Play Trigger when scrolled into view
   useEffect(() => {
     if (!isInView) return;
     const t1 = setTimeout(() => setStage("typing"), 400);
@@ -265,15 +267,45 @@ export default function PropertyPackHeroDemo() {
     };
   }, [isInView]);
 
-  const replay = () => {
-    setStage("idle");
-    setMobileTab("input");
-    setTimeout(() => setStage("typing"), 200);
-    setTimeout(() => setStage("generating"), 3600);
-    setTimeout(() => {
-      setStage("result");
-      setMobileTab("output");
-    }, 5000);
+  // Continuous Back-and-Forth Animation Cycle
+  useEffect(() => {
+    let loopTimer: NodeJS.Timeout;
+    if (stage === "result") {
+      // Lingers on result for 5 seconds, then cycles back to input and generates again
+      loopTimer = setTimeout(() => {
+        setStage("idle");
+        setMobileTab("input");
+        setTimeout(() => setStage("typing"), 300);
+        setTimeout(() => setStage("generating"), 3800);
+        setTimeout(() => {
+          setStage("result");
+          setMobileTab("output");
+        }, 5200);
+      }, 5000);
+    }
+    return () => clearTimeout(loopTimer);
+  }, [stage]);
+
+  // Manual Toggle / Play Back and Forth
+  const handleTogglePlay = () => {
+    if (stage === "result") {
+      // Move back to input
+      setStage("idle");
+      setMobileTab("input");
+      setTimeout(() => setStage("typing"), 200);
+      setTimeout(() => setStage("generating"), 3600);
+      setTimeout(() => {
+        setStage("result");
+        setMobileTab("output");
+      }, 5000);
+    } else if (stage === "idle" || stage === "typing") {
+      // Move forward to generate immediately
+      setStage("generating");
+      setTimeout(() => {
+        setStage("result");
+        setMobileTab("output");
+      }, 1400);
+    }
   };
 
   const fields = [
@@ -308,6 +340,7 @@ export default function PropertyPackHeroDemo() {
                 Property info
               </h4>
             </div>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E8A808]/70 animate-pulse" />
           </div>
 
           {/* Inputs list */}
@@ -324,47 +357,59 @@ export default function PropertyPackHeroDemo() {
             ))}
           </div>
 
-          {/* Replay action */}
-          {stage === "result" && (
-            <button
-              onClick={replay}
-              className="mt-0.5 flex items-center justify-center gap-1 text-[9px] @[540px]:text-[10px] font-semibold text-[#E8A808] hover:underline cursor-pointer"
-            >
-              <RefreshCw className="w-2.5 h-2.5" />
-              <span>Replay demo</span>
-            </button>
-          )}
+          {/* Action indicator */}
+          <div className="mt-0.5 flex items-center justify-center gap-1 text-[9px] @[540px]:text-[10px] font-medium text-slate-400">
+            <span>Input details</span>
+            <ArrowRight className="w-2.5 h-2.5 text-[#E8A808]" />
+          </div>
         </div>
 
-        {/* CENTER: Floating Gold AI Button + Connecting Line */}
-        <div className="w-[36px] @[540px]:w-[44px] shrink-0 flex flex-col items-center justify-center relative py-1">
-          {/* Horizontal Line flowing behind button */}
-          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-white/10 via-[#E8A808]/60 to-white/10 pointer-events-none" />
+        {/* CENTER: Floating Animated AI Button (Plays Back and Forth) */}
+        <div className="w-[42px] @[540px]:w-[50px] shrink-0 flex flex-col items-center justify-center relative py-1">
+          {/* Track Line between left and right cards */}
+          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[2px] bg-gradient-to-r from-white/10 via-[#E8A808]/50 to-white/10 pointer-events-none overflow-hidden">
+            {/* Glowing Light Beam moving back and forth */}
+            <motion.div
+              className="w-4 h-full bg-[#E8A808] shadow-[0_0_10px_#E8A808]"
+              animate={{ x: ["-100%", "300%", "-100%"] }}
+              transition={{
+                duration: stage === "generating" ? 0.9 : 2.4,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          </div>
 
-          {/* The Gold Sparkle Button */}
-          <button
-            onClick={() => {
-              if (stage === "idle") {
-                setStage("typing");
-                setTimeout(() => setStage("generating"), 3600);
-                setTimeout(() => setStage("result"), 5000);
-              }
+          {/* The AI Button moving back and forth */}
+          <motion.button
+            onClick={handleTogglePlay}
+            animate={{
+              x: stage === "generating" ? [-10, 10, -10] : [-5, 5, -5],
+              scale: stage === "generating" ? [1, 1.08, 1] : [1, 1.03, 1],
             }}
-            disabled={stage === "generating"}
-            className="relative w-8 h-8 @[540px]:w-10 @[540px]:h-10 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:scale-95 transition-all shadow-[0_0_16px_rgba(232,168,8,0.45)] border border-[#FFD700] flex items-center justify-center text-[#06143E] cursor-pointer z-10 shrink-0"
-            title="Generate Pack"
+            transition={{
+              duration: stage === "generating" ? 0.8 : 2.4,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            whileHover={{ scale: 1.15 }}
+            whileTap={{ scale: 0.9 }}
+            className="relative w-8 h-8 @[540px]:w-10 @[540px]:h-10 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] transition-colors shadow-[0_0_20px_rgba(232,168,8,0.55)] border border-[#FFD700] flex items-center justify-center text-[#06143E] cursor-pointer z-10 shrink-0"
+            title="Click to play back and forth"
           >
             {stage === "generating" ? (
               <Loader2 className="w-3.5 h-3.5 @[540px]:w-4 @[540px]:h-4 animate-spin" />
+            ) : stage === "result" ? (
+              <ArrowLeftRight className="w-3.5 h-3.5 @[540px]:w-4 @[540px]:h-4 stroke-[2.5]" />
             ) : (
               <Sparkles className="w-3.5 h-3.5 @[540px]:w-4 @[540px]:h-4 fill-current" />
             )}
-          </button>
+          </motion.button>
 
           {/* Label below button */}
-          <p className="mt-1 text-[8px] font-semibold text-slate-300 text-center leading-tight max-w-[44px]">
+          <p className="mt-1 text-[8px] font-semibold text-slate-300 text-center leading-tight max-w-[48px]">
             {stage === "result" ? (
-              <span className="text-emerald-400">Ready!</span>
+              <span className="text-emerald-400">Play ⇄</span>
             ) : stage === "generating" ? (
               "Building…"
             ) : (
@@ -460,11 +505,11 @@ export default function PropertyPackHeroDemo() {
             )}
             {stage === "result" && (
               <button
-                onClick={replay}
+                onClick={handleTogglePlay}
                 className="w-full py-1.5 rounded-xl bg-white/10 border border-white/15 text-[11px] text-white font-medium flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <RefreshCw className="w-2.5 h-2.5 text-[#E8A808]" />
-                <span>Replay Demo</span>
+                <ArrowLeftRight className="w-3 h-3 text-[#E8A808]" />
+                <span>Play Back and Forth</span>
               </button>
             )}
           </div>
