@@ -122,7 +122,7 @@ export default function CreatePackPage() {
   };
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6">
       {/* Toast Feedback */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200">
@@ -136,10 +136,10 @@ export default function CreatePackPage() {
       {/* Top Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
             Create Property Pack
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Generate AI-powered brochures, valuation presentations &amp; buyer packs in seconds
           </p>
         </div>
@@ -241,7 +241,7 @@ export default function CreatePackPage() {
       {/* =========================================================================
           MAIN WHITE CARD CONTAINER
       ========================================================================= */}
-      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 sm:p-8 md:p-10 transition-all">
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 sm:p-7 transition-all">
         {/* =======================================================================
             STEP 1: PROPERTY INFORMATION
         ======================================================================= */}
@@ -249,10 +249,10 @@ export default function CreatePackPage() {
           <div className="space-y-6">
             {/* Card Header */}
             <div>
-              <h2 className="font-heading font-medium text-xl sm:text-2xl text-slate-900 tracking-tight">
+              <h2 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
                 Property Information
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Provide factual details about your property to auto-create
                 professionally structured copy and brochure layout.
               </p>
@@ -434,10 +434,10 @@ export default function CreatePackPage() {
           <div className="space-y-6">
             {/* Card Header */}
             <div>
-              <h2 className="font-heading font-medium text-xl sm:text-2xl text-slate-900 tracking-tight">
+              <h2 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
                 Upload Property Imagery
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Provide at least 3 photos (up to 12 photos). Front photo will be
                 used as the primary cover.
               </p>
@@ -572,10 +572,10 @@ export default function CreatePackPage() {
           <div className="space-y-6">
             {/* Card Header */}
             <div>
-              <h2 className="font-heading font-medium text-xl sm:text-2xl text-slate-900 tracking-tight">
+              <h2 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
                 Review & Generate Brochure
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Make sure your specifications are verified before generating
                 your marketing materials and PDF.
               </p>

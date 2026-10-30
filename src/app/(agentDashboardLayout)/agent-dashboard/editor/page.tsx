@@ -97,7 +97,7 @@ export default function PackEditorPage() {
   };
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200">
@@ -122,7 +122,7 @@ export default function PackEditorPage() {
           </div>
         ) : (
           <div>
-            <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
               Pack Results & Live Editor
             </h1>
             <div className="flex items-center gap-2 mt-1">
@@ -354,7 +354,7 @@ export default function PackEditorPage() {
           </div>
 
           {/* Right Column: Live Brochure Document Preview */}
-          <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 space-y-5 shadow-sm">
+          <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 space-y-5 shadow-sm">
             {/* Agency Brand Header */}
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
@@ -607,7 +607,7 @@ export default function PackEditorPage() {
           </div>
 
           {/* Right Column: Live Brochure Preview */}
-          <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 space-y-5 shadow-sm">
+          <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 space-y-5 shadow-sm">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
                 <div className="w-7 h-7 rounded-lg bg-[#E8A808] flex items-center justify-center text-[#06143E] font-medium text-xs">

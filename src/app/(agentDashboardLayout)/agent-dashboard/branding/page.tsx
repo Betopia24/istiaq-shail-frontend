@@ -86,7 +86,7 @@ export default function AgencyBrandingPage() {
   };
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3.5 rounded-lg shadow-2xl border border-slate-700 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200">
@@ -102,10 +102,10 @@ export default function AgencyBrandingPage() {
       ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
             Agency Branding &amp; Localization
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Single consolidated form to configure firm assets, primary currency, and legal defaults
           </p>
         </div>
@@ -116,7 +116,7 @@ export default function AgencyBrandingPage() {
       ========================================================================= */}
       <form
         onSubmit={handleSave}
-        className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 md:p-9 shadow-xs space-y-8"
+        className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 shadow-xs space-y-8"
       >
         {/* =======================================================================
             SECTION 1: AGENCY PROFILE & REGULATORY CREDENTIALS

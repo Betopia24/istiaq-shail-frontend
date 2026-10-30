@@ -36,7 +36,7 @@ export default function PlatformOverviewPage() {
   ];
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6">
       {/* Super Admin Top Header with Demo / Live Telemetry Indicator */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -49,7 +49,7 @@ export default function PlatformOverviewPage() {
               connected
             </span>
           </div>
-          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
             Platform Performance &amp; Revenue Analytics
           </h1>
         </div>
@@ -80,7 +80,7 @@ export default function PlatformOverviewPage() {
             </span>
           </div>
           <div className="flex items-baseline justify-between gap-2">
-            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            <span className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
               £24,650
             </span>
             <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
@@ -100,7 +100,7 @@ export default function PlatformOverviewPage() {
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            <span className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
               142
             </span>
             <span className="text-slate-400 font-medium text-sm sm:text-base">
@@ -120,7 +120,7 @@ export default function PlatformOverviewPage() {
             </span>
           </div>
           <div className="flex items-baseline justify-between gap-2">
-            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            <span className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
               820
             </span>
             <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
@@ -153,13 +153,13 @@ export default function PlatformOverviewPage() {
       {/* Two Main Visual Cards with Container Queries */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Card: MRR Revenue Growth */}
-        <div className="@container cq-panel bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+        <div className="@container cq-panel bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 sm:gap-4">
             <div>
               <h2 className="font-heading font-medium text-lg sm:text-xl text-slate-900">
                 MRR Revenue Growth (Last 6 Months)
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Stripe verified recurring subscription trajectory
               </p>
             </div>
@@ -315,13 +315,13 @@ export default function PlatformOverviewPage() {
         </div>
 
         {/* Right Card: Weekly Packs Generated with Container Queries & Micro-interactions */}
-        <div className="@container cq-panel bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+        <div className="@container cq-panel bg-white rounded-3xl p-6 sm:p-7 border border-slate-200/90 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
             <div>
               <h2 className="font-heading font-medium text-lg sm:text-xl text-slate-900">
                 Weekly Packs Generated
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 AI brochure output volume across agencies
               </p>
             </div>

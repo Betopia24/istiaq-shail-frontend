@@ -70,7 +70,7 @@ export default function SuperAdminSettingsPage() {
   const entropyBars = getEntropyLevel(newPassword);
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6">
       {/* Toast Alert */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-[#E8A808]/40 animate-fade-in">
@@ -81,10 +81,10 @@ export default function SuperAdminSettingsPage() {
 
       {/* Header */}
       <div>
-        <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+        <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
           Super Admin Settings &amp; Security
         </h1>
-        <p className="text-xs sm:text-sm text-slate-500 mt-1">
+        <p className="text-sm text-slate-500 mt-1">
           Master credentials, platform security, and owner session control
         </p>
       </div>
@@ -92,7 +92,7 @@ export default function SuperAdminSettingsPage() {
       {/* Two Column Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column: Super Admin Profile */}
-        <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-8">
+        <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-7">
           <div>
             <h2 className="font-heading font-medium text-lg text-slate-900">
               Super Admin Profile

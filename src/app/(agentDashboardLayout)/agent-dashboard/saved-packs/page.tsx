@@ -210,7 +210,7 @@ export default function SavedPacksPage() {
   const draftCount = packs.filter((p) => p.status === "draft").length;
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-bottom-3 duration-200">
@@ -224,10 +224,10 @@ export default function SavedPacksPage() {
       ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
             Saved Property Packs
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Manage, edit, export and share all generated property assets
           </p>
         </div>

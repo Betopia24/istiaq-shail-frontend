@@ -277,7 +277,7 @@ export default function SettingsBillingPage() {
   };
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6">
       {/* Toast Feedback */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200">
@@ -293,13 +293,13 @@ export default function SettingsBillingPage() {
       ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
             {activeTab === "profile" && "Agent Profile & Preferences"}
             {activeTab === "billing" && "Subscription & Billing"}
             {activeTab === "team" && "Team Members"}
             {activeTab === "compliance" && "Regional Compliance"}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             {activeTab === "profile" &&
               "Manage your agent bio, headshot photo, and security credentials."}
             {activeTab === "billing" &&
@@ -389,7 +389,7 @@ export default function SettingsBillingPage() {
       {activeTab === "profile" && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
           {/* Left Column: Personal Information Form */}
-          <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 space-y-6 shadow-2xs">
+          <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-7 space-y-6 shadow-2xs">
             <div>
               <h2 className="font-heading font-medium text-lg text-slate-900">
                 Personal Information
@@ -1245,7 +1245,7 @@ export default function SettingsBillingPage() {
           TAB 4: REGIONAL COMPLIANCE
       ========================================================================= */}
       {activeTab === "compliance" && (
-        <div className="max-w-4xl bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 space-y-6 shadow-2xs">
+        <div className="max-w-4xl bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-7 space-y-6 shadow-2xs">
           <div>
             <h3 className="font-heading font-medium text-lg text-slate-900">
               Regional Compliance &amp; Legal Disclaimers

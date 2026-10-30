@@ -260,7 +260,7 @@ export default function LeadsInquiriesPage() {
   });
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6">
       {/* Toast Feedback */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 backdrop-blur-md animate-in fade-in slide-in-from-bottom-4 duration-200">
@@ -276,10 +276,10 @@ export default function LeadsInquiriesPage() {
       ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
             Buyer Inquiries &amp; Viewing Requests
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal">
+          <p className="text-sm text-slate-500 mt-1">
             Captured via Public Buyer Property Pages &amp; QR Codes
           </p>
         </div>
@@ -307,7 +307,7 @@ export default function LeadsInquiriesPage() {
             TOTAL INQUIRIES
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
               28
             </span>
             <span className="text-xs font-medium text-emerald-600 flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
@@ -323,7 +323,7 @@ export default function LeadsInquiriesPage() {
             PENDING REVIEW
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
               4
             </span>
             <Badge variant="brand" className="font-medium">
@@ -338,7 +338,7 @@ export default function LeadsInquiriesPage() {
             CONFIRMED VIEWINGS
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
               18
             </span>
             <span className="text-xs font-medium text-blue-600 flex items-center gap-1.5 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/60">
@@ -354,7 +354,7 @@ export default function LeadsInquiriesPage() {
             VIEWING CONVERSION
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="font-heading font-medium text-3xl sm:text-4xl text-emerald-600 tracking-tight">
+            <span className="font-heading font-medium text-2xl sm:text-3xl text-emerald-600 tracking-tight">
               78.5%
             </span>
             <span className="text-xs text-slate-400 font-normal">

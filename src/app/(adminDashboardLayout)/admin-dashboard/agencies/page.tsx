@@ -133,7 +133,7 @@ export default function AgenciesAndUsersPage() {
   }, [agents, searchQuery, roleFilter]);
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-[#E8A808]/40 animate-fade-in">
@@ -153,7 +153,7 @@ export default function AgenciesAndUsersPage() {
               · 6 Sample Institutional Agent Accounts
             </span>
           </div>
-          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
             Agency Teams &amp; User Access Control
           </h1>
         </div>

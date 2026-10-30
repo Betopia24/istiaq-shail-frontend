@@ -104,7 +104,7 @@ export default function AgentDashboardPage() {
   };
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6">
       {/* Toast Notification */}
       <AnimatePresence>
         {downloadToast && (
@@ -128,10 +128,10 @@ export default function AgentDashboardPage() {
       ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
             Agent Overview
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 mt-1">
             Manage your property marketing collateral &amp; PDF reports
           </p>
         </div>
@@ -256,7 +256,7 @@ export default function AgentDashboardPage() {
             </span>
           </div>
           <div className="mt-5">
-            <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
               42
             </span>
           </div>
@@ -276,7 +276,7 @@ export default function AgentDashboardPage() {
           <div className="mt-4 space-y-3">
             <div className="flex items-baseline justify-between">
               <div>
-                <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900 tracking-tight">
+                <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
                   78
                 </span>
                 <span className="text-xs font-medium text-slate-500 ml-1.5">
@@ -325,7 +325,7 @@ export default function AgentDashboardPage() {
             </div>
           </div>
           <div className="mt-4 flex items-baseline gap-3">
-            <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
               12
             </span>
             <div className="flex items-center text-xs">
@@ -340,7 +340,7 @@ export default function AgentDashboardPage() {
       {/* =========================================================================
           SECTION 4: RECENT PROPERTY MARKETING PACKS TABLE (CONTAINER QUERY & MICRO-INTERACTIONS)
       ========================================================================= */}
-      <div className="@container cq-panel bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 sm:p-8 space-y-6">
+      <div className="@container cq-panel bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 sm:p-7 space-y-6">
         {/* Card Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
