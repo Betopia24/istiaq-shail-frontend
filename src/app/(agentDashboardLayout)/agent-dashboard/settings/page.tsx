@@ -319,18 +319,7 @@ export default function SettingsBillingPage() {
             <span>14 Packs Remaining</span>
           </div>
 
-          {/* Log Out Button */}
-          <button
-            onClick={() => {
-              showToast("Logging out...");
-              setTimeout(() => {
-                window.location.href = "/login";
-              }, 600);
-            }}
-            className="text-xs font-medium text-slate-500 hover:text-red-600 transition cursor-pointer"
-          >
-            Log Out
-          </button>
+          
         </div>
       </div>
 
