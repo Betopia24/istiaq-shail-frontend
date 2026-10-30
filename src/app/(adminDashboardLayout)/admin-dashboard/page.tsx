@@ -36,19 +36,20 @@ export default function PlatformOverviewPage() {
   ];
 
   return (
-    <div className="space-y-7 max-w-7xl mx-auto">
+    <div className="space-y-8 pb-12">
       {/* Super Admin Top Header with Demo / Live Telemetry Indicator */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-1.5">
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 uppercase tracking-wider">
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 uppercase tracking-wider">
               DEMO DATA MODE ACTIVE
             </span>
             <span className="text-xs text-slate-500">
-              · All metrics use sample agency data until live webhooks are connected
+              · All metrics use sample agency data until live webhooks are
+              connected
             </span>
           </div>
-          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
             Platform Performance &amp; Revenue Analytics
           </h1>
         </div>
@@ -56,8 +57,12 @@ export default function PlatformOverviewPage() {
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <div className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs text-slate-600 flex items-center gap-2 shadow-2xs">
             <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <span className="font-semibold text-slate-700">Telemetry Status:</span>
-            <span className="font-mono text-slate-500 text-[11px]">Demo Sandbox</span>
+            <span className="font-medium text-slate-700">
+              Telemetry Status:
+            </span>
+            <span className="font-mono text-slate-500 text-[11px]">
+              Demo Sandbox
+            </span>
           </div>
         </div>
       </div>
@@ -67,18 +72,18 @@ export default function PlatformOverviewPage() {
         {/* Card 1: MRR */}
         <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
               Monthly Recurring Revenue
             </span>
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
               Demo data
             </span>
           </div>
           <div className="flex items-baseline justify-between gap-2">
-            <span className="font-heading font-semibold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
               £24,650
             </span>
-            <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+            <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
               ▲ +12.4%
             </span>
           </div>
@@ -87,15 +92,15 @@ export default function PlatformOverviewPage() {
         {/* Card 2: Active Agencies */}
         <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
               Total Active Agencies
             </span>
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
               Demo data
             </span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="font-heading font-semibold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
               142
             </span>
             <span className="text-slate-400 font-medium text-sm sm:text-base">
@@ -107,18 +112,18 @@ export default function PlatformOverviewPage() {
         {/* Card 3: Packs Generated */}
         <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
               Packs Generated (Oct)
             </span>
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
               Demo data
             </span>
           </div>
           <div className="flex items-baseline justify-between gap-2">
-            <span className="font-heading font-semibold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
               820
             </span>
-            <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+            <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
               ▲ +18% MoM
             </span>
           </div>
@@ -127,18 +132,18 @@ export default function PlatformOverviewPage() {
         {/* Card 4: Gross SaaS Margin */}
         <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
               Gross SaaS Margin
             </span>
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
               Demo data
             </span>
           </div>
           <div className="flex items-baseline justify-between gap-2">
-            <span className="font-heading font-semibold text-2xl sm:text-3xl text-emerald-600 tracking-tight">
+            <span className="font-heading font-medium text-2xl sm:text-3xl text-emerald-600 tracking-tight">
               88.2%
             </span>
-            <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full">
+            <span className="text-[11px] font-medium text-slate-500 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full">
               £0.42 API/PACK
             </span>
           </div>
@@ -151,14 +156,14 @@ export default function PlatformOverviewPage() {
         <div className="@container cq-panel bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 sm:gap-4">
             <div>
-              <h2 className="font-heading font-bold text-lg sm:text-xl text-slate-900">
+              <h2 className="font-heading font-medium text-lg sm:text-xl text-slate-900">
                 MRR Revenue Growth (Last 6 Months)
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
                 Stripe verified recurring subscription trajectory
               </p>
             </div>
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 rounded-full self-start sm:self-auto">
+            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 rounded-full self-start sm:self-auto">
               Demo data
             </span>
           </div>
@@ -168,13 +173,14 @@ export default function PlatformOverviewPage() {
             {/* Tooltip */}
             {hoveredMonth !== null && (
               <div
-                className="absolute z-10 px-2.5 py-1 rounded-lg bg-[#06143E] text-white text-xs font-bold shadow-lg pointer-events-none transform -translate-x-1/2 -translate-y-9 transition-all"
+                className="absolute z-10 px-2.5 py-1 rounded-lg bg-[#06143E] text-white text-xs font-medium shadow-lg pointer-events-none transform -translate-x-1/2 -translate-y-9 transition-all"
                 style={{
                   left: `${(mrrData[hoveredMonth].x / 530) * 100}%`,
                   top: `${(mrrData[hoveredMonth].y / 180) * 100}%`,
                 }}
               >
-                {mrrData[hoveredMonth].month}: £{mrrData[hoveredMonth].value.toLocaleString()}
+                {mrrData[hoveredMonth].month}: £
+                {mrrData[hoveredMonth].value.toLocaleString()}
               </div>
             )}
 
@@ -196,19 +202,73 @@ export default function PlatformOverviewPage() {
                   preserveAspectRatio="none"
                 >
                   <defs>
-                    <linearGradient id="mrrGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#E8A808" stopOpacity="0.32" />
-                      <stop offset="65%" stopColor="#E8A808" stopOpacity="0.08" />
+                    <linearGradient
+                      id="mrrGradient"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop
+                        offset="0%"
+                        stopColor="#E8A808"
+                        stopOpacity="0.32"
+                      />
+                      <stop
+                        offset="65%"
+                        stopColor="#E8A808"
+                        stopOpacity="0.08"
+                      />
                       <stop offset="100%" stopColor="#E8A808" stopOpacity="0" />
                     </linearGradient>
                   </defs>
 
                   {/* Horizontal grid lines */}
-                  <line x1="0" y1="10" x2="530" y2="10" stroke="#F1F5F9" strokeWidth="1" strokeDasharray="3 3" />
-                  <line x1="0" y1="50" x2="530" y2="50" stroke="#F1F5F9" strokeWidth="1" strokeDasharray="3 3" />
-                  <line x1="0" y1="90" x2="530" y2="90" stroke="#F1F5F9" strokeWidth="1" strokeDasharray="3 3" />
-                  <line x1="0" y1="130" x2="530" y2="130" stroke="#F1F5F9" strokeWidth="1" strokeDasharray="3 3" />
-                  <line x1="0" y1="170" x2="530" y2="170" stroke="#F1F5F9" strokeWidth="1" strokeDasharray="3 3" />
+                  <line
+                    x1="0"
+                    y1="10"
+                    x2="530"
+                    y2="10"
+                    stroke="#F1F5F9"
+                    strokeWidth="1"
+                    strokeDasharray="3 3"
+                  />
+                  <line
+                    x1="0"
+                    y1="50"
+                    x2="530"
+                    y2="50"
+                    stroke="#F1F5F9"
+                    strokeWidth="1"
+                    strokeDasharray="3 3"
+                  />
+                  <line
+                    x1="0"
+                    y1="90"
+                    x2="530"
+                    y2="90"
+                    stroke="#F1F5F9"
+                    strokeWidth="1"
+                    strokeDasharray="3 3"
+                  />
+                  <line
+                    x1="0"
+                    y1="130"
+                    x2="530"
+                    y2="130"
+                    stroke="#F1F5F9"
+                    strokeWidth="1"
+                    strokeDasharray="3 3"
+                  />
+                  <line
+                    x1="0"
+                    y1="170"
+                    x2="530"
+                    y2="170"
+                    stroke="#F1F5F9"
+                    strokeWidth="1"
+                    strokeDasharray="3 3"
+                  />
 
                   {/* Area fill under curve */}
                   <path
@@ -244,7 +304,7 @@ export default function PlatformOverviewPage() {
                 </svg>
 
                 {/* X-axis labels */}
-                <div className="absolute -bottom-2 left-0 right-0 flex justify-between text-[11px] font-semibold text-slate-500 px-3">
+                <div className="absolute -bottom-2 left-0 right-0 flex justify-between text-[11px] font-medium text-slate-500 px-3">
                   {mrrData.map((d) => (
                     <span key={d.month}>{d.month}</span>
                   ))}
@@ -258,7 +318,7 @@ export default function PlatformOverviewPage() {
         <div className="@container cq-panel bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
             <div>
-              <h2 className="font-heading font-bold text-lg sm:text-xl text-slate-900">
+              <h2 className="font-heading font-medium text-lg sm:text-xl text-slate-900">
                 Weekly Packs Generated
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -267,10 +327,10 @@ export default function PlatformOverviewPage() {
             </div>
             {/* Badges container: wraps on mobile so the percentage badge never clips */}
             <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-              <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 rounded-full">
                 Demo data
               </span>
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 whitespace-nowrap shadow-2xs">
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60 whitespace-nowrap shadow-2xs">
                 ▲ +24% highest week
               </span>
             </div>
@@ -288,7 +348,7 @@ export default function PlatformOverviewPage() {
                 >
                   {/* Tooltip */}
                   {hoveredWeek === index && (
-                    <div className="absolute -top-10 px-2.5 py-1 rounded-lg bg-[#06143E] text-white text-xs font-bold shadow-lg pointer-events-none whitespace-nowrap z-10 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="absolute -top-10 px-2.5 py-1 rounded-lg bg-[#06143E] text-white text-xs font-medium shadow-lg pointer-events-none whitespace-nowrap z-10 animate-in fade-in zoom-in-95 duration-150">
                       {item.count} packs
                     </div>
                   )}
@@ -305,9 +365,12 @@ export default function PlatformOverviewPage() {
             </div>
 
             {/* X-axis labels */}
-            <div className="flex justify-between px-2 sm:px-8 text-[12px] font-semibold text-slate-500 pt-3">
+            <div className="flex justify-between px-2 sm:px-8 text-[12px] font-medium text-slate-500 pt-3">
               {weeklyPacks.map((item) => (
-                <div key={item.week} className="flex-1 text-center group-hover:text-slate-900 transition-colors">
+                <div
+                  key={item.week}
+                  className="flex-1 text-center group-hover:text-slate-900 transition-colors"
+                >
                   {item.week}
                 </div>
               ))}
@@ -319,8 +382,10 @@ export default function PlatformOverviewPage() {
       {/* Row 3: Infrastructure / System Status Strip with Explicit Demo Telemetry Label */}
       <div className="bg-[#EDF4FB] rounded-2xl border border-slate-200/80 px-4 sm:px-6 py-4 sm:py-5 shadow-sm space-y-2">
         <div className="flex items-center justify-between pb-2 border-b border-slate-200/70 text-[11px] text-slate-500">
-          <span className="font-semibold text-slate-700">Production Infrastructure &amp; Latency</span>
-          <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+          <span className="font-medium text-slate-700">
+            Production Infrastructure &amp; Latency
+          </span>
+          <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
             Demo data telemetry
           </span>
         </div>
@@ -330,7 +395,7 @@ export default function PlatformOverviewPage() {
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             <span>
               Claude 3.5 Sonnet Latency:{" "}
-              <strong className="text-emerald-700 font-bold font-mono">
+              <strong className="text-emerald-700 font-medium font-mono">
                 420ms (Optimal)
               </strong>
             </span>
@@ -341,7 +406,7 @@ export default function PlatformOverviewPage() {
             <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
             <span>
               PDF Rendering Worker:{" "}
-              <strong className="text-emerald-700 font-bold font-mono">
+              <strong className="text-emerald-700 font-medium font-mono">
                 99.98% Uptime
               </strong>
             </span>
@@ -352,7 +417,9 @@ export default function PlatformOverviewPage() {
             <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
             <span>
               Failed Webhooks (24h):{" "}
-              <strong className="text-emerald-700 font-bold font-mono">0</strong>
+              <strong className="text-emerald-700 font-medium font-mono">
+                0
+              </strong>
             </span>
           </div>
         </div>

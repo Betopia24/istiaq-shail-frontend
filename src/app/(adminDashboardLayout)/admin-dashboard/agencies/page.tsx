@@ -105,12 +105,12 @@ export default function AgenciesAndUsersPage() {
           showToast(
             newStatus === "SUSPENDED"
               ? `Access suspended for ${name}`
-              : `Access restored for ${name}`
+              : `Access restored for ${name}`,
           );
           return { ...a, status: newStatus };
         }
         return a;
-      })
+      }),
     );
   };
 
@@ -125,15 +125,15 @@ export default function AgenciesAndUsersPage() {
         roleFilter === "All"
           ? true
           : roleFilter === "Suspended"
-          ? agent.status === "SUSPENDED"
-          : agent.role === roleFilter;
+            ? agent.status === "SUSPENDED"
+            : agent.role === roleFilter;
 
       return matchSearch && matchRole;
     });
   }, [agents, searchQuery, roleFilter]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-8 pb-12">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-[#E8A808]/40 animate-fade-in">
@@ -146,12 +146,14 @@ export default function AgenciesAndUsersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
               Demo data
             </span>
-            <span className="text-xs text-slate-400">· 6 Sample Institutional Agent Accounts</span>
+            <span className="text-xs text-slate-400">
+              · 6 Sample Institutional Agent Accounts
+            </span>
           </div>
-          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
             Agency Teams &amp; User Access Control
           </h1>
         </div>
@@ -194,7 +196,7 @@ export default function AgenciesAndUsersPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-white border-b border-slate-200/70 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <tr className="bg-white border-b border-slate-200/70 text-[11px] font-medium uppercase tracking-wider text-slate-500">
                 <th className="px-6 py-4">User / Agent Name</th>
                 <th className="px-6 py-4">Agency Affiliation</th>
                 <th className="px-6 py-4">Role</th>
@@ -206,7 +208,10 @@ export default function AgenciesAndUsersPage() {
             <tbody className="divide-y divide-slate-100 text-sm">
               {filteredAgents.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                  <td
+                    colSpan={6}
+                    className="px-6 py-12 text-center text-slate-500"
+                  >
                     No agents found matching your query.
                   </td>
                 </tr>
@@ -219,11 +224,11 @@ export default function AgenciesAndUsersPage() {
                     {/* User / Agent */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0 border border-slate-200">
+                        <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-700 font-medium text-xs flex items-center justify-center shrink-0 border border-slate-200">
                           {agent.initials}
                         </div>
                         <div>
-                          <div className="font-semibold text-slate-900 leading-tight">
+                          <div className="font-medium text-slate-900 leading-tight">
                             {agent.name}
                           </div>
                           <div className="text-xs text-slate-400 mt-0.5">
@@ -241,7 +246,7 @@ export default function AgenciesAndUsersPage() {
                     {/* Role */}
                     <td className="px-6 py-4">
                       {agent.role === "Agency Owner" ? (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200/60">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200/60">
                           Agency Owner
                         </span>
                       ) : (
@@ -252,18 +257,18 @@ export default function AgenciesAndUsersPage() {
                     </td>
 
                     {/* Packs Created */}
-                    <td className="px-6 py-4 font-semibold text-slate-800">
+                    <td className="px-6 py-4 font-medium text-slate-800">
                       {agent.packsCount} Packs
                     </td>
 
                     {/* Status */}
                     <td className="px-6 py-4">
                       {agent.status === "ACTIVE" ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/50">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/50">
                           ACTIVE
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200/50">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200/50">
                           SUSPENDED
                         </span>
                       )}
@@ -273,15 +278,19 @@ export default function AgenciesAndUsersPage() {
                     <td className="px-6 py-4 text-right">
                       {agent.status === "ACTIVE" ? (
                         <button
-                          onClick={() => handleToggleStatus(agent.id, agent.name)}
-                          className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline transition"
+                          onClick={() =>
+                            handleToggleStatus(agent.id, agent.name)
+                          }
+                          className="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline transition"
                         >
                           Suspend
                         </button>
                       ) : (
                         <button
-                          onClick={() => handleToggleStatus(agent.id, agent.name)}
-                          className="text-xs font-semibold text-amber-600 hover:text-amber-800 hover:underline transition"
+                          onClick={() =>
+                            handleToggleStatus(agent.id, agent.name)
+                          }
+                          className="text-xs font-medium text-amber-600 hover:text-amber-800 hover:underline transition"
                         >
                           Reactivate
                         </button>

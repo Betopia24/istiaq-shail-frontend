@@ -18,14 +18,18 @@ export default function ForgotPasswordForm() {
   const [otp, setOtp] = useState<string[]>(["4", "9", "2", "9", "1", ""]);
   const [resendTimer, setResendTimer] = useState(48);
   const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("KensingtonVault2024!");
+  const [confirmPassword, setConfirmPassword] = useState(
+    "KensingtonVault2024!",
+  );
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resetToken, setResetToken] = useState("");
 
-  const [forgotPassword, { isLoading: isSendingEmail }] = useForgotPasswordMutation();
+  const [forgotPassword, { isLoading: isSendingEmail }] =
+    useForgotPasswordMutation();
   const [verifyOtp, { isLoading: isVerifyingOtp }] = useVerifyOtpMutation();
-  const [resetPassword, { isLoading: isResettingPassword }] = useResetPasswordMutation();
+  const [resetPassword, { isLoading: isResettingPassword }] =
+    useResetPasswordMutation();
   const [resendOtp, { isLoading: isResendingOtp }] = useResendOtpMutation();
 
   const [isLocalLoading, setIsLocalLoading] = useState(false);
@@ -81,7 +85,10 @@ export default function ForgotPasswordForm() {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number,
+  ) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -159,11 +166,12 @@ export default function ForgotPasswordForm() {
       {step === 1 && (
         <div>
           <div className="mb-7">
-            <h1 className="font-heading font-bold text-2xl sm:text-[28px] text-[#020618] tracking-tight mb-2">
+            <h1 className="font-heading font-medium text-2xl sm:text-[28px] text-[#020618] tracking-tight mb-2">
               Forgot your password?
             </h1>
             <p className="font-sans text-sm sm:text-[14.5px] text-[#62748E] leading-relaxed">
-              Enter your work email address and we&#39;ll send a 6-digit verification code (OTP) to reset your password.
+              Enter your work email address and we&#39;ll send a 6-digit
+              verification code (OTP) to reset your password.
             </p>
           </div>
 
@@ -191,7 +199,7 @@ export default function ForgotPasswordForm() {
               <button
                 type="submit"
                 disabled={isSendingEmail || isLocalLoading}
-                className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-75 cursor-pointer"
+                className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-medium text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-75 cursor-pointer"
               >
                 {isSendingEmail || isLocalLoading ? (
                   <>
@@ -209,7 +217,7 @@ export default function ForgotPasswordForm() {
                 Remember your password?{" "}
                 <Link
                   href="/login"
-                  className="font-semibold text-[#0A2168] hover:text-[#06143E] hover:underline transition-colors"
+                  className="font-medium text-[#0A2168] hover:text-[#06143E] hover:underline transition-colors"
                 >
                   Sign in
                 </Link>
@@ -225,7 +233,7 @@ export default function ForgotPasswordForm() {
       {step === 2 && (
         <div>
           <div className="mb-7">
-            <h1 className="font-heading font-bold text-2xl sm:text-[28px] text-[#020618] tracking-tight mb-2">
+            <h1 className="font-heading font-medium text-2xl sm:text-[28px] text-[#020618] tracking-tight mb-2">
               Enter verification code
             </h1>
             <p className="font-sans text-sm sm:text-[14.5px] text-[#62748E] leading-relaxed">
@@ -251,7 +259,7 @@ export default function ForgotPasswordForm() {
                     value={digit}
                     onChange={(e) => handleOtpChange(e.target.value, index)}
                     onKeyDown={(e) => handleKeyDown(e, index)}
-                    className="w-full h-12 sm:h-13 text-center font-heading text-lg sm:text-xl font-bold text-[#020618] border border-slate-200 rounded-xl focus:border-[#092167] focus:ring-2 focus:ring-[#092167]/15 focus:outline-none transition-all duration-150 bg-white"
+                    className="w-full h-12 sm:h-13 text-center font-heading text-lg sm:text-xl font-medium text-[#020618] border border-slate-200 rounded-xl focus:border-[#092167] focus:ring-2 focus:ring-[#092167]/15 focus:outline-none transition-all duration-150 bg-white"
                   />
                 ))}
               </div>
@@ -261,7 +269,7 @@ export default function ForgotPasswordForm() {
               <button
                 type="submit"
                 disabled={isVerifyingOtp || isLocalLoading}
-                className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-medium text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
               >
                 {isVerifyingOtp || isLocalLoading ? (
                   <>
@@ -293,12 +301,13 @@ export default function ForgotPasswordForm() {
       {step === 3 && (
         <div>
           <div className="mb-7">
-            <h1 className="font-heading font-bold text-2xl sm:text-[28px] text-[#020618] tracking-tight mb-2">
+            <h1 className="font-heading font-medium text-2xl sm:text-[28px] text-[#020618] tracking-tight mb-2">
               Create a new password
             </h1>
             <p className="font-sans text-sm sm:text-[14.5px] text-[#62748E] leading-relaxed">
               Choose a strong password for{" "}
-              <span className="font-medium text-slate-800">{email}</span> to regain secure access to your Property Pack AI workstation.
+              <span className="font-medium text-slate-800">{email}</span> to
+              regain secure access to your Property Pack AI workstation.
             </p>
           </div>
 
@@ -367,7 +376,7 @@ export default function ForgotPasswordForm() {
               <button
                 type="submit"
                 disabled={isResettingPassword || isLocalLoading}
-                className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-medium text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
               >
                 {isResettingPassword || isLocalLoading ? (
                   <>
@@ -385,7 +394,7 @@ export default function ForgotPasswordForm() {
                 Remember your password?{" "}
                 <Link
                   href="/login"
-                  className="font-semibold text-[#0A2168] hover:text-[#06143E] hover:underline transition-colors"
+                  className="font-medium text-[#0A2168] hover:text-[#06143E] hover:underline transition-colors"
                 >
                   Sign in
                 </Link>
@@ -412,24 +421,26 @@ export default function ForgotPasswordForm() {
             </div>
           </div>
 
-          <h2 className="font-heading font-bold text-2xl sm:text-[26px] text-[#020618] tracking-tight mb-2">
+          <h2 className="font-heading font-medium text-2xl sm:text-[26px] text-[#020618] tracking-tight mb-2">
             Password updated successfully
           </h2>
 
           <div className="mb-4">
-            <span className="font-sans text-[11px] font-bold tracking-wider uppercase text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full">
+            <span className="font-sans text-[11px] font-medium tracking-wider uppercase text-emerald-700 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full">
               Security Credentials Have Been Fully Updated
             </span>
           </div>
 
           <p className="font-sans text-sm text-[#62748E] leading-relaxed max-w-sm mx-auto mb-7">
             Your password has been successfully updated for{" "}
-            <span className="font-semibold text-slate-800">{email}</span>. You can now log in with your new credentials and continue back to your workstation.
+            <span className="font-medium text-slate-800">{email}</span>. You can
+            now log in with your new credentials and continue back to your
+            workstation.
           </p>
 
           <button
             onClick={() => router.push("/login")}
-            className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center cursor-pointer"
+            className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-medium text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center cursor-pointer"
           >
             Sign In to Workstation
           </button>

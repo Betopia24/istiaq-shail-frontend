@@ -33,9 +33,9 @@ export const Button: React.FC<ButtonProps> = ({
 
   const variantStyles: Record<ButtonVariant, string> = {
     primary:
-      "bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-semibold shadow-[0_3px_12px_rgba(232,168,8,0.35)] hover:shadow-[0_5px_18px_rgba(232,168,8,0.45)] active:scale-[0.98]",
+      "bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-medium shadow-[0_3px_12px_rgba(232,168,8,0.35)] hover:shadow-[0_5px_18px_rgba(232,168,8,0.45)] active:scale-[0.98]",
     secondary:
-      "bg-[#092167] hover:bg-[#06143E] active:bg-[#030b24] text-white font-semibold border border-[#1E3B87] shadow-xs active:scale-[0.98]",
+      "bg-[#092167] hover:bg-[#06143E] active:bg-[#030b24] text-white font-medium border border-[#1E3B87] shadow-xs active:scale-[0.98]",
     outline:
       "bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-800 font-medium border border-slate-300 hover:border-slate-400 active:scale-[0.98] shadow-2xs",
     ghost:
@@ -67,4 +67,3 @@ export const Button: React.FC<ButtonProps> = ({
 };
 
 export default Button;
-

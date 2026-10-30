@@ -47,17 +47,20 @@ export default function LeadsInquiriesPage() {
     "all" | "pending" | "confirmed" | "completed" | "cancelled"
   >("all");
 
-  const [selectedPropertyFilter, setSelectedPropertyFilter] = useState("All Listings");
+  const [selectedPropertyFilter, setSelectedPropertyFilter] =
+    useState("All Listings");
   const [isPropertyDropdownOpen, setIsPropertyDropdownOpen] = useState(false);
   const [openStatusMenuId, setOpenStatusMenuId] = useState<string | null>(null);
 
-  const [selectedLeadForDetails, setSelectedLeadForDetails] = useState<LeadInquiry | null>(null);
-  const [selectedLeadForEmail, setSelectedLeadForEmail] = useState<LeadInquiry | null>(null);
+  const [selectedLeadForDetails, setSelectedLeadForDetails] =
+    useState<LeadInquiry | null>(null);
+  const [selectedLeadForEmail, setSelectedLeadForEmail] =
+    useState<LeadInquiry | null>(null);
   const [emailSubject, setEmailSubject] = useState(
-    "Regarding your viewing request for 16 Gorse Drive"
+    "Regarding your viewing request for 16 Gorse Drive",
   );
   const [emailBody, setEmailBody] = useState(
-    "Hi David,\n\nThank you for booking a viewing for 16 Gorse Drive, Chorlton. We are pleased to confirm your appointment for Saturday, 17 October at 10:30 AM.\n\nOur valuer will meet you at the property.\n\nBest regards,\nPrestige Estates UK"
+    "Hi David,\n\nThank you for booking a viewing for 16 Gorse Drive, Chorlton. We are pleased to confirm your appointment for Saturday, 17 October at 10:30 AM.\n\nOur valuer will meet you at the property.\n\nBest regards,\nPrestige Estates UK",
   );
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -140,7 +143,8 @@ export default function LeadsInquiriesPage() {
       statusNote: "Buyer cancelled slot",
       statusNoteType: "danger",
       status: "Cancelled",
-      message: "Had to reschedule due to work commitments. Will rebook for next weekend.",
+      message:
+        "Had to reschedule due to work commitments. Will rebook for next weekend.",
       preApproved: false,
     },
     {
@@ -158,7 +162,8 @@ export default function LeadsInquiriesPage() {
       statusNote: "Submitted 1 hour ago",
       statusNoteType: "warning",
       status: "Pending Action",
-      message: "First-time buyers with DIP certificate from Santander ready for inspection.",
+      message:
+        "First-time buyers with DIP certificate from Santander ready for inspection.",
       preApproved: true,
     },
     {
@@ -176,7 +181,8 @@ export default function LeadsInquiriesPage() {
       statusNote: "Calendar synced",
       statusNoteType: "success",
       status: "Confirmed",
-      message: "Relocating from London next month, looking for quick completion.",
+      message:
+        "Relocating from London next month, looking for quick completion.",
       preApproved: true,
     },
   ]);
@@ -189,7 +195,9 @@ export default function LeadsInquiriesPage() {
         if (Array.isArray(parsed) && parsed.length > 0) {
           setLeads((prev) => {
             const existingIds = new Set(prev.map((p) => p.id));
-            const newOnes = parsed.filter((p: LeadInquiry) => !existingIds.has(p.id));
+            const newOnes = parsed.filter(
+              (p: LeadInquiry) => !existingIds.has(p.id),
+            );
             return [...newOnes, ...prev];
           });
         }
@@ -201,7 +209,9 @@ export default function LeadsInquiriesPage() {
 
   const handleUpdateStatus = (leadId: string, newStatus: InquiryStatus) => {
     setLeads((prev) =>
-      prev.map((item) => (item.id === leadId ? { ...item, status: newStatus } : item))
+      prev.map((item) =>
+        item.id === leadId ? { ...item, status: newStatus } : item,
+      ),
     );
     setOpenStatusMenuId(null);
     showToast(`Inquiry status updated to ${newStatus}`);
@@ -213,11 +223,12 @@ export default function LeadsInquiriesPage() {
   };
 
   const handleExportCSV = () => {
-    const csvHeader = "Buyer Name,Email,Phone,Property Title,Price,Requested Date,Time,Status\n";
+    const csvHeader =
+      "Buyer Name,Email,Phone,Property Title,Price,Requested Date,Time,Status\n";
     const csvRows = leads
       .map(
         (l) =>
-          `"${l.buyerName}","${l.email}","${l.phone}","${l.propertyTitle}","${l.propertyPrice}","${l.requestedDate}","${l.requestedTime}","${l.status}"`
+          `"${l.buyerName}","${l.email}","${l.phone}","${l.propertyTitle}","${l.propertyPrice}","${l.requestedDate}","${l.requestedTime}","${l.status}"`,
       )
       .join("\n");
     const blob = new Blob([csvHeader + csvRows], { type: "text/csv" });
@@ -230,10 +241,14 @@ export default function LeadsInquiriesPage() {
   };
 
   const filteredLeads = leads.filter((lead) => {
-    if (activeFilter === "pending" && lead.status !== "Pending Action") return false;
-    if (activeFilter === "confirmed" && lead.status !== "Confirmed") return false;
-    if (activeFilter === "completed" && lead.status !== "Completed") return false;
-    if (activeFilter === "cancelled" && lead.status !== "Cancelled") return false;
+    if (activeFilter === "pending" && lead.status !== "Pending Action")
+      return false;
+    if (activeFilter === "confirmed" && lead.status !== "Confirmed")
+      return false;
+    if (activeFilter === "completed" && lead.status !== "Completed")
+      return false;
+    if (activeFilter === "cancelled" && lead.status !== "Cancelled")
+      return false;
 
     if (
       selectedPropertyFilter !== "All Listings" &&
@@ -245,7 +260,7 @@ export default function LeadsInquiriesPage() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto space-y-7 pb-16">
+    <div className="space-y-8 pb-12">
       {/* Toast Feedback */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 backdrop-blur-md animate-in fade-in slide-in-from-bottom-4 duration-200">
@@ -261,7 +276,7 @@ export default function LeadsInquiriesPage() {
       ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading font-semibold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
             Buyer Inquiries &amp; Viewing Requests
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1 font-normal">
@@ -288,11 +303,11 @@ export default function LeadsInquiriesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {/* Card 1: Total Inquiries */}
         <div className="@container bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow space-y-3">
-          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+          <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
             TOTAL INQUIRIES
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="font-heading font-semibold text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900 tracking-tight">
               28
             </span>
             <span className="text-xs font-medium text-emerald-600 flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
@@ -304,11 +319,11 @@ export default function LeadsInquiriesPage() {
 
         {/* Card 2: Pending Review */}
         <div className="@container bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow space-y-3">
-          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+          <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
             PENDING REVIEW
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="font-heading font-semibold text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900 tracking-tight">
               4
             </span>
             <Badge variant="brand" className="font-medium">
@@ -319,11 +334,11 @@ export default function LeadsInquiriesPage() {
 
         {/* Card 3: Confirmed Viewings */}
         <div className="@container bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow space-y-3">
-          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+          <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
             CONFIRMED VIEWINGS
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="font-heading font-semibold text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900 tracking-tight">
               18
             </span>
             <span className="text-xs font-medium text-blue-600 flex items-center gap-1.5 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/60">
@@ -335,14 +350,16 @@ export default function LeadsInquiriesPage() {
 
         {/* Card 4: Viewing Conversion */}
         <div className="@container bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow space-y-3">
-          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+          <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
             VIEWING CONVERSION
           </span>
           <div className="flex items-baseline justify-between">
-            <span className="font-heading font-semibold text-3xl sm:text-4xl text-emerald-600 tracking-tight">
+            <span className="font-heading font-medium text-3xl sm:text-4xl text-emerald-600 tracking-tight">
               78.5%
             </span>
-            <span className="text-xs text-slate-400 font-normal">Lead to viewing</span>
+            <span className="text-xs text-slate-400 font-normal">
+              Lead to viewing
+            </span>
           </div>
         </div>
       </div>
@@ -365,7 +382,7 @@ export default function LeadsInquiriesPage() {
               onClick={() => setActiveFilter(tab.id as any)}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 cursor-pointer shrink-0 ${
                 activeFilter === tab.id
-                  ? "bg-[#06143E] text-white shadow-xs font-semibold"
+                  ? "bg-[#06143E] text-white shadow-xs font-medium"
                   : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900"
               }`}
             >
@@ -382,7 +399,7 @@ export default function LeadsInquiriesPage() {
             className="h-10 px-4 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium flex items-center gap-2 cursor-pointer shadow-2xs transition"
           >
             <span className="text-slate-400">Filter by Property:</span>
-            <span className="font-semibold text-slate-900 truncate max-w-[200px]">
+            <span className="font-medium text-slate-900 truncate max-w-[200px]">
               {selectedPropertyFilter}
             </span>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -405,7 +422,7 @@ export default function LeadsInquiriesPage() {
                   }}
                   className={`w-full px-3 py-2 text-xs rounded-xl text-left transition cursor-pointer ${
                     selectedPropertyFilter === prop
-                      ? "bg-slate-100 text-slate-900 font-semibold"
+                      ? "bg-slate-100 text-slate-900 font-medium"
                       : "text-slate-600 hover:bg-slate-50 font-normal"
                   }`}
                 >
@@ -424,12 +441,12 @@ export default function LeadsInquiriesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs min-w-[760px]">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/70 text-slate-400 uppercase text-[10px] font-semibold tracking-wider">
-                <th className="py-3.5 pl-6 font-semibold">BUYER DETAILS</th>
-                <th className="py-3.5 font-semibold">INTERESTED PROPERTY</th>
-                <th className="py-3.5 font-semibold">REQUESTED VIEWING</th>
-                <th className="py-3.5 font-semibold">STATUS</th>
-                <th className="py-3.5 pr-6 text-right font-semibold">ACTIONS</th>
+              <tr className="border-b border-slate-100 bg-slate-50/70 text-slate-400 uppercase text-[10px] font-medium tracking-wider">
+                <th className="py-3.5 pl-6 font-medium">BUYER DETAILS</th>
+                <th className="py-3.5 font-medium">INTERESTED PROPERTY</th>
+                <th className="py-3.5 font-medium">REQUESTED VIEWING</th>
+                <th className="py-3.5 font-medium">STATUS</th>
+                <th className="py-3.5 pr-6 text-right font-medium">ACTIONS</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -449,12 +466,12 @@ export default function LeadsInquiriesPage() {
                     <td className="py-4 pl-6">
                       <div className="flex items-center gap-3.5">
                         <div
-                          className={`w-9 h-9 rounded-full ${lead.avatarColor} text-white flex items-center justify-center font-semibold text-xs shrink-0 shadow-2xs`}
+                          className={`w-9 h-9 rounded-full ${lead.avatarColor} text-white flex items-center justify-center font-medium text-xs shrink-0 shadow-2xs`}
                         >
                           {lead.initials}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-semibold text-slate-900 text-sm leading-snug">
+                          <p className="font-medium text-slate-900 text-sm leading-snug">
                             {lead.buyerName}
                           </p>
                           <p className="text-slate-500 text-[11px] truncate mt-0.5">
@@ -487,10 +504,10 @@ export default function LeadsInquiriesPage() {
                             lead.statusNoteType === "warning"
                               ? "text-amber-700 font-medium"
                               : lead.statusNoteType === "success"
-                              ? "text-emerald-700 font-medium"
-                              : lead.statusNoteType === "danger"
-                              ? "text-rose-700 font-medium"
-                              : "text-slate-400 font-normal"
+                                ? "text-emerald-700 font-medium"
+                                : lead.statusNoteType === "danger"
+                                  ? "text-rose-700 font-medium"
+                                  : "text-slate-400 font-normal"
                           }`}
                         >
                           {lead.statusNote}
@@ -505,17 +522,17 @@ export default function LeadsInquiriesPage() {
                           type="button"
                           onClick={() =>
                             setOpenStatusMenuId(
-                              openStatusMenuId === lead.id ? null : lead.id
+                              openStatusMenuId === lead.id ? null : lead.id,
                             )
                           }
                           className={`h-8 px-3 rounded-full text-xs font-medium transition flex items-center gap-1.5 cursor-pointer border shadow-2xs ${
                             lead.status === "Pending Action"
                               ? "bg-amber-50 text-amber-800 border-amber-200/70 hover:bg-amber-100"
                               : lead.status === "Confirmed"
-                              ? "bg-emerald-50 text-emerald-800 border-emerald-200/70 hover:bg-emerald-100"
-                              : lead.status === "Completed"
-                              ? "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200"
-                              : "bg-rose-50 text-rose-800 border-rose-200/70 hover:bg-rose-100"
+                                ? "bg-emerald-50 text-emerald-800 border-emerald-200/70 hover:bg-emerald-100"
+                                : lead.status === "Completed"
+                                  ? "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200"
+                                  : "bg-rose-50 text-rose-800 border-rose-200/70 hover:bg-rose-100"
                           }`}
                         >
                           <span
@@ -523,10 +540,10 @@ export default function LeadsInquiriesPage() {
                               lead.status === "Pending Action"
                                 ? "bg-amber-500"
                                 : lead.status === "Confirmed"
-                                ? "bg-emerald-500"
-                                : lead.status === "Completed"
-                                ? "bg-slate-500"
-                                : "bg-rose-500"
+                                  ? "bg-emerald-500"
+                                  : lead.status === "Completed"
+                                    ? "bg-slate-500"
+                                    : "bg-rose-500"
                             }`}
                           />
                           <span>{lead.status}</span>
@@ -562,13 +579,20 @@ export default function LeadsInquiriesPage() {
                                 key={s.label}
                                 type="button"
                                 onClick={() =>
-                                  handleUpdateStatus(lead.id, s.label as InquiryStatus)
+                                  handleUpdateStatus(
+                                    lead.id,
+                                    s.label as InquiryStatus,
+                                  )
                                 }
                                 className={`w-full px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 hover:bg-slate-50 transition ${s.text} font-medium cursor-pointer ${
-                                  lead.status === s.label ? "bg-slate-100 font-semibold" : ""
+                                  lead.status === s.label
+                                    ? "bg-slate-100 font-medium"
+                                    : ""
                                 }`}
                               >
-                                <span className={`w-2 h-2 rounded-full ${s.dot}`} />
+                                <span
+                                  className={`w-2 h-2 rounded-full ${s.dot}`}
+                                />
                                 <span>{s.label}</span>
                               </button>
                             ))}
@@ -594,10 +618,10 @@ export default function LeadsInquiriesPage() {
                           onClick={() => {
                             setSelectedLeadForEmail(lead);
                             setEmailSubject(
-                              `Regarding your viewing request for ${lead.propertyTitle}`
+                              `Regarding your viewing request for ${lead.propertyTitle}`,
                             );
                             setEmailBody(
-                              `Hi ${lead.buyerName.split(" ")[0]},\n\nThank you for booking a viewing for ${lead.propertyTitle}. We are pleased to confirm your appointment for ${lead.requestedDate} at ${lead.requestedTime}.\n\nOur agent will meet you at the property.\n\nBest regards,\nPrestige Estates`
+                              `Hi ${lead.buyerName.split(" ")[0]},\n\nThank you for booking a viewing for ${lead.propertyTitle}. We are pleased to confirm your appointment for ${lead.requestedDate} at ${lead.requestedTime}.\n\nOur agent will meet you at the property.\n\nBest regards,\nPrestige Estates`,
                             );
                           }}
                           className="p-1.5 rounded-lg text-slate-400 hover:text-[#092167] hover:bg-slate-100 transition cursor-pointer"
@@ -630,7 +654,7 @@ export default function LeadsInquiriesPage() {
             <button className="w-8 h-8 rounded-xl border border-slate-200 text-slate-400 flex items-center justify-center hover:bg-slate-50 transition cursor-pointer">
               ‹
             </button>
-            <button className="w-8 h-8 rounded-xl bg-[#06143E] text-white font-semibold flex items-center justify-center shadow-2xs">
+            <button className="w-8 h-8 rounded-xl bg-[#06143E] text-white font-medium flex items-center justify-center shadow-2xs">
               1
             </button>
             <button className="w-8 h-8 rounded-xl border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 transition cursor-pointer">
@@ -652,12 +676,12 @@ export default function LeadsInquiriesPage() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-3">
                 <div
-                  className={`w-10 h-10 rounded-full ${selectedLeadForDetails.avatarColor} text-white flex items-center justify-center font-semibold text-sm shrink-0 shadow-sm`}
+                  className={`w-10 h-10 rounded-full ${selectedLeadForDetails.avatarColor} text-white flex items-center justify-center font-medium text-sm shrink-0 shadow-sm`}
                 >
                   {selectedLeadForDetails.initials}
                 </div>
                 <div>
-                  <h3 className="font-heading font-semibold text-lg text-slate-900">
+                  <h3 className="font-heading font-medium text-lg text-slate-900">
                     {selectedLeadForDetails.buyerName}
                   </h3>
                   <p className="text-xs text-slate-400">
@@ -676,7 +700,7 @@ export default function LeadsInquiriesPage() {
             <div className="space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
                 <div>
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+                  <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider block">
                     CONTACT EMAIL
                   </span>
                   <a
@@ -687,7 +711,7 @@ export default function LeadsInquiriesPage() {
                   </a>
                 </div>
                 <div>
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">
+                  <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider block">
                     CONTACT PHONE
                   </span>
                   <a
@@ -700,10 +724,10 @@ export default function LeadsInquiriesPage() {
               </div>
 
               <div>
-                <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider block mb-1">
                   REQUESTED PROPERTY
                 </span>
-                <p className="font-semibold text-slate-900 text-sm">
+                <p className="font-medium text-slate-900 text-sm">
                   {selectedLeadForDetails.propertyTitle}
                 </p>
                 <p className="text-slate-500 text-xs">
@@ -713,21 +737,20 @@ export default function LeadsInquiriesPage() {
 
               <div className="flex items-center justify-between p-3.5 bg-amber-50 rounded-2xl border border-amber-200/70">
                 <div>
-                  <span className="text-[10px] font-semibold text-amber-800 uppercase tracking-wider block">
+                  <span className="text-[10px] font-medium text-amber-800 uppercase tracking-wider block">
                     APPOINTMENT TIME
                   </span>
-                  <span className="font-semibold text-amber-950 text-sm">
-                    {selectedLeadForDetails.requestedDate} • {selectedLeadForDetails.requestedTime}
+                  <span className="font-medium text-amber-950 text-sm">
+                    {selectedLeadForDetails.requestedDate} •{" "}
+                    {selectedLeadForDetails.requestedTime}
                   </span>
                 </div>
-                <Badge variant="warning">
-                  {selectedLeadForDetails.status}
-                </Badge>
+                <Badge variant="warning">{selectedLeadForDetails.status}</Badge>
               </div>
 
               {selectedLeadForDetails.message && (
                 <div>
-                  <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
+                  <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider block mb-1">
                     BUYER MESSAGE / NOTE
                   </span>
                   <p className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-slate-700 leading-relaxed font-normal">
@@ -774,7 +797,7 @@ export default function LeadsInquiriesPage() {
                   <Mail className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-semibold text-lg text-slate-900">
+                  <h3 className="font-heading font-medium text-lg text-slate-900">
                     Reply to {selectedLeadForEmail.buyerName}
                   </h3>
                   <p className="text-xs text-slate-400">
@@ -792,7 +815,7 @@ export default function LeadsInquiriesPage() {
 
             <div className="space-y-4 text-xs">
               <div>
-                <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+                <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider mb-1.5">
                   Subject Line
                 </label>
                 <input
@@ -804,7 +827,7 @@ export default function LeadsInquiriesPage() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+                <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider mb-1.5">
                   Email Message
                 </label>
                 <textarea

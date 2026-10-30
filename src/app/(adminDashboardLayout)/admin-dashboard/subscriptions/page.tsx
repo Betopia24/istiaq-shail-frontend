@@ -99,7 +99,9 @@ export default function SubscriptionsAndBillingPage() {
   const [activeFilter, setActiveFilter] = useState<
     "All" | "Professional" | "Team Plan" | "Starter Plan" | "Past Due"
   >("All");
-  const [selectedReceipt, setSelectedReceipt] = useState<BillingRecord | null>(null);
+  const [selectedReceipt, setSelectedReceipt] = useState<BillingRecord | null>(
+    null,
+  );
   const [retryingId, setRetryingId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -120,8 +122,8 @@ export default function SubscriptionsAndBillingPage() {
                 isDeclined: false,
                 renewalInfo: "Renews 25 Nov 2026 (Manual Retry Succeeded)",
               }
-            : inv
-        )
+            : inv,
+        ),
       );
       setRetryingId(null);
       showToast(`Stripe payment retry succeeded for ${agency}!`);
@@ -132,7 +134,15 @@ export default function SubscriptionsAndBillingPage() {
     const csvContent =
       "data:text/csv;charset=utf-8," +
       [
-        ["Invoice Number", "Stripe ID", "Agency", "Email", "Plan Tier", "Amount", "Status"],
+        [
+          "Invoice Number",
+          "Stripe ID",
+          "Agency",
+          "Email",
+          "Plan Tier",
+          "Amount",
+          "Status",
+        ],
         ...invoices.map((i) => [
           i.invoiceNumber,
           i.stripeId,
@@ -149,7 +159,10 @@ export default function SubscriptionsAndBillingPage() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `property_pack_stripe_billing_${Date.now()}.csv`);
+    link.setAttribute(
+      "download",
+      `property_pack_stripe_billing_${Date.now()}.csv`,
+    );
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -158,7 +171,8 @@ export default function SubscriptionsAndBillingPage() {
 
   const filteredInvoices = invoices.filter((item) => {
     if (activeFilter === "All") return true;
-    if (activeFilter === "Professional") return item.planTier === "Professional";
+    if (activeFilter === "Professional")
+      return item.planTier === "Professional";
     if (activeFilter === "Team Plan") return item.planTier === "Team Plan";
     if (activeFilter === "Starter Plan") return item.planTier === "Starter";
     if (activeFilter === "Past Due") return item.status === "PAST DUE";
@@ -166,7 +180,7 @@ export default function SubscriptionsAndBillingPage() {
   });
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-8 pb-12">
       {/* Toast Alert */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-[#E8A808]/40 animate-fade-in">
@@ -179,19 +193,21 @@ export default function SubscriptionsAndBillingPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
               Demo data
             </span>
-            <span className="text-xs text-slate-400">· Stripe Mock Invoices &amp; Webhook Events</span>
+            <span className="text-xs text-slate-400">
+              · Stripe Mock Invoices &amp; Webhook Events
+            </span>
           </div>
-          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
             Subscription History &amp; Stripe Billing Logs
           </h1>
         </div>
 
         <button
           onClick={handleExportCSV}
-          className="h-10 px-4 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-sm transition shrink-0 cursor-pointer"
+          className="h-10 px-4 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white text-xs sm:text-sm font-medium flex items-center gap-2 shadow-sm transition shrink-0 cursor-pointer"
         >
           <Download className="w-4 h-4" />
           <span>Export Billing CSV ↓</span>
@@ -202,7 +218,7 @@ export default function SubscriptionsAndBillingPage() {
       <div className="flex flex-wrap items-center gap-2.5">
         <button
           onClick={() => setActiveFilter("All")}
-          className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
+          className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition ${
             activeFilter === "All"
               ? "bg-[#06143E] text-white shadow-sm"
               : "bg-white text-slate-600 border border-slate-200 hover:border-slate-300"
@@ -213,7 +229,7 @@ export default function SubscriptionsAndBillingPage() {
 
         <button
           onClick={() => setActiveFilter("Professional")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition ${
             activeFilter === "Professional"
               ? "bg-[#06143E] text-white shadow-sm"
               : "bg-white text-slate-700 border border-slate-200 hover:border-slate-300"
@@ -225,7 +241,7 @@ export default function SubscriptionsAndBillingPage() {
 
         <button
           onClick={() => setActiveFilter("Team Plan")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition ${
             activeFilter === "Team Plan"
               ? "bg-[#06143E] text-white shadow-sm"
               : "bg-white text-slate-700 border border-slate-200 hover:border-slate-300"
@@ -237,7 +253,7 @@ export default function SubscriptionsAndBillingPage() {
 
         <button
           onClick={() => setActiveFilter("Starter Plan")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition ${
             activeFilter === "Starter Plan"
               ? "bg-[#06143E] text-white shadow-sm"
               : "bg-white text-slate-700 border border-slate-200 hover:border-slate-300"
@@ -249,7 +265,7 @@ export default function SubscriptionsAndBillingPage() {
 
         <button
           onClick={() => setActiveFilter("Past Due")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition ${
             activeFilter === "Past Due"
               ? "bg-rose-600 text-white shadow-sm"
               : "bg-white text-rose-600 border border-rose-200 hover:bg-rose-50/50"
@@ -265,7 +281,7 @@ export default function SubscriptionsAndBillingPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-white border-b border-slate-200/70 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <tr className="bg-white border-b border-slate-200/70 text-[11px] font-medium uppercase tracking-wider text-slate-500">
                 <th className="px-6 py-4">Invoice &amp; Stripe ID</th>
                 <th className="px-6 py-4">Agency / Subscriber</th>
                 <th className="px-6 py-4">Plan Tier (Current)</th>
@@ -277,7 +293,10 @@ export default function SubscriptionsAndBillingPage() {
             <tbody className="divide-y divide-slate-100 text-sm">
               {filteredInvoices.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                  <td
+                    colSpan={6}
+                    className="px-6 py-12 text-center text-slate-500"
+                  >
                     No billing records found in this category.
                   </td>
                 </tr>
@@ -290,8 +309,10 @@ export default function SubscriptionsAndBillingPage() {
                     {/* Invoice & Stripe ID */}
                     <td className="px-6 py-4">
                       <div
-                        className={`font-mono font-bold text-sm ${
-                          inv.status === "PAST DUE" ? "text-rose-600" : "text-slate-900"
+                        className={`font-mono font-medium text-sm ${
+                          inv.status === "PAST DUE"
+                            ? "text-rose-600"
+                            : "text-slate-900"
                         }`}
                       >
                         {inv.invoiceNumber}
@@ -305,12 +326,12 @@ export default function SubscriptionsAndBillingPage() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-9 h-9 rounded-full ${inv.avatarBg} ${inv.avatarText} font-bold text-xs flex items-center justify-center shrink-0 border border-slate-200/60`}
+                          className={`w-9 h-9 rounded-full ${inv.avatarBg} ${inv.avatarText} font-medium text-xs flex items-center justify-center shrink-0 border border-slate-200/60`}
                         >
                           {inv.initials}
                         </div>
                         <div>
-                          <div className="font-semibold text-slate-900 leading-tight">
+                          <div className="font-medium text-slate-900 leading-tight">
                             {inv.agencyName}
                           </div>
                           <div className="text-xs text-slate-400 mt-0.5">
@@ -323,13 +344,13 @@ export default function SubscriptionsAndBillingPage() {
                     {/* Plan Tier */}
                     <td className="px-6 py-4">
                       {inv.planTier === "Professional" && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-[#06143E] text-white">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-[#06143E] text-white">
                           <Sparkles className="w-3.5 h-3.5 text-[#E8A808]" />
                           <span>Professional</span>
                         </span>
                       )}
                       {inv.planTier === "Team Plan" && (
-                        <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
+                        <span className="inline-flex items-center px-3 py-1 rounded-lg text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200/60">
                           Team Plan
                         </span>
                       )}
@@ -347,7 +368,9 @@ export default function SubscriptionsAndBillingPage() {
                       </div>
                       <div
                         className={`text-xs mt-0.5 ${
-                          inv.isDeclined ? "text-rose-600 font-semibold" : "text-slate-400"
+                          inv.isDeclined
+                            ? "text-rose-600 font-medium"
+                            : "text-slate-400"
                         }`}
                       >
                         {inv.renewalInfo}
@@ -357,11 +380,11 @@ export default function SubscriptionsAndBillingPage() {
                     {/* Status */}
                     <td className="px-6 py-4">
                       {inv.status === "PAID" ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/50">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/50">
                           PAID
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200/50">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200/50">
                           PAST DUE
                         </span>
                       )}
@@ -372,15 +395,17 @@ export default function SubscriptionsAndBillingPage() {
                       {inv.status === "PAID" ? (
                         <button
                           onClick={() => setSelectedReceipt(inv)}
-                          className="h-8 px-3 rounded-lg border border-slate-200 hover:border-slate-300 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-white transition cursor-pointer"
+                          className="h-8 px-3 rounded-lg border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-700 hover:text-slate-900 bg-white transition cursor-pointer"
                         >
                           View Receipt
                         </button>
                       ) : (
                         <button
-                          onClick={() => handleRetryStripe(inv.id, inv.agencyName)}
+                          onClick={() =>
+                            handleRetryStripe(inv.id, inv.agencyName)
+                          }
                           disabled={retryingId === inv.id}
-                          className="h-8 px-3.5 rounded-lg bg-[#06143E] hover:bg-[#092167] text-xs font-semibold text-white transition flex items-center gap-1.5 ml-auto cursor-pointer"
+                          className="h-8 px-3.5 rounded-lg bg-[#06143E] hover:bg-[#092167] text-xs font-medium text-white transition flex items-center gap-1.5 ml-auto cursor-pointer"
                         >
                           {retryingId === inv.id ? (
                             <>
@@ -417,7 +442,7 @@ export default function SubscriptionsAndBillingPage() {
                 <Receipt className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-heading font-bold text-lg text-slate-900">
+                <h3 className="font-heading font-medium text-lg text-slate-900">
                   Stripe Payment Receipt
                 </h3>
                 <p className="text-xs text-slate-500 font-mono">
@@ -429,7 +454,7 @@ export default function SubscriptionsAndBillingPage() {
             <div className="space-y-4 my-6 p-4 rounded-xl bg-slate-50 border border-slate-100 text-sm">
               <div className="flex justify-between pb-2 border-b border-slate-200">
                 <span className="text-slate-500">Customer:</span>
-                <span className="font-semibold text-slate-900">
+                <span className="font-medium text-slate-900">
                   {selectedReceipt.agencyName}
                 </span>
               </div>
@@ -441,19 +466,19 @@ export default function SubscriptionsAndBillingPage() {
               </div>
               <div className="flex justify-between pb-2 border-b border-slate-200">
                 <span className="text-slate-500">Plan Tier:</span>
-                <span className="font-semibold text-slate-900">
+                <span className="font-medium text-slate-900">
                   {selectedReceipt.planTier} Subscription
                 </span>
               </div>
               <div className="flex justify-between pb-2 border-b border-slate-200">
                 <span className="text-slate-500">Billing Cycle:</span>
-                <span className="font-semibold text-slate-900">
+                <span className="font-medium text-slate-900">
                   {selectedReceipt.cycle}
                 </span>
               </div>
               <div className="flex justify-between pt-1">
-                <span className="text-slate-900 font-bold">Total Paid:</span>
-                <span className="font-heading font-semibold text-lg text-emerald-600">
+                <span className="text-slate-900 font-medium">Total Paid:</span>
+                <span className="font-heading font-medium text-lg text-emerald-600">
                   {selectedReceipt.planAmount.replace("/mo", "")}
                 </span>
               </div>
@@ -462,7 +487,7 @@ export default function SubscriptionsAndBillingPage() {
             <div className="flex items-center justify-end gap-3">
               <button
                 onClick={() => setSelectedReceipt(null)}
-                className="px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100 transition"
+                className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition"
               >
                 Close
               </button>
@@ -471,7 +496,7 @@ export default function SubscriptionsAndBillingPage() {
                   showToast("Invoice PDF download initiated");
                   setSelectedReceipt(null);
                 }}
-                className="px-4 py-2 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white text-sm font-semibold flex items-center gap-2 shadow-sm transition"
+                className="px-4 py-2 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white text-sm font-medium flex items-center gap-2 shadow-sm transition"
               >
                 <Download className="w-4 h-4" />
                 <span>Download PDF</span>

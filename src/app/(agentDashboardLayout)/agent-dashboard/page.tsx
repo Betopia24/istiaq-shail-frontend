@@ -104,7 +104,7 @@ export default function AgentDashboardPage() {
   };
 
   return (
-    <div className="mx-auto space-y-8 pb-16 section-breathable">
+    <div className="space-y-8 pb-12">
       {/* Toast Notification */}
       <AnimatePresence>
         {downloadToast && (
@@ -128,7 +128,7 @@ export default function AgentDashboardPage() {
       ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
             Agent Overview
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -141,12 +141,12 @@ export default function AgentDashboardPage() {
           <div className="relative">
             <button
               onClick={() => setShowCreditDetails(!showCreditDetails)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-[#8C6605] text-xs font-semibold shadow-2xs hover:bg-[#FDE68A]/60 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-[#8C6605] text-xs font-medium shadow-2xs hover:bg-[#FDE68A]/60 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
               title="Click to view credits relationship breakdown"
             >
               <span className="w-2 h-2 rounded-full bg-[#E8A808] shrink-0 animate-pulse" />
               <span>78 Packs Available</span>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-[#E8A808]/25 text-[#715003] font-bold">
+              <span className="text-[10px] px-2 py-0.5 rounded bg-[#E8A808]/25 text-[#715003] font-medium">
                 64 Monthly + 14 Add-on
               </span>
             </button>
@@ -162,7 +162,9 @@ export default function AgentDashboardPage() {
                   className="absolute right-0 top-full mt-2 w-72 z-30 p-4 bg-white rounded-2xl shadow-xl border border-slate-200 text-xs text-slate-700"
                 >
                   <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-                    <span className="font-heading font-bold text-slate-900">Available Credits Explained</span>
+                    <span className="font-heading font-medium text-slate-900">
+                      Available Credits Explained
+                    </span>
                     <button
                       onClick={() => setShowCreditDetails(false)}
                       className="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-100 transition"
@@ -172,20 +174,31 @@ export default function AgentDashboardPage() {
                   </div>
                   <div className="space-y-2 py-2.5 text-[11px]">
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-500">Monthly Plan (36/100 used):</span>
-                      <strong className="text-slate-900 font-bold">64 remaining</strong>
+                      <span className="text-slate-500">
+                        Monthly Plan (36/100 used):
+                      </span>
+                      <strong className="text-slate-900 font-medium">
+                        64 remaining
+                      </strong>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-500">Purchased Add-On Packs:</span>
-                      <strong className="text-[#8C6605] font-bold">+14 packs</strong>
+                      <span className="text-slate-500">
+                        Purchased Add-On Packs:
+                      </span>
+                      <strong className="text-[#8C6605] font-medium">
+                        +14 packs
+                      </strong>
                     </div>
-                    <div className="pt-1.5 border-t border-slate-100 flex justify-between items-center font-bold text-slate-900 text-xs">
+                    <div className="pt-1.5 border-t border-slate-100 flex justify-between items-center font-medium text-slate-900 text-xs">
                       <span>Total Ready to Generate:</span>
-                      <span className="text-[#092167] font-semibold text-sm">78 packs</span>
+                      <span className="text-[#092167] font-medium text-sm">
+                        78 packs
+                      </span>
                     </div>
                   </div>
                   <p className="text-[10px] text-slate-400 leading-tight">
-                    Monthly plan resets on 1 Nov 2026. The 14 purchased add-on packs never expire.
+                    Monthly plan resets on 1 Nov 2026. The 14 purchased add-on
+                    packs never expire.
                   </p>
                 </motion.div>
               )}
@@ -195,7 +208,7 @@ export default function AgentDashboardPage() {
           {/* Buy Packs Button with Micro-Interaction */}
           <button
             onClick={() => setShowBuyModal(true)}
-            className="h-10 px-5 rounded-xl bg-[#071330] hover:bg-[#0B1E48] active:bg-[#040C1E] active:scale-[0.98] text-white text-xs font-semibold flex items-center justify-center transition-all shadow-sm cursor-pointer"
+            className="h-10 px-5 rounded-xl bg-[#071330] hover:bg-[#0B1E48] active:bg-[#040C1E] active:scale-[0.98] text-white text-xs font-medium flex items-center justify-center transition-all shadow-sm cursor-pointer"
           >
             + Buy Packs
           </button>
@@ -210,17 +223,18 @@ export default function AgentDashboardPage() {
         <div className="absolute right-0 top-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 max-w-2xl space-y-2">
-          <h2 className="font-heading font-bold text-xl sm:text-2xl text-white tracking-tight">
+          <h2 className="font-heading font-medium text-xl sm:text-2xl text-white tracking-tight">
             Market a New Property Listing
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
-            Turn your property details into listing copy and marketing content in seconds.
+            Turn your property details into listing copy and marketing content
+            in seconds.
           </p>
         </div>
 
         <Link
           href="/agent-dashboard/create"
-          className="relative z-10 h-12 px-7 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-sm shadow-[0_2px_12px_rgba(232,168,8,0.35)] hover:shadow-[0_4px_18px_rgba(232,168,8,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer self-start md:self-auto"
+          className="relative z-10 h-12 px-7 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-sm shadow-[0_2px_12px_rgba(232,168,8,0.35)] hover:shadow-[0_4px_18px_rgba(232,168,8,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer self-start md:self-auto"
         >
           <Plus className="w-4 h-4 stroke-[3]" />
           <span>Create Property Pack</span>
@@ -237,12 +251,12 @@ export default function AgentDashboardPage() {
             <span className="text-xs font-medium text-slate-500">
               Total Packs Created
             </span>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#DCFCE7] text-[#15803D]">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-medium bg-[#DCFCE7] text-[#15803D]">
               +6 this month
             </span>
           </div>
           <div className="mt-5">
-            <span className="font-heading font-bold text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900 tracking-tight">
               42
             </span>
           </div>
@@ -254,7 +268,7 @@ export default function AgentDashboardPage() {
             <span className="text-xs font-medium text-slate-500">
               Plan &amp; Credits Allocation
             </span>
-            <span className="text-[11px] text-[#8C6605] bg-[#FEF3C7] border border-[#FDE68A] px-2.5 py-0.5 rounded-full font-semibold">
+            <span className="text-[11px] text-[#8C6605] bg-[#FEF3C7] border border-[#FDE68A] px-2.5 py-0.5 rounded-full font-medium">
               36% Plan Quota Used
             </span>
           </div>
@@ -262,10 +276,10 @@ export default function AgentDashboardPage() {
           <div className="mt-4 space-y-3">
             <div className="flex items-baseline justify-between">
               <div>
-                <span className="font-heading font-bold text-3xl sm:text-4xl text-slate-900 tracking-tight">
+                <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900 tracking-tight">
                   78
                 </span>
-                <span className="text-xs font-semibold text-slate-500 ml-1.5">
+                <span className="text-xs font-medium text-slate-500 ml-1.5">
                   total packs ready to use
                 </span>
               </div>
@@ -286,11 +300,15 @@ export default function AgentDashboardPage() {
             <div className="pt-2.5 border-t border-slate-100 flex flex-col @sm:flex-row @sm:items-center justify-between gap-2 text-[11px] text-slate-600">
               <span className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#06143E]" />
-                <span><strong>64</strong> monthly left (from 100)</span>
+                <span>
+                  <strong>64</strong> monthly left (from 100)
+                </span>
               </span>
               <span className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-[#E8A808]" />
-                <span><strong>14</strong> purchased add-ons</span>
+                <span>
+                  <strong>14</strong> purchased add-ons
+                </span>
               </span>
             </div>
           </div>
@@ -307,11 +325,11 @@ export default function AgentDashboardPage() {
             </div>
           </div>
           <div className="mt-4 flex items-baseline gap-3">
-            <span className="font-heading font-bold text-3xl sm:text-4xl text-slate-900 tracking-tight">
+            <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900 tracking-tight">
               12
             </span>
             <div className="flex items-center text-xs">
-              <span className="font-semibold text-slate-800">Live</span>
+              <span className="font-medium text-slate-800">Live</span>
               <span className="text-emerald-500 text-[10px] mx-1.5">●</span>
               <span className="text-slate-400 font-normal">6 Drafts</span>
             </div>
@@ -326,7 +344,7 @@ export default function AgentDashboardPage() {
         {/* Card Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 className="font-heading font-bold text-base sm:text-lg text-slate-900">
+            <h3 className="font-heading font-medium text-base sm:text-lg text-slate-900">
               Recent Property Marketing Packs
             </h3>
             <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
@@ -335,7 +353,7 @@ export default function AgentDashboardPage() {
           </div>
           <Link
             href="/agent-dashboard/packs"
-            className="text-xs font-semibold text-slate-900 hover:text-[#092167] flex items-center gap-1.5 transition-all hover:translate-x-0.5 self-start sm:self-auto group"
+            className="text-xs font-medium text-slate-900 hover:text-[#092167] flex items-center gap-1.5 transition-all hover:translate-x-0.5 self-start sm:self-auto group"
           >
             <span>View All (18)</span>
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 text-[#E8A808]" />
@@ -346,8 +364,10 @@ export default function AgentDashboardPage() {
         <div className="overflow-x-auto -mx-6 sm:mx-0">
           <table className="w-full text-left min-w-[680px]">
             <thead>
-              <tr className="border-b border-slate-100 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                <th className="py-3.5 px-6 sm:px-3 w-[42%]">Property Address</th>
+              <tr className="border-b border-slate-100 text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+                <th className="py-3.5 px-6 sm:px-3 w-[42%]">
+                  Property Address
+                </th>
                 <th className="py-3.5 px-3 w-[18%]">Listing Price</th>
                 <th className="py-3.5 px-3 w-[16%]">Date Created</th>
                 <th className="py-3.5 px-3 w-[12%]">Status</th>
@@ -374,7 +394,7 @@ export default function AgentDashboardPage() {
                         />
                       </div>
                       <div className="min-w-0">
-                        <p className="font-semibold text-sm text-slate-900 truncate group-hover:text-[#092167] transition-colors">
+                        <p className="font-medium text-sm text-slate-900 truncate group-hover:text-[#092167] transition-colors">
                           {pack.address}
                         </p>
                         <p className="text-xs text-slate-500 truncate mt-0.5">
@@ -386,7 +406,7 @@ export default function AgentDashboardPage() {
 
                   {/* Listing Price */}
                   <td className="py-4 px-3">
-                    <span className="font-semibold text-sm text-slate-900">
+                    <span className="font-medium text-sm text-slate-900">
                       {pack.price}
                     </span>
                   </td>
@@ -400,7 +420,7 @@ export default function AgentDashboardPage() {
 
                   {/* Status Badge */}
                   <td className="py-4 px-3">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#DCFCE7] text-[#15803D]">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#DCFCE7] text-[#15803D]">
                       {pack.status}
                     </span>
                   </td>
@@ -410,7 +430,7 @@ export default function AgentDashboardPage() {
                     <div className="inline-flex items-center gap-2">
                       <button
                         onClick={() => handleDownloadPdf(pack.address)}
-                        className="h-8 px-3.5 rounded-lg bg-slate-100 hover:bg-slate-200 active:bg-slate-300 hover:scale-105 active:scale-95 text-slate-800 text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+                        className="h-8 px-3.5 rounded-lg bg-slate-100 hover:bg-slate-200 active:bg-slate-300 hover:scale-105 active:scale-95 text-slate-800 text-xs font-medium transition-all cursor-pointer shadow-2xs"
                       >
                         PDF Report
                       </button>
@@ -435,7 +455,7 @@ export default function AgentDashboardPage() {
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setCurrentPage(1)}
-              className={`w-7 h-7 rounded-lg font-semibold text-xs flex items-center justify-center transition cursor-pointer ${
+              className={`w-7 h-7 rounded-lg font-medium text-xs flex items-center justify-center transition cursor-pointer ${
                 currentPage === 1
                   ? "bg-[#071330] text-white shadow-2xs"
                   : "border border-slate-200 text-slate-600 hover:bg-slate-50"
@@ -445,7 +465,7 @@ export default function AgentDashboardPage() {
             </button>
             <button
               onClick={() => setCurrentPage(2)}
-              className={`w-7 h-7 rounded-lg font-semibold text-xs flex items-center justify-center transition cursor-pointer ${
+              className={`w-7 h-7 rounded-lg font-medium text-xs flex items-center justify-center transition cursor-pointer ${
                 currentPage === 2
                   ? "bg-[#071330] text-white shadow-2xs"
                   : "border border-slate-200 text-slate-600 hover:bg-slate-50"
@@ -468,7 +488,7 @@ export default function AgentDashboardPage() {
                 <div className="w-8 h-8 rounded-lg bg-[#E8A808]/15 text-[#E8A808] flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-[#8C6605]" />
                 </div>
-                <h3 className="font-heading font-bold text-lg text-slate-900">
+                <h3 className="font-heading font-medium text-lg text-slate-900">
                   Create Property Marketing Pack
                 </h3>
               </div>
@@ -490,7 +510,7 @@ export default function AgentDashboardPage() {
               className="space-y-4 text-xs"
             >
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">
+                <label className="block font-medium text-slate-700 mb-1">
                   Property Address or Postcode
                 </label>
                 <input
@@ -503,7 +523,7 @@ export default function AgentDashboardPage() {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <label className="block font-medium text-slate-700 mb-1">
                     Listing Price (£)
                   </label>
                   <input
@@ -513,7 +533,7 @@ export default function AgentDashboardPage() {
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">
+                  <label className="block font-medium text-slate-700 mb-1">
                     Property Type
                   </label>
                   <select className="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[#092167] text-sm bg-white">
@@ -527,7 +547,7 @@ export default function AgentDashboardPage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-slate-700 mb-1">
+                <label className="block font-medium text-slate-700 mb-1">
                   Key Specs & Features
                 </label>
                 <textarea
@@ -541,13 +561,13 @@ export default function AgentDashboardPage() {
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="h-10 px-4 rounded-lg border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50 cursor-pointer"
+                  className="h-10 px-4 rounded-lg border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] text-[#06143E] font-bold cursor-pointer transition shadow-sm"
+                  className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] text-[#06143E] font-medium cursor-pointer transition shadow-sm"
                 >
                   Generate Pack
                 </button>
@@ -568,7 +588,7 @@ export default function AgentDashboardPage() {
                 <div className="w-8 h-8 rounded-lg bg-[#071330] text-white flex items-center justify-center">
                   <CreditCard className="w-4 h-4 text-[#E8A808]" />
                 </div>
-                <h3 className="font-heading font-bold text-lg text-slate-900">
+                <h3 className="font-heading font-medium text-lg text-slate-900">
                   Buy Property Packs
                 </h3>
               </div>
@@ -583,32 +603,47 @@ export default function AgentDashboardPage() {
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1">
               <div className="flex justify-between font-medium">
                 <span>Current Monthly Remaining:</span>
-                <span className="font-bold text-slate-800">64 packs (36/100 used)</span>
+                <span className="font-medium text-slate-800">
+                  64 packs (36/100 used)
+                </span>
               </div>
               <div className="flex justify-between font-medium">
                 <span>Current Purchased Add-ons:</span>
-                <span className="font-bold text-[#8C6605]">14 packs remaining</span>
+                <span className="font-medium text-[#8C6605]">
+                  14 packs remaining
+                </span>
               </div>
               <p className="text-[10px] text-slate-400 pt-1 border-t border-slate-200">
-                Purchased add-on credits never expire and roll over each billing cycle.
+                Purchased add-on credits never expire and roll over each billing
+                cycle.
               </p>
             </div>
 
             <div className="space-y-3">
               <div className="p-4 rounded-xl border-2 border-[#092167] bg-blue-50/30 flex items-center justify-between cursor-pointer">
                 <div>
-                  <p className="font-bold text-sm text-slate-900">10 Packs Bundle</p>
+                  <p className="font-medium text-sm text-slate-900">
+                    10 Packs Bundle
+                  </p>
                   <p className="text-xs text-slate-500">£15 per pack</p>
                 </div>
-                <span className="font-heading font-bold text-base text-[#092167]">£150</span>
+                <span className="font-heading font-medium text-base text-[#092167]">
+                  £150
+                </span>
               </div>
 
               <div className="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-center justify-between cursor-pointer">
                 <div>
-                  <p className="font-bold text-sm text-slate-900">25 Packs Bundle</p>
-                  <p className="text-xs text-slate-500">£12 per pack (Save 20%)</p>
+                  <p className="font-medium text-sm text-slate-900">
+                    25 Packs Bundle
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    £12 per pack (Save 20%)
+                  </p>
                 </div>
-                <span className="font-heading font-bold text-base text-slate-900">£300</span>
+                <span className="font-heading font-medium text-base text-slate-900">
+                  £300
+                </span>
               </div>
             </div>
 
@@ -616,7 +651,7 @@ export default function AgentDashboardPage() {
               <button
                 type="button"
                 onClick={() => setShowBuyModal(false)}
-                className="h-10 px-4 rounded-lg border border-slate-200 text-slate-600 text-xs font-semibold hover:bg-slate-50 cursor-pointer"
+                className="h-10 px-4 rounded-lg border border-slate-200 text-slate-600 text-xs font-medium hover:bg-slate-50 cursor-pointer"
               >
                 Cancel
               </button>
@@ -627,7 +662,7 @@ export default function AgentDashboardPage() {
                   setDownloadToast("10 Packs added to your allocation!");
                   setTimeout(() => setDownloadToast(null), 3000);
                 }}
-                className="h-10 px-5 rounded-lg bg-[#071330] hover:bg-[#0B1E48] text-white text-xs font-semibold cursor-pointer transition shadow-sm"
+                className="h-10 px-5 rounded-lg bg-[#071330] hover:bg-[#0B1E48] text-white text-xs font-medium cursor-pointer transition shadow-sm"
               >
                 Confirm Purchase
               </button>

@@ -109,7 +109,7 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
           ) : (
             <Link
               href="/"
-              className="mx-auto w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-[#E8A808] font-semibold text-lg"
+              className="mx-auto w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center text-[#E8A808] font-medium text-lg"
               title="Property Pack AI"
             >
               P
@@ -154,7 +154,7 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
                 onClick={isMobile ? onClose : undefined}
                 className={`relative flex items-center justify-between px-4 py-3 rounded-lg font-sans transition-all group ${
                   isActive
-                    ? "bg-[#092167] text-white font-semibold shadow-sm"
+                    ? "bg-[#092167] text-white font-medium shadow-sm"
                     : "text-slate-300 hover:text-white hover:bg-[#092167]/40 font-medium"
                 } ${isCollapsed ? "justify-center px-2" : ""}`}
                 title={isCollapsed ? item.title : undefined}
@@ -179,7 +179,7 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
 
                 {!isCollapsed && item.badge !== undefined && (
                   <span
-                    className={`ml-2 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-colors ${
+                    className={`ml-2 px-2 py-0.5 rounded-full text-[11px] font-medium transition-colors ${
                       isActive
                         ? "bg-[#FFB800] text-[#06143E]"
                         : "bg-[#0B1A42] text-slate-300"
@@ -203,13 +203,13 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
         >
           <div className="flex items-center gap-3 min-w-0">
             {/* Avatar Pill */}
-            <div className="w-9 h-9 rounded-full bg-[#E8A808] text-[#06143E] font-semibold text-xs flex items-center justify-center shrink-0 shadow-sm">
+            <div className="w-9 h-9 rounded-full bg-[#E8A808] text-[#06143E] font-medium text-xs flex items-center justify-center shrink-0 shadow-sm">
               {initials}
             </div>
 
             {!isCollapsed && (
               <div className="min-w-0 leading-tight">
-                <p className="text-sm font-semibold text-white truncate">
+                <p className="text-sm font-medium text-white truncate">
                   {displayName}
                 </p>
                 <p className="text-[11px] text-slate-400 truncate mt-0.5">

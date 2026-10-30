@@ -17,9 +17,18 @@ interface NavLinkItem {
 }
 
 const navLinks: NavLinkItem[] = [
-  { id: "valuation-presentation", label: "Valuation Feature", href: "/#valuation-presentation", isSpecial: true },
+  {
+    id: "valuation-presentation",
+    label: "Valuation Feature",
+    href: "/#valuation-presentation",
+    isSpecial: true,
+  },
   { id: "how-it-works", label: "How It Works", href: "/#how-it-works" },
-  { id: "marketing-outputs", label: "10 Marketing Outputs", href: "/#marketing-outputs" },
+  {
+    id: "marketing-outputs",
+    label: "10 Marketing Outputs",
+    href: "/#marketing-outputs",
+  },
   { id: "pricing", label: "Pricing", href: "/#pricing" },
   { id: "faq", label: "FAQ", href: "/#faq" },
 ];
@@ -48,7 +57,9 @@ export default function Navbar() {
       const sectionElements = navLinks
         .map((link) => {
           const el = document.getElementById(link.id);
-          return el ? { id: link.id, top: el.offsetTop, height: el.offsetHeight } : null;
+          return el
+            ? { id: link.id, top: el.offsetTop, height: el.offsetHeight }
+            : null;
         })
         .filter(Boolean) as { id: string; top: number; height: number }[];
 
@@ -105,7 +116,7 @@ export default function Navbar() {
                   key={link.id}
                   href={link.href}
                   onClick={() => setActiveSection(link.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 ${
                     isActive
                       ? "bg-[#E8A808] text-[#06143E] shadow-[0_2px_12px_rgba(232,168,8,0.35)] ring-2 ring-[#FFB800]/50"
                       : "bg-[#E8A808]/15 text-[#FFC024] hover:bg-[#E8A808]/25 hover:text-white border border-[#E8A808]/30"
@@ -128,7 +139,7 @@ export default function Navbar() {
                 onClick={() => setActiveSection(link.id)}
                 className={`relative py-1 transition-colors duration-200 text-sm ${
                   isActive
-                    ? "text-[#FFC024] font-semibold"
+                    ? "text-[#FFC024] font-medium"
                     : "text-white/85 hover:text-[#E8A808]"
                 }`}
               >
@@ -146,8 +157,12 @@ export default function Navbar() {
           {hasToken ? (
             <div className="flex items-center gap-3">
               <Link
-                href={user?.role?.toUpperCase() === "ADMIN" ? "/admin-dashboard" : "/agent-dashboard"}
-                className="h-10 px-4 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] text-[#06143E] text-sm font-semibold flex items-center gap-2 shadow-sm transition"
+                href={
+                  user?.role?.toUpperCase() === "ADMIN"
+                    ? "/admin-dashboard"
+                    : "/agent-dashboard"
+                }
+                className="h-10 px-4 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] text-[#06143E] text-sm font-medium flex items-center gap-2 shadow-sm transition"
               >
                 <LayoutDashboard className="w-4 h-4" />
                 <span>Workstation</span>
@@ -165,7 +180,7 @@ export default function Navbar() {
               {/* Log In */}
               <Link
                 href="/login"
-                className="h-9 px-4 rounded-lg border border-[#E8A808] text-[#E8A808] hover:bg-[#E8A808]/10 text-sm font-sans font-semibold flex items-center justify-center transition cursor-pointer"
+                className="h-9 px-4 rounded-lg border border-[#E8A808] text-[#E8A808] hover:bg-[#E8A808]/10 text-sm font-sans font-medium flex items-center justify-center transition cursor-pointer"
               >
                 Log In
               </Link>
@@ -173,7 +188,7 @@ export default function Navbar() {
               {/* Get Started */}
               <Link
                 href="/sign-up"
-                className="h-9 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] text-sm font-sans font-semibold flex items-center justify-center shadow-[0_2px_10px_rgba(232,168,8,0.35)] hover:shadow-[0_4px_16px_rgba(232,168,8,0.45)] active:scale-[0.98] transition cursor-pointer"
+                className="h-9 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] text-sm font-sans font-medium flex items-center justify-center shadow-[0_2px_10px_rgba(232,168,8,0.35)] hover:shadow-[0_4px_16px_rgba(232,168,8,0.45)] active:scale-[0.98] transition cursor-pointer"
               >
                 <span>Get Started</span>
               </Link>
@@ -188,7 +203,11 @@ export default function Navbar() {
             className="p-2 rounded-lg text-white/80 hover:text-white hover:bg-white/10 focus:outline-none"
             aria-label="Toggle menu"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
         </div>
       </div>
@@ -209,7 +228,7 @@ export default function Navbar() {
                       setActiveSection(link.id);
                       setMobileMenuOpen(false);
                     }}
-                    className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition ${
+                    className={`px-3 py-2 rounded-xl text-xs font-medium flex items-center gap-2 transition ${
                       isActive
                         ? "bg-[#E8A808] text-[#06143E]"
                         : "bg-[#E8A808]/15 text-[#FFC024]"
@@ -235,12 +254,14 @@ export default function Navbar() {
                   }}
                   className={`px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between ${
                     isActive
-                      ? "bg-white/10 text-[#FFC024] font-semibold"
+                      ? "bg-white/10 text-[#FFC024] font-medium"
                       : "hover:bg-white/5 hover:text-[#E8A808]"
                   }`}
                 >
                   <span>{link.label}</span>
-                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#E8A808]" />}
+                  {isActive && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#E8A808]" />
+                  )}
                 </Link>
               );
             })}
@@ -250,9 +271,13 @@ export default function Navbar() {
             {hasToken ? (
               <>
                 <Link
-                  href={user?.role?.toUpperCase() === "ADMIN" ? "/admin-dashboard" : "/agent-dashboard"}
+                  href={
+                    user?.role?.toUpperCase() === "ADMIN"
+                      ? "/admin-dashboard"
+                      : "/agent-dashboard"
+                  }
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full h-11 rounded-lg bg-[#E8A808] text-[#06143E] text-center flex items-center justify-center font-semibold"
+                  className="w-full h-11 rounded-lg bg-[#E8A808] text-[#06143E] text-center flex items-center justify-center font-medium"
                 >
                   Go to Workstation
                 </Link>
@@ -272,14 +297,14 @@ export default function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full h-11 rounded-lg border border-[#E8A808] text-[#E8A808] flex items-center justify-center font-semibold"
+                  className="w-full h-11 rounded-lg border border-[#E8A808] text-[#E8A808] flex items-center justify-center font-medium"
                 >
                   Log In
                 </Link>
                 <Link
                   href="/sign-up"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full h-11 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] text-[#06143E] flex items-center justify-center font-semibold shadow-md"
+                  className="w-full h-11 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] text-[#06143E] flex items-center justify-center font-medium shadow-md"
                 >
                   Get Started
                 </Link>

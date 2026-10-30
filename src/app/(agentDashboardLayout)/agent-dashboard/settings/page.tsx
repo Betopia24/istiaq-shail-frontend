@@ -90,10 +90,10 @@ export default function SettingsBillingPage() {
   const [isEditingPayment, setIsEditingPayment] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [billingAddress, setBillingAddress] = useState(
-    "14 Gorse gate, Manchester, M21 2FA, United Kingdom"
+    "14 Gorse gate, Manchester, M21 2FA, United Kingdom",
   );
   const [billingEntity, setBillingEntity] = useState(
-    "Prestige Estates UK Ltd (Ishtiaq Sohail)"
+    "Prestige Estates UK Ltd (Ishtiaq Sohail)",
   );
   const [vatId, setVatId] = useState("GB 282 0512 44");
 
@@ -189,7 +189,7 @@ export default function SettingsBillingPage() {
 
   // Active action menu member ID
   const [activeMenuMemberId, setActiveMenuMemberId] = useState<string | null>(
-    null
+    null,
   );
 
   // Invite modal
@@ -205,7 +205,7 @@ export default function SettingsBillingPage() {
   const [cprDisclaimers, setCprDisclaimers] = useState(true);
   const [showNaeaBadge, setShowNaeaBadge] = useState(true);
   const [customDisclaimerText, setCustomDisclaimerText] = useState(
-    "These particulars are prepared for guidance only and do not constitute part of an offer or contract. All descriptions, dimensions, and reference to condition are given in good faith."
+    "These particulars are prepared for guidance only and do not constitute part of an offer or contract. All descriptions, dimensions, and reference to condition are given in good faith.",
   );
 
   // =========================================================================
@@ -256,7 +256,7 @@ export default function SettingsBillingPage() {
   // Member Action Handler
   const handleMemberAction = (
     action: "edit" | "deactivate" | "remove",
-    memberId: string
+    memberId: string,
   ) => {
     setActiveMenuMemberId(null);
     if (action === "remove") {
@@ -267,8 +267,8 @@ export default function SettingsBillingPage() {
         prev.map((m) =>
           m.id === memberId
             ? { ...m, status: m.status === "Active" ? "Inactive" : "Active" }
-            : m
-        )
+            : m,
+        ),
       );
       showToast("Member status toggled");
     } else {
@@ -277,7 +277,7 @@ export default function SettingsBillingPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-7 pb-16">
+    <div className="space-y-8 pb-12">
       {/* Toast Feedback */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200">
@@ -293,7 +293,7 @@ export default function SettingsBillingPage() {
       ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
             {activeTab === "profile" && "Agent Profile & Preferences"}
             {activeTab === "billing" && "Subscription & Billing"}
             {activeTab === "team" && "Team Members"}
@@ -314,7 +314,7 @@ export default function SettingsBillingPage() {
         {/* Top Right Badges */}
         <div className="flex items-center gap-4 self-start sm:self-auto">
           {/* Packs Remaining Pill */}
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold shadow-2xs">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium shadow-2xs">
             <span className="w-2 h-2 rounded-full bg-[#E8A808] animate-pulse" />
             <span>14 Packs Remaining</span>
           </div>
@@ -327,7 +327,7 @@ export default function SettingsBillingPage() {
                 window.location.href = "/login";
               }, 600);
             }}
-            className="text-xs font-semibold text-slate-500 hover:text-red-600 transition cursor-pointer"
+            className="text-xs font-medium text-slate-500 hover:text-red-600 transition cursor-pointer"
           >
             Log Out
           </button>
@@ -342,8 +342,8 @@ export default function SettingsBillingPage() {
           onClick={() => setActiveTab("profile")}
           className={`pb-3.5 text-xs sm:text-sm font-heading transition-all border-b-2 cursor-pointer shrink-0 ${
             activeTab === "profile"
-              ? "border-[#E8A808] text-[#092167] font-bold"
-              : "border-transparent text-slate-500 hover:text-slate-900 font-semibold"
+              ? "border-[#E8A808] text-[#092167] font-medium"
+              : "border-transparent text-slate-500 hover:text-slate-900 font-medium"
           }`}
         >
           Agent Profile
@@ -353,8 +353,8 @@ export default function SettingsBillingPage() {
           onClick={() => setActiveTab("billing")}
           className={`pb-3.5 text-xs sm:text-sm font-heading transition-all border-b-2 cursor-pointer shrink-0 ${
             activeTab === "billing"
-              ? "border-[#E8A808] text-[#092167] font-bold"
-              : "border-transparent text-slate-500 hover:text-slate-900 font-semibold"
+              ? "border-[#E8A808] text-[#092167] font-medium"
+              : "border-transparent text-slate-500 hover:text-slate-900 font-medium"
           }`}
         >
           Subscription &amp; Billing
@@ -364,8 +364,8 @@ export default function SettingsBillingPage() {
           onClick={() => setActiveTab("team")}
           className={`pb-3.5 text-xs sm:text-sm font-heading transition-all border-b-2 cursor-pointer shrink-0 ${
             activeTab === "team"
-              ? "border-[#E8A808] text-[#092167] font-bold"
-              : "border-transparent text-slate-500 hover:text-slate-900 font-semibold"
+              ? "border-[#E8A808] text-[#092167] font-medium"
+              : "border-transparent text-slate-500 hover:text-slate-900 font-medium"
           }`}
         >
           Team Members
@@ -375,8 +375,8 @@ export default function SettingsBillingPage() {
           onClick={() => setActiveTab("compliance")}
           className={`pb-3.5 text-xs sm:text-sm font-heading transition-all border-b-2 cursor-pointer shrink-0 ${
             activeTab === "compliance"
-              ? "border-[#E8A808] text-[#092167] font-bold"
-              : "border-transparent text-slate-500 hover:text-slate-900 font-semibold"
+              ? "border-[#E8A808] text-[#092167] font-medium"
+              : "border-transparent text-slate-500 hover:text-slate-900 font-medium"
           }`}
         >
           Regional Compliance
@@ -391,11 +391,12 @@ export default function SettingsBillingPage() {
           {/* Left Column: Personal Information Form */}
           <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 space-y-6 shadow-2xs">
             <div>
-              <h2 className="font-heading font-bold text-lg text-slate-900">
+              <h2 className="font-heading font-medium text-lg text-slate-900">
                 Personal Information
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                This contact info &amp; headshot photo will appear on your generated brochure signature blocks.
+                This contact info &amp; headshot photo will appear on your
+                generated brochure signature blocks.
               </p>
             </div>
 
@@ -409,7 +410,7 @@ export default function SettingsBillingPage() {
                 onChange={handleHeadshotUpload}
               />
 
-              <div className="relative w-16 h-16 rounded-full overflow-hidden bg-[#06143E] text-white flex items-center justify-center font-heading font-semibold text-xl shadow-md border-2 border-slate-200 shrink-0">
+              <div className="relative w-16 h-16 rounded-full overflow-hidden bg-[#06143E] text-white flex items-center justify-center font-heading font-medium text-xl shadow-md border-2 border-slate-200 shrink-0">
                 {headshotPreview ? (
                   <Image
                     src={headshotPreview}
@@ -427,7 +428,7 @@ export default function SettingsBillingPage() {
                   <button
                     type="button"
                     onClick={() => headshotInputRef.current?.click()}
-                    className="h-9 px-4 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white font-semibold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-2xs"
+                    className="h-9 px-4 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white font-medium text-xs transition cursor-pointer flex items-center gap-1.5 shadow-2xs"
                   >
                     <Upload className="w-3.5 h-3.5 text-[#E8A808]" />
                     <span>Upload Photo</span>
@@ -440,7 +441,7 @@ export default function SettingsBillingPage() {
                         setHeadshotPreview(null);
                         showToast("Photo removed");
                       }}
-                      className="h-9 px-3 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 font-semibold text-xs transition cursor-pointer"
+                      className="h-9 px-3 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 font-medium text-xs transition cursor-pointer"
                     >
                       Remove
                     </button>
@@ -457,7 +458,7 @@ export default function SettingsBillingPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* First Name */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                  <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                     FIRST NAME <span className="text-amber-500">*</span>
                   </label>
                   <input
@@ -476,7 +477,7 @@ export default function SettingsBillingPage() {
 
                 {/* Last Name */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                  <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                     LAST NAME <span className="text-amber-500">*</span>
                   </label>
                   <input
@@ -497,8 +498,9 @@ export default function SettingsBillingPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Email Address */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-                    DIRECT EMAIL ADDRESS <span className="text-amber-500">*</span>
+                  <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
+                    DIRECT EMAIL ADDRESS{" "}
+                    <span className="text-amber-500">*</span>
                   </label>
                   <input
                     type="email"
@@ -513,8 +515,9 @@ export default function SettingsBillingPage() {
 
                 {/* Mobile Number */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-                    DIRECT MOBILE NUMBER <span className="text-amber-500">*</span>
+                  <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
+                    DIRECT MOBILE NUMBER{" "}
+                    <span className="text-amber-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -531,7 +534,7 @@ export default function SettingsBillingPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Role / Job Title */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                  <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                     ROLE / JOB TITLE <span className="text-amber-500">*</span>
                   </label>
                   <input
@@ -550,7 +553,7 @@ export default function SettingsBillingPage() {
 
                 {/* Licence / NAEA ID */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                  <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                     PROFESSIONAL LICENCE / NAEA ID
                   </label>
                   <input
@@ -569,7 +572,7 @@ export default function SettingsBillingPage() {
 
               {/* Bio */}
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                   AGENT PROFESSIONAL BIO
                 </label>
                 <textarea
@@ -586,7 +589,7 @@ export default function SettingsBillingPage() {
               <div className="pt-2">
                 <div className="rounded-xl border border-slate-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70">
                   <div>
-                    <h4 className="font-heading font-bold text-xs text-slate-900">
+                    <h4 className="font-heading font-medium text-xs text-slate-900">
                       Account Security &amp; Password
                     </h4>
                     <p className="text-[11px] text-slate-500 mt-0.5">
@@ -596,7 +599,7 @@ export default function SettingsBillingPage() {
                   <button
                     type="button"
                     onClick={() => setIsPasswordModalOpen(true)}
-                    className="h-9 px-4 rounded-lg border border-slate-300 hover:bg-white text-slate-700 font-semibold text-xs transition cursor-pointer self-start sm:self-auto shadow-2xs"
+                    className="h-9 px-4 rounded-lg border border-slate-300 hover:bg-white text-slate-700 font-medium text-xs transition cursor-pointer self-start sm:self-auto shadow-2xs"
                   >
                     Change Password
                   </button>
@@ -607,11 +610,11 @@ export default function SettingsBillingPage() {
               <div className="pt-4 flex items-center gap-3">
                 <button
                   type="submit"
-                  className="h-11 px-7 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-sm shadow-sm transition cursor-pointer"
+                  className="h-11 px-7 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-sm shadow-sm transition cursor-pointer"
                 >
                   Save Changes
                 </button>
-                <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
                   <Check className="w-4 h-4 stroke-[2.5]" />
                   <span>Profile up to date</span>
                 </span>
@@ -624,11 +627,12 @@ export default function SettingsBillingPage() {
             {/* Card 1: Brochure Signature Preview */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-6 space-y-4 shadow-2xs">
               <div>
-                <h3 className="font-heading font-bold text-sm text-slate-900">
+                <h3 className="font-heading font-medium text-sm text-slate-900">
                   Brochure Signature Preview
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  This is how your agent contact info looks on Page 2 of the PDF.
+                  This is how your agent contact info looks on Page 2 of the
+                  PDF.
                 </p>
               </div>
 
@@ -636,11 +640,11 @@ export default function SettingsBillingPage() {
               <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 space-y-3 relative overflow-hidden">
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-full bg-[#06143E] text-white flex items-center justify-center font-bold text-sm shrink-0">
+                    <div className="w-11 h-11 rounded-full bg-[#06143E] text-white flex items-center justify-center font-medium text-sm shrink-0">
                       IS
                     </div>
                     <div>
-                      <h4 className="font-heading font-bold text-sm text-slate-900">
+                      <h4 className="font-heading font-medium text-sm text-slate-900">
                         {profileForm.firstName} {profileForm.lastName}
                       </h4>
                       <p className="text-xs text-slate-600 font-medium">
@@ -652,7 +656,7 @@ export default function SettingsBillingPage() {
                     </div>
                   </div>
 
-                  <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#092167] text-[#FFB800] tracking-wider uppercase">
+                  <span className="px-2 py-0.5 rounded text-[9px] font-medium bg-[#092167] text-[#FFB800] tracking-wider uppercase">
                     DIRECTOR/VALUER
                   </span>
                 </div>
@@ -673,7 +677,7 @@ export default function SettingsBillingPage() {
             {/* Card 2: Notification Preferences */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-6 space-y-4 shadow-2xs">
               <div>
-                <h3 className="font-heading font-bold text-sm text-slate-900">
+                <h3 className="font-heading font-medium text-sm text-slate-900">
                   Notification Preferences
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -685,7 +689,7 @@ export default function SettingsBillingPage() {
                 {/* Switch 1 */}
                 <div className="flex items-center justify-between gap-4 pt-2">
                   <div>
-                    <p className="text-xs font-bold text-slate-800">
+                    <p className="text-xs font-medium text-slate-800">
                       Pack Generation Complete
                     </p>
                     <p className="text-[11px] text-slate-500">
@@ -701,7 +705,9 @@ export default function SettingsBillingPage() {
                       }))
                     }
                     className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${
-                      notifications.packComplete ? "bg-[#092167]" : "bg-slate-300"
+                      notifications.packComplete
+                        ? "bg-[#092167]"
+                        : "bg-slate-300"
                     }`}
                   >
                     <span
@@ -717,7 +723,7 @@ export default function SettingsBillingPage() {
                 {/* Switch 2 */}
                 <div className="flex items-center justify-between gap-4 pt-3">
                   <div>
-                    <p className="text-xs font-bold text-slate-800">
+                    <p className="text-xs font-medium text-slate-800">
                       Low Pack Credits Warning
                     </p>
                     <p className="text-[11px] text-slate-500">
@@ -749,7 +755,7 @@ export default function SettingsBillingPage() {
                 {/* Switch 3 */}
                 <div className="flex items-center justify-between gap-4 pt-3">
                   <div>
-                    <p className="text-xs font-bold text-slate-800">
+                    <p className="text-xs font-medium text-slate-800">
                       Monthly Billing Statements
                     </p>
                     <p className="text-[11px] text-slate-500">
@@ -784,12 +790,14 @@ export default function SettingsBillingPage() {
 
             {/* Card 3: Multi-Agent Workspace Tip */}
             <div className="rounded-2xl border border-slate-200/90 bg-slate-50 p-5 space-y-2 text-xs text-slate-600 shadow-2xs">
-              <div className="flex items-center gap-2 text-slate-900 font-bold">
+              <div className="flex items-center gap-2 text-slate-900 font-medium">
                 <Sparkles className="w-3.5 h-3.5 text-[#E8A808]" />
                 <span>Multi-Agent Workspace Tip</span>
               </div>
               <p className="leading-relaxed text-slate-500 text-[11px]">
-                If your agency has multiple negotiators or valuers, use the &lsquo;Team Members&rsquo; tab to invite more users under your Prestige Estates subscription.
+                If your agency has multiple negotiators or valuers, use the
+                &lsquo;Team Members&rsquo; tab to invite more users under your
+                Prestige Estates subscription.
               </p>
             </div>
           </div>
@@ -806,11 +814,12 @@ export default function SettingsBillingPage() {
             {/* Card 1: Active Subscription */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-7 space-y-6 shadow-2xs">
               <div>
-                <h3 className="font-heading font-bold text-lg text-slate-900">
+                <h3 className="font-heading font-medium text-lg text-slate-900">
                   Active Subscription
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Your agency is currently on the Pro Tier billed monthly via Stripe.
+                  Your agency is currently on the Pro Tier billed monthly via
+                  Stripe.
                 </p>
               </div>
 
@@ -818,10 +827,10 @@ export default function SettingsBillingPage() {
               <div className="rounded-xl border border-slate-200 p-5 bg-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2.5">
-                    <h4 className="font-heading font-semibold text-base text-slate-900">
+                    <h4 className="font-heading font-medium text-base text-slate-900">
                       Pro Agency Plan
                     </h4>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
                       ACTIVE
                     </span>
                   </div>
@@ -832,8 +841,10 @@ export default function SettingsBillingPage() {
 
                 <button
                   type="button"
-                  onClick={() => showToast("Opening Stripe Plan Upgrade Portal...")}
-                  className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition cursor-pointer self-start sm:self-auto"
+                  onClick={() =>
+                    showToast("Opening Stripe Plan Upgrade Portal...")
+                  }
+                  className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition cursor-pointer self-start sm:self-auto"
                 >
                   Upgrade
                 </button>
@@ -841,9 +852,11 @@ export default function SettingsBillingPage() {
 
               {/* Pack Credits Progress Bar */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs font-semibold">
+                <div className="flex items-center justify-between text-xs font-medium">
                   <span className="text-slate-600">Pack Credits Remaining</span>
-                  <span className="text-slate-900 font-bold">14 / 50 Packs</span>
+                  <span className="text-slate-900 font-medium">
+                    14 / 50 Packs
+                  </span>
                 </div>
                 <div className="w-full h-2.5 rounded-full bg-slate-200 overflow-hidden">
                   <div
@@ -865,22 +878,23 @@ export default function SettingsBillingPage() {
             {/* Card 2: Payment Method & Tax Info */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-7 space-y-6 shadow-2xs">
               <div>
-                <h3 className="font-heading font-bold text-lg text-slate-900">
+                <h3 className="font-heading font-medium text-lg text-slate-900">
                   Payment Method &amp; Tax Info
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Primary card used for recurring automated billing and invoicing.
+                  Primary card used for recurring automated billing and
+                  invoicing.
                 </p>
               </div>
 
               {/* Credit Card Box */}
               <div className="rounded-xl border border-slate-200 p-4 flex items-center justify-between bg-slate-50/60">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-10 h-7 rounded bg-[#06143E] text-white flex items-center justify-center font-semibold text-[10px] tracking-wider shrink-0">
+                  <div className="w-10 h-7 rounded bg-[#06143E] text-white flex items-center justify-center font-medium text-[10px] tracking-wider shrink-0">
                     VISA
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-900">
+                    <p className="text-xs font-medium text-slate-900">
                       Visa ending in 4242
                     </p>
                     <p className="text-[11px] text-slate-500">
@@ -892,7 +906,7 @@ export default function SettingsBillingPage() {
                 <button
                   type="button"
                   onClick={() => setIsEditingPayment(true)}
-                  className="h-8 px-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition cursor-pointer shadow-2xs"
+                  className="h-8 px-3 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs transition cursor-pointer shadow-2xs"
                 >
                   Edit
                 </button>
@@ -901,17 +915,19 @@ export default function SettingsBillingPage() {
               {/* Billing Entity & Registered Address */}
               <div className="pt-2 border-t border-slate-100 space-y-4 text-xs">
                 <div>
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                  <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider block">
                     BILLING ENTITY &amp; COMPANY
                   </span>
-                  <p className="font-semibold text-slate-900 mt-1">
+                  <p className="font-medium text-slate-900 mt-1">
                     {billingEntity}
                   </p>
-                  <p className="text-slate-500 text-[11px]">VAT / Tax ID: {vatId}</p>
+                  <p className="text-slate-500 text-[11px]">
+                    VAT / Tax ID: {vatId}
+                  </p>
                 </div>
 
                 <div>
-                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">
+                  <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider block">
                     REGISTERED BILLING ADDRESS
                   </span>
                   <p className="text-slate-700 mt-1 leading-relaxed">
@@ -923,7 +939,7 @@ export default function SettingsBillingPage() {
                   <button
                     type="button"
                     onClick={() => setIsEditingAddress(true)}
-                    className="h-9 px-4 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-800 font-semibold text-xs transition cursor-pointer"
+                    className="h-9 px-4 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-800 font-medium text-xs transition cursor-pointer"
                   >
                     Update Billing Details
                   </button>
@@ -937,7 +953,7 @@ export default function SettingsBillingPage() {
             {/* Card 1: Stripe Billing History */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-6 space-y-4 shadow-2xs">
               <div>
-                <h3 className="font-heading font-bold text-sm text-slate-900">
+                <h3 className="font-heading font-medium text-sm text-slate-900">
                   Stripe Billing History
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -952,7 +968,7 @@ export default function SettingsBillingPage() {
                     className="p-3.5 rounded-xl border border-slate-200/80 hover:border-slate-300 transition flex items-center justify-between gap-3 text-xs"
                   >
                     <div className="min-w-0">
-                      <p className="font-bold text-slate-900 truncate">
+                      <p className="font-medium text-slate-900 truncate">
                         Invoice #{inv.id}
                       </p>
                       <p className="text-[11px] text-slate-500">
@@ -961,7 +977,7 @@ export default function SettingsBillingPage() {
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                         {inv.status}
                       </span>
                       <button
@@ -969,7 +985,7 @@ export default function SettingsBillingPage() {
                         onClick={() =>
                           showToast(`Downloading VAT Invoice #${inv.id}...`)
                         }
-                        className="h-7 px-2 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-semibold flex items-center gap-1 transition cursor-pointer"
+                        className="h-7 px-2 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-medium flex items-center gap-1 transition cursor-pointer"
                       >
                         <span>PDF</span>
                         <Download className="w-3 h-3 text-slate-500" />
@@ -982,11 +998,13 @@ export default function SettingsBillingPage() {
 
             {/* Card 2: Need Custom VAT Receipts? */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-6 space-y-3 shadow-2xs">
-              <h4 className="font-heading font-bold text-sm text-slate-900">
+              <h4 className="font-heading font-medium text-sm text-slate-900">
                 Need Custom VAT Receipts?
               </h4>
               <p className="text-xs text-slate-500 leading-relaxed">
-                All Stripe invoices include UK VAT calculations. To assign multi-office tax codes or split billing across regional agency branches, contact support.
+                All Stripe invoices include UK VAT calculations. To assign
+                multi-office tax codes or split billing across regional agency
+                branches, contact support.
               </p>
               <div className="pt-1">
                 <button
@@ -994,7 +1012,7 @@ export default function SettingsBillingPage() {
                   onClick={() =>
                     showToast("Opening billing support request ticket...")
                   }
-                  className="text-xs font-bold text-[#092167] hover:text-[#E8A808] transition flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-medium text-[#092167] hover:text-[#E8A808] transition flex items-center gap-1 cursor-pointer"
                 >
                   <span>Contact Billing Support</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
@@ -1014,18 +1032,19 @@ export default function SettingsBillingPage() {
           <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-7 space-y-6 shadow-2xs">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h3 className="font-heading font-bold text-lg text-slate-900">
+                <h3 className="font-heading font-medium text-lg text-slate-900">
                   Active Team Members
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">
-                  Colleagues with access to generate, edit, and export property packs.
+                  Colleagues with access to generate, edit, and export property
+                  packs.
                 </p>
               </div>
 
               <button
                 type="button"
                 onClick={() => setIsInviteModalOpen(true)}
-                className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer shrink-0"
+                className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer shrink-0"
               >
                 <UserPlus className="w-3.5 h-3.5" />
                 <span>Invite Member</span>
@@ -1036,26 +1055,29 @@ export default function SettingsBillingPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs min-w-[520px]">
                 <thead>
-                  <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px] font-bold tracking-wider">
-                    <th className="pb-3 pl-1 font-semibold">Member</th>
-                    <th className="pb-3 font-semibold">Role</th>
-                    <th className="pb-3 font-semibold">Status</th>
-                    <th className="pb-3 pr-2 text-right font-semibold">Action</th>
+                  <tr className="border-b border-slate-200 text-slate-400 uppercase text-[10px] font-medium tracking-wider">
+                    <th className="pb-3 pl-1 font-medium">Member</th>
+                    <th className="pb-3 font-medium">Role</th>
+                    <th className="pb-3 font-medium">Status</th>
+                    <th className="pb-3 pr-2 text-right font-medium">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {teamMembers.map((member) => (
-                    <tr key={member.id} className="hover:bg-slate-50/70 transition">
+                    <tr
+                      key={member.id}
+                      className="hover:bg-slate-50/70 transition"
+                    >
                       {/* Member Info */}
                       <td className="py-3.5 pl-1">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-9 h-9 rounded-full ${member.avatarColor} text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs`}
+                            className={`w-9 h-9 rounded-full ${member.avatarColor} text-white flex items-center justify-center font-medium text-xs shrink-0 shadow-2xs`}
                           >
                             {member.initials}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-bold text-slate-900 text-sm">
+                            <p className="font-medium text-slate-900 text-sm">
                               {member.name}
                             </p>
                             <p className="text-slate-500 text-[11px] truncate">
@@ -1067,7 +1089,7 @@ export default function SettingsBillingPage() {
 
                       {/* Role */}
                       <td className="py-3.5">
-                        <span className="font-semibold text-slate-700">
+                        <span className="font-medium text-slate-700">
                           {member.role}
                         </span>
                       </td>
@@ -1075,7 +1097,7 @@ export default function SettingsBillingPage() {
                       {/* Status */}
                       <td className="py-3.5">
                         <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${
                             member.status === "Active"
                               ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                               : "bg-slate-100 text-slate-600 border border-slate-200"
@@ -1099,7 +1121,7 @@ export default function SettingsBillingPage() {
                                 setActiveMenuMemberId(
                                   activeMenuMemberId === member.id
                                     ? null
-                                    : member.id
+                                    : member.id,
                                 )
                               }
                               className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
@@ -1157,7 +1179,7 @@ export default function SettingsBillingPage() {
             {/* Card 1: Pending Invitations */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-6 space-y-4 shadow-2xs">
               <div>
-                <h4 className="font-heading font-bold text-sm text-slate-900">
+                <h4 className="font-heading font-medium text-sm text-slate-900">
                   Pending Invitations
                 </h4>
                 <p className="text-xs text-slate-500 mt-0.5">
@@ -1172,7 +1194,7 @@ export default function SettingsBillingPage() {
                     className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/60 flex items-center justify-between gap-3 text-xs"
                   >
                     <div className="min-w-0">
-                      <p className="font-semibold text-slate-900 truncate">
+                      <p className="font-medium text-slate-900 truncate">
                         {inv.email}
                       </p>
                       <p className="text-[11px] text-slate-400">{inv.sentAt}</p>
@@ -1183,7 +1205,7 @@ export default function SettingsBillingPage() {
                       onClick={() =>
                         showToast(`Invitation re-sent to ${inv.email}`)
                       }
-                      className="h-7 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-[11px] transition cursor-pointer shadow-2xs shrink-0"
+                      className="h-7 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-[11px] transition cursor-pointer shadow-2xs shrink-0"
                     >
                       Resend
                     </button>
@@ -1194,12 +1216,13 @@ export default function SettingsBillingPage() {
 
             {/* Card 2: Workspace Limit */}
             <div className="bg-white rounded-2xl border border-slate-200/90 p-6 space-y-3 shadow-2xs">
-              <div className="flex items-center gap-2 text-slate-900 font-bold text-sm">
+              <div className="flex items-center gap-2 text-slate-900 font-medium text-sm">
                 <ShieldCheck className="w-4 h-4 text-[#E8A808]" />
                 <span>Workspace Limit</span>
               </div>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Your Pro Tier plan includes up to 5 team members. Upgrade your plan to add more negotiators and maintenance features.
+                Your Pro Tier plan includes up to 5 team members. Upgrade your
+                plan to add more negotiators and maintenance features.
               </p>
               <div className="pt-1">
                 <button
@@ -1207,7 +1230,7 @@ export default function SettingsBillingPage() {
                   onClick={() =>
                     showToast("Opening Subscription Upgrade dialog...")
                   }
-                  className="text-xs font-bold text-[#092167] hover:text-[#E8A808] transition flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-medium text-[#092167] hover:text-[#E8A808] transition flex items-center gap-1 cursor-pointer"
                 >
                   <span>Upgrade Subscription</span>
                   <ArrowUpRight className="w-3.5 h-3.5" />
@@ -1224,25 +1247,26 @@ export default function SettingsBillingPage() {
       {activeTab === "compliance" && (
         <div className="max-w-4xl bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 space-y-6 shadow-2xs">
           <div>
-            <h3 className="font-heading font-bold text-lg text-slate-900">
+            <h3 className="font-heading font-medium text-lg text-slate-900">
               Regional Compliance &amp; Legal Disclaimers
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Ensure all generated PDF brochures and portal listings satisfy regional trading standards.
+              Ensure all generated PDF brochures and portal listings satisfy
+              regional trading standards.
             </p>
           </div>
 
           <div className="space-y-5 pt-1">
             {/* Region Selector */}
             <div className="space-y-1.5">
-              <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+              <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                 PRIMARY TRADING JURISDICTION
               </label>
               <div className="grid grid-cols-2 gap-3 max-w-md">
                 <button
                   type="button"
                   onClick={() => setComplianceRegion("UK")}
-                  className={`h-11 rounded-xl font-bold text-xs transition border flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`h-11 rounded-xl font-medium text-xs transition border flex items-center justify-center gap-2 cursor-pointer ${
                     complianceRegion === "UK"
                       ? "border-[#092167] bg-[#092167] text-white shadow-sm"
                       : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
@@ -1254,7 +1278,7 @@ export default function SettingsBillingPage() {
                 <button
                   type="button"
                   onClick={() => setComplianceRegion("US")}
-                  className={`h-11 rounded-xl font-bold text-xs transition border flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`h-11 rounded-xl font-medium text-xs transition border flex items-center justify-center gap-2 cursor-pointer ${
                     complianceRegion === "US"
                       ? "border-[#092167] bg-[#092167] text-white shadow-sm"
                       : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
@@ -1269,11 +1293,12 @@ export default function SettingsBillingPage() {
             <div className="space-y-4 pt-2">
               <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-slate-50/70">
                 <div>
-                  <p className="text-xs font-bold text-slate-900">
+                  <p className="text-xs font-medium text-slate-900">
                     Mandatory Consumer Protection Regulations (CPR) Disclaimers
                   </p>
                   <p className="text-[11px] text-slate-500">
-                    Automatically append verified measurements and tenure disclaimers to exported brochures.
+                    Automatically append verified measurements and tenure
+                    disclaimers to exported brochures.
                   </p>
                 </div>
                 <button
@@ -1293,11 +1318,12 @@ export default function SettingsBillingPage() {
 
               <div className="flex items-center justify-between p-4 rounded-xl border border-slate-200 bg-slate-50/70">
                 <div>
-                  <p className="text-xs font-bold text-slate-900">
+                  <p className="text-xs font-medium text-slate-900">
                     Display Professional Ombudsman &amp; NAEA Badge
                   </p>
                   <p className="text-[11px] text-slate-500">
-                    Show TPO and Propertymark logos in the footer of all presentation packs.
+                    Show TPO and Propertymark logos in the footer of all
+                    presentation packs.
                   </p>
                 </div>
                 <button
@@ -1318,7 +1344,7 @@ export default function SettingsBillingPage() {
 
             {/* Custom Disclaimer Textarea */}
             <div className="space-y-1.5 pt-2">
-              <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+              <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                 CUSTOM AGENCY LEGAL NOTICE
               </label>
               <textarea
@@ -1333,9 +1359,11 @@ export default function SettingsBillingPage() {
               <button
                 type="button"
                 onClick={() =>
-                  showToast("Compliance and legal disclaimers saved successfully!")
+                  showToast(
+                    "Compliance and legal disclaimers saved successfully!",
+                  )
                 }
-                className="h-11 px-7 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-sm shadow-sm transition cursor-pointer"
+                className="h-11 px-7 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-sm shadow-sm transition cursor-pointer"
               >
                 Save Compliance Settings
               </button>
@@ -1353,11 +1381,12 @@ export default function SettingsBillingPage() {
             {/* Modal Header */}
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-heading font-bold text-lg text-slate-900">
+                <h3 className="font-heading font-medium text-lg text-slate-900">
                   Invite New Team Member
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">
-                  Invite negotiators, valuers, and administrators to collaborate and generate packs.
+                  Invite negotiators, valuers, and administrators to collaborate
+                  and generate packs.
                 </p>
               </div>
               <button
@@ -1373,7 +1402,7 @@ export default function SettingsBillingPage() {
             <form onSubmit={handleSendInvite} className="space-y-4">
               {/* Email Address */}
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                   EMAIL ADDRESS <span className="text-amber-500">*</span>
                 </label>
                 <input
@@ -1388,8 +1417,9 @@ export default function SettingsBillingPage() {
 
               {/* Assign Workspace Role */}
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
-                  ASSIGN WORKSPACE ROLE <span className="text-amber-500">*</span>
+                <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
+                  ASSIGN WORKSPACE ROLE{" "}
+                  <span className="text-amber-500">*</span>
                 </label>
                 <select
                   value={inviteRole}
@@ -1415,9 +1445,7 @@ export default function SettingsBillingPage() {
                 <input
                   type="checkbox"
                   checked={sendInviteEmailCheckbox}
-                  onChange={(e) =>
-                    setSendInviteEmailCheckbox(e.target.checked)
-                  }
+                  onChange={(e) => setSendInviteEmailCheckbox(e.target.checked)}
                   className="w-4 h-4 rounded text-[#092167] border-slate-300 focus:ring-[#092167]"
                 />
                 <span>Send an invitation email with access instructions</span>
@@ -1428,13 +1456,13 @@ export default function SettingsBillingPage() {
                 <button
                   type="button"
                   onClick={() => setIsInviteModalOpen(false)}
-                  className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition cursor-pointer"
+                  className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition cursor-pointer"
+                  className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition cursor-pointer"
                 >
                   Send Invite
                 </button>
@@ -1452,7 +1480,7 @@ export default function SettingsBillingPage() {
           <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-heading font-bold text-lg text-slate-900">
+                <h3 className="font-heading font-medium text-lg text-slate-900">
                   Change Password
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">
@@ -1477,7 +1505,7 @@ export default function SettingsBillingPage() {
               className="space-y-4"
             >
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                   CURRENT PASSWORD
                 </label>
                 <input
@@ -1489,7 +1517,7 @@ export default function SettingsBillingPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                   NEW PASSWORD
                 </label>
                 <input
@@ -1504,13 +1532,13 @@ export default function SettingsBillingPage() {
                 <button
                   type="button"
                   onClick={() => setIsPasswordModalOpen(false)}
-                  className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition cursor-pointer"
+                  className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition cursor-pointer"
+                  className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition cursor-pointer"
                 >
                   Update Password
                 </button>
@@ -1528,8 +1556,10 @@ export default function SettingsBillingPage() {
           <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="font-heading font-bold text-lg text-slate-900">
-                  {isEditingPayment ? "Update Payment Method" : "Update Billing Entity"}
+                <h3 className="font-heading font-medium text-lg text-slate-900">
+                  {isEditingPayment
+                    ? "Update Payment Method"
+                    : "Update Billing Entity"}
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">
                   Manage Stripe billing credentials and invoices.
@@ -1559,7 +1589,7 @@ export default function SettingsBillingPage() {
               {isEditingPayment ? (
                 <>
                   <div className="space-y-1.5">
-                    <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                    <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                       CARD NUMBER
                     </label>
                     <input
@@ -1570,7 +1600,7 @@ export default function SettingsBillingPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="space-y-1.5">
-                      <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                      <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                         EXPIRY
                       </label>
                       <input
@@ -1580,7 +1610,7 @@ export default function SettingsBillingPage() {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                      <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                         CVC
                       </label>
                       <input
@@ -1594,7 +1624,7 @@ export default function SettingsBillingPage() {
               ) : (
                 <>
                   <div className="space-y-1.5">
-                    <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                    <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                       BILLING ENTITY
                     </label>
                     <input
@@ -1605,7 +1635,7 @@ export default function SettingsBillingPage() {
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                    <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
                       BILLING ADDRESS
                     </label>
                     <input
@@ -1625,13 +1655,13 @@ export default function SettingsBillingPage() {
                     setIsEditingPayment(false);
                     setIsEditingAddress(false);
                   }}
-                  className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition cursor-pointer"
+                  className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium text-xs transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition cursor-pointer"
+                  className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition cursor-pointer"
                 >
                   Save Billing Info
                 </button>

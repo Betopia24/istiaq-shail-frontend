@@ -51,20 +51,21 @@ export default function NotFound() {
       <main className="relative z-10 max-w-xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center my-auto">
         {/* Stylized 404 Display */}
         <div className="relative select-none mb-2">
-          <h1 className="font-heading font-semibold text-8xl sm:text-9xl md:text-[120px] leading-none tracking-tight bg-gradient-to-b from-white via-slate-100 to-white/40 bg-clip-text text-transparent drop-shadow-xl">
+          <h1 className="font-heading font-medium text-8xl sm:text-9xl md:text-[120px] leading-none tracking-tight bg-gradient-to-b from-white via-slate-100 to-white/40 bg-clip-text text-transparent drop-shadow-xl">
             404
           </h1>
-          <div className="absolute -top-2 -right-3 w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-[#FFB800] text-[#06143E] font-semibold text-base sm:text-lg flex items-center justify-center shadow-md rotate-12">
+          <div className="absolute -top-2 -right-3 w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-[#FFB800] text-[#06143E] font-medium text-base sm:text-lg flex items-center justify-center shadow-md rotate-12">
             ?
           </div>
         </div>
 
         {/* Title & Description */}
-        <h2 className="font-heading font-bold text-2xl sm:text-3xl text-white tracking-tight mt-3">
+        <h2 className="font-heading font-medium text-2xl sm:text-3xl text-white tracking-tight mt-3">
           Page Not Found
         </h2>
         <p className="text-slate-300 text-sm sm:text-base max-w-md mx-auto mt-2.5 leading-relaxed">
-          The page you are looking for doesn&apos;t exist, has been removed, or was moved to another location.
+          The page you are looking for doesn&apos;t exist, has been removed, or
+          was moved to another location.
         </p>
 
         {/* Go Back to Previous Location Button */}
@@ -72,7 +73,7 @@ export default function NotFound() {
           <button
             type="button"
             onClick={handleGoBack}
-            className="h-10 px-6 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-bold text-sm shadow-[0_2px_12px_rgba(255,184,0,0.3)] transition inline-flex items-center gap-2 cursor-pointer"
+            className="h-10 px-6 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-medium text-sm shadow-[0_2px_12px_rgba(255,184,0,0.3)] transition inline-flex items-center gap-2 cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 stroke-[2.5]" />
             <span>Go Back</span>

@@ -25,7 +25,9 @@ export default function BuyerTwoPagePdfBrochure() {
   const propertyId = (params?.id as string) || "16-gorse-drive";
 
   // Dynamic Property Data (populated from backend AI response / localStorage / fallback)
-  const [property, setProperty] = useState<PropertyPackData>(DEFAULT_PROPERTY_PACK);
+  const [property, setProperty] = useState<PropertyPackData>(
+    DEFAULT_PROPERTY_PACK,
+  );
 
   useEffect(() => {
     if (propertyId) {
@@ -44,7 +46,7 @@ export default function BuyerTwoPagePdfBrochure() {
       <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#06143E] text-white px-5 py-2.5 rounded-full shadow-2xl border border-slate-700 flex items-center gap-4 no-print">
         <Link
           href={`/property/${propertyId}`}
-          className="text-xs font-semibold text-slate-300 hover:text-white flex items-center gap-1.5 transition"
+          className="text-xs font-medium text-slate-300 hover:text-white flex items-center gap-1.5 transition"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Property Page</span>
@@ -58,7 +60,7 @@ export default function BuyerTwoPagePdfBrochure() {
 
         <button
           onClick={handlePrint}
-          className="h-8 px-4 rounded-full bg-[#E8A808] hover:bg-[#d89b05] text-[#06143E] font-bold text-xs flex items-center gap-1.5 transition shadow-sm cursor-pointer"
+          className="h-8 px-4 rounded-full bg-[#E8A808] hover:bg-[#d89b05] text-[#06143E] font-medium text-xs flex items-center gap-1.5 transition shadow-sm cursor-pointer"
         >
           <Printer className="w-3.5 h-3.5" />
           <span>Print / Save as PDF</span>
@@ -74,17 +76,17 @@ export default function BuyerTwoPagePdfBrochure() {
           {/* Header Bar */}
           <div className="bg-[#06143E] text-white rounded-lg px-6 py-3.5 flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <span className="text-[#E8A808] font-bold text-lg">▲</span>
+              <span className="text-[#E8A808] font-medium text-lg">▲</span>
               <div>
-                <span className="font-heading font-extrabold text-sm tracking-wider uppercase block leading-tight">
+                <span className="font-heading font-semibold text-sm tracking-wider uppercase block leading-tight">
                   {property.agency.name}
                 </span>
-                <span className="text-[9px] font-bold text-slate-400 tracking-widest uppercase block">
+                <span className="text-[9px] font-medium text-slate-400 tracking-widest uppercase block">
                   {property.agency.tagline}
                 </span>
               </div>
             </div>
-            <div className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <div className="text-xs font-medium text-slate-300 flex items-center gap-1.5">
               <Phone className="w-3 h-3 text-[#E8A808]" />
               <span>{property.agency.phone}</span>
             </div>
@@ -101,10 +103,10 @@ export default function BuyerTwoPagePdfBrochure() {
             />
             {/* Top Badges */}
             <div className="absolute top-4 left-4 flex items-center gap-2">
-              <span className="px-2.5 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-emerald-600 text-white shadow-sm">
+              <span className="px-2.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-emerald-600 text-white shadow-sm">
                 {property.statusBadge}
               </span>
-              <span className="px-2.5 py-0.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-[#06143E] text-white border border-[#E8A808]/40 shadow-sm">
+              <span className="px-2.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider bg-[#06143E] text-white border border-[#E8A808]/40 shadow-sm">
                 {property.propertyTypeBadge}
               </span>
             </div>
@@ -113,7 +115,7 @@ export default function BuyerTwoPagePdfBrochure() {
           {/* Title & Price Header */}
           <div className="flex items-end justify-between border-b border-slate-200 pb-3">
             <div>
-              <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+              <h1 className="font-heading font-semibold text-2xl sm:text-3xl text-slate-900 tracking-tight">
                 {property.title}
               </h1>
               <p className="text-xs font-medium text-slate-500 mt-0.5">
@@ -121,10 +123,10 @@ export default function BuyerTwoPagePdfBrochure() {
               </p>
             </div>
             <div className="text-right">
-              <div className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+              <div className="font-heading font-semibold text-2xl sm:text-3xl text-slate-900 tracking-tight">
                 {property.price}
               </div>
-              <div className="text-[11px] font-semibold text-slate-500">
+              <div className="text-[11px] font-medium text-slate-500">
                 {property.priceQualifier}
               </div>
             </div>
@@ -133,28 +135,40 @@ export default function BuyerTwoPagePdfBrochure() {
           {/* 6-Column Specs Strip */}
           <div className="grid grid-cols-6 gap-2 text-center py-2.5 px-3 rounded-lg bg-slate-50 border border-slate-200 text-xs">
             <div>
-              <span className="font-bold text-slate-900 block text-xs">{property.specs.bedrooms}</span>
+              <span className="font-medium text-slate-900 block text-xs">
+                {property.specs.bedrooms}
+              </span>
             </div>
             <div className="border-l border-slate-200">
-              <span className="font-bold text-slate-900 block text-xs">{property.specs.bathrooms}</span>
+              <span className="font-medium text-slate-900 block text-xs">
+                {property.specs.bathrooms}
+              </span>
             </div>
             <div className="border-l border-slate-200">
-              <span className="font-bold text-slate-900 block text-xs">{property.specs.sqft} ({property.specs.sqm})</span>
+              <span className="font-medium text-slate-900 block text-xs">
+                {property.specs.sqft} ({property.specs.sqm})
+              </span>
             </div>
             <div className="border-l border-slate-200">
-              <span className="font-bold text-slate-900 block text-xs">{property.specs.propertyType}</span>
+              <span className="font-medium text-slate-900 block text-xs">
+                {property.specs.propertyType}
+              </span>
             </div>
             <div className="border-l border-slate-200">
-              <span className="font-bold text-emerald-600 block text-xs">{property.specs.epcRating}</span>
+              <span className="font-medium text-emerald-600 block text-xs">
+                {property.specs.epcRating}
+              </span>
             </div>
             <div className="border-l border-slate-200">
-              <span className="font-bold text-slate-900 block text-xs">{property.specs.tenure}</span>
+              <span className="font-medium text-slate-900 block text-xs">
+                {property.specs.tenure}
+              </span>
             </div>
           </div>
 
           {/* Property Overview */}
           <div className="space-y-1.5">
-            <h2 className="font-heading font-bold text-sm uppercase tracking-wider text-slate-900">
+            <h2 className="font-heading font-medium text-sm uppercase tracking-wider text-slate-900">
               Property Overview
             </h2>
             <p className="text-xs text-slate-600 leading-relaxed">
@@ -164,7 +178,7 @@ export default function BuyerTwoPagePdfBrochure() {
 
           {/* Key Features */}
           <div className="space-y-1.5">
-            <h2 className="font-heading font-bold text-sm uppercase tracking-wider text-slate-900">
+            <h2 className="font-heading font-medium text-sm uppercase tracking-wider text-slate-900">
               Key Features
             </h2>
             <ul className="grid grid-cols-1 gap-1 text-xs text-slate-700">
@@ -180,20 +194,35 @@ export default function BuyerTwoPagePdfBrochure() {
           {/* 3 Bottom Gallery Thumbnails */}
           <div className="grid grid-cols-3 gap-3 pt-1">
             <div className="relative h-24 rounded-lg overflow-hidden border border-slate-200">
-              <Image src={property.images.kitchen} alt="Kitchen & Island" fill className="object-cover" />
-              <div className="absolute bottom-1 left-1.5 bg-black/60 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded backdrop-blur-xs">
+              <Image
+                src={property.images.kitchen}
+                alt="Kitchen & Island"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute bottom-1 left-1.5 bg-black/60 text-white text-[9px] font-medium px-1.5 py-0.5 rounded backdrop-blur-xs">
                 Kitchen &amp; Island
               </div>
             </div>
             <div className="relative h-24 rounded-lg overflow-hidden border border-slate-200">
-              <Image src={property.images.garden} alt="South-Facing Garden" fill className="object-cover" />
-              <div className="absolute bottom-1 left-1.5 bg-black/60 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded backdrop-blur-xs">
+              <Image
+                src={property.images.garden}
+                alt="South-Facing Garden"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute bottom-1 left-1.5 bg-black/60 text-white text-[9px] font-medium px-1.5 py-0.5 rounded backdrop-blur-xs">
                 South-Facing Garden
               </div>
             </div>
             <div className="relative h-24 rounded-lg overflow-hidden border border-slate-200">
-              <Image src={property.images.masterSuite} alt="Principal En-Suite" fill className="object-cover" />
-              <div className="absolute bottom-1 left-1.5 bg-black/60 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded backdrop-blur-xs">
+              <Image
+                src={property.images.masterSuite}
+                alt="Principal En-Suite"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute bottom-1 left-1.5 bg-black/60 text-white text-[9px] font-medium px-1.5 py-0.5 rounded backdrop-blur-xs">
                 Principal En-Suite
               </div>
             </div>
@@ -201,7 +230,9 @@ export default function BuyerTwoPagePdfBrochure() {
 
           {/* Page 1 Footer */}
           <div className="border-t border-slate-200 pt-3 flex justify-between text-[10px] text-slate-400 font-medium">
-            <span>Page 1 of 2 • {property.title}, {property.postcode}</span>
+            <span>
+              Page 1 of 2 • {property.title}, {property.postcode}
+            </span>
             <span>{property.agency.name}</span>
           </div>
         </div>
@@ -211,19 +242,21 @@ export default function BuyerTwoPagePdfBrochure() {
         ========================================================================= */}
         <div className="w-full bg-white shadow-xl border border-slate-300/80 p-8 sm:p-10 space-y-6 relative print:shadow-none print:border-none print:p-8">
           {/* Header Bar */}
-          <div className="flex justify-between items-center border-b border-slate-200 pb-2 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-            <span>{property.title.toUpperCase()} | {property.postcode}</span>
+          <div className="flex justify-between items-center border-b border-slate-200 pb-2 text-[10px] text-slate-500 font-medium uppercase tracking-wider">
+            <span>
+              {property.title.toUpperCase()} | {property.postcode}
+            </span>
             <span>Page 2 of 2</span>
           </div>
 
           {/* Room Dimensions & Layout */}
           <div className="space-y-2">
-            <h2 className="font-heading font-bold text-sm uppercase tracking-wider text-slate-900 border-l-2 border-[#E8A808] pl-2.5">
+            <h2 className="font-heading font-medium text-sm uppercase tracking-wider text-slate-900 border-l-2 border-[#E8A808] pl-2.5">
               Room Dimensions &amp; Layout
             </h2>
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-                <span className="font-bold text-slate-900 block text-xs">
+                <span className="font-medium text-slate-900 block text-xs">
                   {property.roomDimensions.groundFloor.wingName}
                 </span>
                 {property.roomDimensions.groundFloor.items.map((item, idx) => (
@@ -234,7 +267,7 @@ export default function BuyerTwoPagePdfBrochure() {
               </div>
 
               <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
-                <span className="font-bold text-slate-900 block text-xs">
+                <span className="font-medium text-slate-900 block text-xs">
                   {property.roomDimensions.firstFloor.wingName}
                 </span>
                 {property.roomDimensions.firstFloor.items.map((item, idx) => (
@@ -248,13 +281,13 @@ export default function BuyerTwoPagePdfBrochure() {
 
           {/* Architectural Floor Plan */}
           <div className="space-y-2">
-            <h2 className="font-heading font-bold text-sm uppercase tracking-wider text-slate-900 border-l-2 border-[#E8A808] pl-2.5">
+            <h2 className="font-heading font-medium text-sm uppercase tracking-wider text-slate-900 border-l-2 border-[#E8A808] pl-2.5">
               Architectural Floor Plan
             </h2>
             <div className="grid grid-cols-2 gap-3">
               {/* Ground Floor Diagram */}
               <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 text-center">
-                <div className="h-28 w-full border border-slate-300 rounded grid grid-cols-3 grid-rows-2 gap-1 p-1 bg-white text-[9px] font-bold text-slate-500 mb-2">
+                <div className="h-28 w-full border border-slate-300 rounded grid grid-cols-3 grid-rows-2 gap-1 p-1 bg-white text-[9px] font-medium text-slate-500 mb-2">
                   <div className="col-span-2 border border-slate-200 flex items-center justify-center bg-slate-50">
                     KITCHEN / DINING
                   </div>
@@ -265,14 +298,14 @@ export default function BuyerTwoPagePdfBrochure() {
                     LIVING ROOM
                   </div>
                 </div>
-                <span className="text-[11px] font-bold text-slate-700">
+                <span className="text-[11px] font-medium text-slate-700">
                   GROUND FLOOR ({property.floorPlans.groundFloorArea})
                 </span>
               </div>
 
               {/* First Floor Diagram */}
               <div className="p-4 rounded-lg bg-slate-50 border border-slate-200 text-center">
-                <div className="h-28 w-full border border-slate-300 rounded grid grid-cols-2 grid-rows-2 gap-1 p-1 bg-white text-[9px] font-bold text-slate-500 mb-2">
+                <div className="h-28 w-full border border-slate-300 rounded grid grid-cols-2 grid-rows-2 gap-1 p-1 bg-white text-[9px] font-medium text-slate-500 mb-2">
                   <div className="border border-slate-200 flex items-center justify-center bg-slate-50">
                     BEDROOM 1
                   </div>
@@ -286,7 +319,7 @@ export default function BuyerTwoPagePdfBrochure() {
                     BED 4 / BATH
                   </div>
                 </div>
-                <span className="text-[11px] font-bold text-slate-700">
+                <span className="text-[11px] font-medium text-slate-700">
                   FIRST FLOOR ({property.floorPlans.firstFloorArea})
                 </span>
               </div>
@@ -295,16 +328,23 @@ export default function BuyerTwoPagePdfBrochure() {
 
           {/* Proximity & Commute */}
           <div className="space-y-2">
-            <h2 className="font-heading font-bold text-sm uppercase tracking-wider text-slate-900">
+            <h2 className="font-heading font-medium text-sm uppercase tracking-wider text-slate-900">
               Proximity &amp; Commute
             </h2>
             <div className="grid grid-cols-4 gap-2.5 text-center text-xs">
               {property.commute.map((item, idx) => (
-                <div key={idx} className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-                  <span className={`font-heading font-bold text-base block ${item.highlight ? "text-emerald-600" : "text-slate-900"}`}>
+                <div
+                  key={idx}
+                  className="p-3 rounded-lg bg-slate-50 border border-slate-200"
+                >
+                  <span
+                    className={`font-heading font-medium text-base block ${item.highlight ? "text-emerald-600" : "text-slate-900"}`}
+                  >
                     {item.metric}
                   </span>
-                  <span className="text-[10px] text-slate-500 font-medium">{item.label}</span>
+                  <span className="text-[10px] text-slate-500 font-medium">
+                    {item.label}
+                  </span>
                 </div>
               ))}
             </div>
@@ -313,14 +353,14 @@ export default function BuyerTwoPagePdfBrochure() {
           {/* Listing Agent Card & QR Code */}
           <div className="p-4 rounded-xl bg-[#06143E] text-white border-t-2 border-[#E8A808] flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-[#E8A808] text-[#06143E] font-heading font-bold text-base flex items-center justify-center shrink-0 shadow-md">
+              <div className="w-12 h-12 rounded-full bg-[#E8A808] text-[#06143E] font-heading font-medium text-base flex items-center justify-center shrink-0 shadow-md">
                 {property.agent.initials}
               </div>
               <div>
-                <h3 className="font-heading font-bold text-sm text-white">
+                <h3 className="font-heading font-medium text-sm text-white">
                   {property.agent.name}
                 </h3>
-                <p className="text-[11px] text-[#E8A808] font-semibold">
+                <p className="text-[11px] text-[#E8A808] font-medium">
                   {property.agent.role}
                 </p>
                 <p className="text-[10px] text-slate-300 mt-0.5">
@@ -335,7 +375,7 @@ export default function BuyerTwoPagePdfBrochure() {
                 <QrCode className="w-full h-full text-[#06143E]" />
               </div>
               <div className="text-left text-[10px]">
-                <span className="font-bold text-[#E8A808] block leading-tight">
+                <span className="font-medium text-[#E8A808] block leading-tight">
                   Scan to Book
                 </span>
                 <span className="text-slate-300 block leading-tight">
@@ -355,7 +395,9 @@ export default function BuyerTwoPagePdfBrochure() {
 
           {/* Page 2 Footer */}
           <div className="border-t border-slate-200 pt-3 flex justify-between text-[10px] text-slate-400 font-medium">
-            <span>{property.agency.name} • Property Pack AI Generation Engine</span>
+            <span>
+              {property.agency.name} • Property Pack AI Generation Engine
+            </span>
             <span>Printed in A4 Format</span>
           </div>
         </div>

@@ -50,18 +50,17 @@ export default function LoginForm() {
           (res as any)?.data?.user?.name ||
           (res as any)?.data?.name ||
           email.split("@")[0],
-        email: (res as any)?.data?.user?.email || (res as any)?.data?.email || email,
+        email:
+          (res as any)?.data?.user?.email || (res as any)?.data?.email || email,
         role:
-          (res as any)?.data?.user?.role ||
-          (res as any)?.data?.role ||
-          "AGENT",
+          (res as any)?.data?.user?.role || (res as any)?.data?.role || "AGENT",
       };
 
       dispatch(
         setCredentials({
           user: userData,
           accessToken,
-        })
+        }),
       );
 
       toast.success("Signed in successfully!");
@@ -78,7 +77,9 @@ export default function LoginForm() {
       // Graceful fallback for demo if backend is offline or returns error
       console.warn("Sign in API response or offline fallback:", err);
       const message =
-        err?.data?.message || err?.message || "Signed in (demo workstation mode)";
+        err?.data?.message ||
+        err?.message ||
+        "Signed in (demo workstation mode)";
 
       // In demo mode: create a session so the user can explore dashboards
       const demoUser: UserProfile = {
@@ -92,7 +93,7 @@ export default function LoginForm() {
         setCredentials({
           user: demoUser,
           accessToken: "demo-session-token-jwt",
-        })
+        }),
       );
 
       toast.success(message);
@@ -110,11 +111,12 @@ export default function LoginForm() {
     <div className="w-full max-w-[520px] bg-white rounded-[28px] p-8 sm:p-10 lg:p-11 shadow-[0_20px_50px_rgba(11,23,54,0.08),0_4px_16px_rgba(11,23,54,0.02)] border border-slate-100/80 transition-all duration-300">
       {/* Header */}
       <div className="mb-7">
-        <h1 className="font-heading font-bold text-2xl sm:text-[30px] text-[#020618] tracking-tight mb-2">
+        <h1 className="font-heading font-medium text-2xl sm:text-[30px] text-[#020618] tracking-tight mb-2">
           Welcome back
         </h1>
         <p className="font-sans text-sm sm:text-[14.5px] text-[#62748E] leading-relaxed">
-          Sign in to continue to your Property Pack AI institutional workstation.
+          Sign in to continue to your Property Pack AI institutional
+          workstation.
         </p>
       </div>
 
@@ -211,7 +213,7 @@ export default function LoginForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-medium text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
           >
             {isLoading ? (
               <>
@@ -230,7 +232,7 @@ export default function LoginForm() {
             Don&#39;t have an account?{" "}
             <Link
               href="/sign-up"
-              className="font-semibold text-[#0A2168] hover:text-[#06143E] hover:underline transition-colors"
+              className="font-medium text-[#0A2168] hover:text-[#06143E] hover:underline transition-colors"
             >
               Create one
             </Link>

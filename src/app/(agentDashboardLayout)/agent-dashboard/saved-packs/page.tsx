@@ -176,10 +176,14 @@ export default function SavedPacksPage() {
       })
       .sort((a, b) => {
         if (sortOption === "newest") {
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
         }
         if (sortOption === "oldest") {
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
         }
         if (sortOption === "price-high") {
           return b.price - a.price;
@@ -191,16 +195,22 @@ export default function SavedPacksPage() {
       });
   }, [packs, activeFilter, searchQuery, sortOption]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredPacks.length / ITEMS_PER_PAGE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredPacks.length / ITEMS_PER_PAGE),
+  );
   const validPage = Math.min(currentPage, totalPages);
   const startIndex = (validPage - 1) * ITEMS_PER_PAGE;
-  const currentPacks = filteredPacks.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const currentPacks = filteredPacks.slice(
+    startIndex,
+    startIndex + ITEMS_PER_PAGE,
+  );
 
   const readyCount = packs.filter((p) => p.status === "ready").length;
   const draftCount = packs.filter((p) => p.status === "draft").length;
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12">
+    <div className="space-y-8 pb-12">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-bottom-3 duration-200">
@@ -213,11 +223,11 @@ export default function SavedPacksPage() {
           TOP HEADER
       ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4">
-          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+        <div>
+          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
             Saved Property Packs
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 font-normal">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Manage, edit, export and share all generated property assets
           </p>
         </div>
@@ -226,7 +236,7 @@ export default function SavedPacksPage() {
           {/* Credits Badge */}
           <div className="h-10 px-4 rounded-xl border border-amber-200/80 bg-amber-50/60 flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#FFB800]" />
-            <span className="text-xs font-bold text-slate-800">
+            <span className="text-xs font-medium text-slate-800">
               14 Credits Left
             </span>
           </div>
@@ -234,7 +244,7 @@ export default function SavedPacksPage() {
           {/* New Property Pack Button */}
           <Link
             href="/agent-dashboard/create"
-            className="h-10 px-5 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-bold text-xs sm:text-sm transition flex items-center gap-1.5 shadow-xs"
+            className="h-10 px-5 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-medium text-xs sm:text-sm transition flex items-center gap-1.5 shadow-xs"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>New Property Pack</span>
@@ -255,8 +265,8 @@ export default function SavedPacksPage() {
             }}
             className={`px-4 py-2 rounded-lg font-heading text-xs transition cursor-pointer shrink-0 ${
               activeFilter === "all"
-                ? "bg-[#06143E] text-white font-bold shadow-sm"
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold"
+                ? "bg-[#06143E] text-white font-medium shadow-sm"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
             }`}
           >
             All ({packs.length})
@@ -269,8 +279,8 @@ export default function SavedPacksPage() {
             }}
             className={`px-4 py-2 rounded-lg font-heading text-xs transition cursor-pointer shrink-0 ${
               activeFilter === "ready"
-                ? "bg-[#06143E] text-white font-bold shadow-sm"
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold"
+                ? "bg-[#06143E] text-white font-medium shadow-sm"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
             }`}
           >
             Ready ({readyCount})
@@ -283,8 +293,8 @@ export default function SavedPacksPage() {
             }}
             className={`px-4 py-2 rounded-lg font-heading text-xs transition cursor-pointer shrink-0 ${
               activeFilter === "draft"
-                ? "bg-[#06143E] text-white font-bold shadow-sm"
-                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-semibold"
+                ? "bg-[#06143E] text-white font-medium shadow-sm"
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
             }`}
           >
             Drafts ({draftCount})
@@ -313,7 +323,7 @@ export default function SavedPacksPage() {
             <select
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value as SortOption)}
-              className="h-9 pl-3.5 pr-8 rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-700 hover:bg-slate-50 focus:outline-none focus:border-[#092167] transition appearance-none cursor-pointer"
+              className="h-9 pl-3.5 pr-8 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:border-[#092167] transition appearance-none cursor-pointer"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -330,11 +340,12 @@ export default function SavedPacksPage() {
       ========================================================================= */}
       {currentPacks.length === 0 ? (
         <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3">
-          <p className="font-heading font-bold text-slate-800 text-lg">
+          <p className="font-heading font-medium text-slate-800 text-lg">
             No saved property packs found
           </p>
           <p className="text-xs text-slate-500 max-w-md mx-auto">
-            Try adjusting your search query or filter pills to see other saved packs.
+            Try adjusting your search query or filter pills to see other saved
+            packs.
           </p>
         </div>
       ) : (
@@ -367,11 +378,11 @@ export default function SavedPacksPage() {
                 {/* Top Left Badge: Status */}
                 <div className="absolute top-3 left-3 z-20">
                   {pack.status === "ready" ? (
-                    <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#10B981] text-white shadow-xs">
+                    <span className="px-3 py-1 rounded-full text-[11px] font-medium bg-[#10B981] text-white shadow-xs">
                       Ready
                     </span>
                   ) : (
-                    <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#FF9800] text-white shadow-xs">
+                    <span className="px-3 py-1 rounded-full text-[11px] font-medium bg-[#FF9800] text-white shadow-xs">
                       Draft
                     </span>
                   )}
@@ -379,7 +390,7 @@ export default function SavedPacksPage() {
 
                 {/* Top Right Badge: Country / Region */}
                 <div className="absolute top-3 right-3 z-20">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#06143E]/85 backdrop-blur-xs text-white">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#06143E]/85 backdrop-blur-xs text-white">
                     {pack.country}
                   </span>
                 </div>
@@ -391,7 +402,7 @@ export default function SavedPacksPage() {
                   {/* Property Title */}
                   <Link
                     href={`/agent-dashboard/editor?pack=${pack.id}`}
-                    className="block font-heading font-bold text-base text-slate-900 tracking-tight hover:text-[#092167] transition line-clamp-1"
+                    className="block font-heading font-medium text-base text-slate-900 tracking-tight hover:text-[#092167] transition line-clamp-1"
                     title={pack.title}
                   >
                     {pack.title}
@@ -403,22 +414,22 @@ export default function SavedPacksPage() {
                   </p>
 
                   {/* Price */}
-                  <p className="font-heading font-bold text-xl text-slate-900 mt-2.5">
+                  <p className="font-heading font-medium text-xl text-slate-900 mt-2.5">
                     {pack.displayPrice}
                   </p>
 
                   {/* Specs Pills */}
                   <div className="flex items-center flex-wrap gap-1.5 mt-3 select-none">
-                    <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-700">
+                    <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700">
                       {pack.beds} Beds
                     </span>
-                    <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-700">
+                    <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700">
                       {pack.baths} Baths
                     </span>
-                    <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-700">
+                    <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700">
                       {pack.sqft} sq ft
                     </span>
-                    <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-700">
+                    <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700">
                       {pack.propertyType}
                     </span>
                   </div>
@@ -429,7 +440,7 @@ export default function SavedPacksPage() {
                   {/* Edit Button */}
                   <Link
                     href={`/agent-dashboard/editor?pack=${pack.id}`}
-                    className="h-9 px-5 rounded-lg bg-[#06143E] hover:bg-[#0A1F5C] active:bg-[#040D28] text-white font-heading font-bold text-xs flex items-center justify-center transition shadow-2xs"
+                    className="h-9 px-5 rounded-lg bg-[#06143E] hover:bg-[#0A1F5C] active:bg-[#040D28] text-white font-heading font-medium text-xs flex items-center justify-center transition shadow-2xs"
                   >
                     Edit
                   </Link>
@@ -512,8 +523,8 @@ export default function SavedPacksPage() {
             onClick={() => setCurrentPage(1)}
             className={`w-8 h-8 rounded-lg font-heading text-xs transition cursor-pointer ${
               validPage === 1
-                ? "bg-[#06143E] text-white font-bold shadow-xs"
-                : "border border-slate-200 bg-white text-slate-700 font-semibold hover:bg-slate-50"
+                ? "bg-[#06143E] text-white font-medium shadow-xs"
+                : "border border-slate-200 bg-white text-slate-700 font-medium hover:bg-slate-50"
             }`}
           >
             1
@@ -526,8 +537,8 @@ export default function SavedPacksPage() {
               onClick={() => setCurrentPage(2)}
               className={`w-8 h-8 rounded-lg font-heading text-xs transition cursor-pointer ${
                 validPage === 2
-                  ? "bg-[#06143E] text-white font-bold shadow-xs"
-                  : "border border-slate-200 bg-white text-slate-700 font-semibold hover:bg-slate-50"
+                  ? "bg-[#06143E] text-white font-medium shadow-xs"
+                  : "border border-slate-200 bg-white text-slate-700 font-medium hover:bg-slate-50"
               }`}
             >
               2

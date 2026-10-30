@@ -3,7 +3,14 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Lock, Eye, EyeOff, Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
+import {
+  Lock,
+  Eye,
+  EyeOff,
+  Loader2,
+  ArrowLeft,
+  CheckCircle2,
+} from "lucide-react";
 import { useResetPasswordMutation } from "@/redux/api/auth/authApi";
 import toast from "react-hot-toast";
 
@@ -16,7 +23,8 @@ export default function ResetPasswordForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [resetPassword, { isLoading: isApiLoading }] = useResetPasswordMutation();
+  const [resetPassword, { isLoading: isApiLoading }] =
+    useResetPasswordMutation();
   const [isLocalLoading, setIsLocalLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -56,7 +64,7 @@ export default function ResetPasswordForm() {
   return (
     <div className="w-full max-w-[520px] bg-white rounded-[28px] p-8 sm:p-10 lg:p-11 shadow-[0_20px_50px_rgba(11,23,54,0.08),0_4px_16px_rgba(11,23,54,0.02)] border border-slate-100/80 transition-all duration-300">
       <div className="mb-7">
-        <h1 className="font-heading font-bold text-2xl sm:text-[30px] text-[#020618] tracking-tight mb-2">
+        <h1 className="font-heading font-medium text-2xl sm:text-[30px] text-[#020618] tracking-tight mb-2">
           Set new password
         </h1>
         <p className="font-sans text-sm sm:text-[14.5px] text-[#62748E] leading-relaxed">
@@ -86,7 +94,11 @@ export default function ResetPasswordForm() {
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
             >
-              {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+              {showPassword ? (
+                <Eye className="w-5 h-5" />
+              ) : (
+                <EyeOff className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
@@ -112,7 +124,11 @@ export default function ResetPasswordForm() {
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
             >
-              {showConfirmPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+              {showConfirmPassword ? (
+                <Eye className="w-5 h-5" />
+              ) : (
+                <EyeOff className="w-5 h-5" />
+              )}
             </button>
           </div>
         </div>
@@ -121,7 +137,7 @@ export default function ResetPasswordForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] text-white font-sans font-semibold text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+            className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] text-white font-sans font-medium text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
           >
             {isLoading ? (
               <>
@@ -143,7 +159,7 @@ export default function ResetPasswordForm() {
       <div className="text-center pt-5 border-t border-slate-100 mt-6">
         <Link
           href="/login"
-          className="inline-flex items-center gap-2 font-sans text-sm font-semibold text-[#0A2168] hover:text-[#06143E] hover:underline transition-colors"
+          className="inline-flex items-center gap-2 font-sans text-sm font-medium text-[#0A2168] hover:text-[#06143E] hover:underline transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to sign in</span>

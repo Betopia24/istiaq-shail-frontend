@@ -19,8 +19,11 @@ export function DashboardHeader({ role = "agent" }: DashboardHeaderProps) {
     window.location.href = "/login";
   };
 
-  const displayName = user?.name || (role === "admin" ? "Admin Workstation" : "Eleanor Vance");
-  const displayRole = user?.role || (role === "admin" ? "Super Administrator" : "Senior Property Agent");
+  const displayName =
+    user?.name || (role === "admin" ? "Admin Workstation" : "Eleanor Vance");
+  const displayRole =
+    user?.role ||
+    (role === "admin" ? "Super Administrator" : "Senior Property Agent");
 
   return (
     <header className="sticky top-0 z-30 h-18 bg-white border-b border-slate-200 px-6 sm:px-8 flex items-center justify-between">
@@ -39,7 +42,7 @@ export function DashboardHeader({ role = "agent" }: DashboardHeaderProps) {
       {/* Right Controls */}
       <div className="flex items-center gap-4">
         {/* Role Badge */}
-        <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+        <div className="hidden md:flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
           {role === "admin" ? (
             <>
               <ShieldCheck className="w-3.5 h-3.5 text-[#092167]" />
@@ -64,11 +67,11 @@ export function DashboardHeader({ role = "agent" }: DashboardHeaderProps) {
 
         {/* User Card */}
         <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#092167] to-[#1E3A8A] text-white font-heading font-semibold text-sm flex items-center justify-center shadow-sm">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#092167] to-[#1E3A8A] text-white font-heading font-medium text-sm flex items-center justify-center shadow-sm">
             {displayName.charAt(0).toUpperCase()}
           </div>
           <div className="hidden sm:block text-left">
-            <p className="text-sm font-semibold text-slate-900 leading-tight">
+            <p className="text-sm font-medium text-slate-900 leading-tight">
               {displayName}
             </p>
             <p className="text-xs text-slate-500">{displayRole}</p>

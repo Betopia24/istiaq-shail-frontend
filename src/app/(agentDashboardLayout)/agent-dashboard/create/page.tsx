@@ -76,7 +76,7 @@ export default function CreatePackPage() {
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -122,7 +122,7 @@ export default function CreatePackPage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-7 pb-16">
+    <div className="space-y-8 pb-12">
       {/* Toast Feedback */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3.5 rounded-xl shadow-2xl border border-slate-700 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200">
@@ -134,10 +134,15 @@ export default function CreatePackPage() {
       )}
 
       {/* Top Page Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
-          Create Property Pack
-        </h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            Create Property Pack
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Generate AI-powered brochures, valuation presentations &amp; buyer packs in seconds
+          </p>
+        </div>
       </div>
 
       {/* =========================================================================
@@ -152,17 +157,17 @@ export default function CreatePackPage() {
           >
             <div className="flex items-center gap-1.5 mb-2">
               {currentStep > 1 ? (
-                <span className="w-4 h-4 rounded-full bg-[#06143E] text-[#E8A808] flex items-center justify-center text-[10px] font-bold">
+                <span className="w-4 h-4 rounded-full bg-[#06143E] text-[#E8A808] flex items-center justify-center text-[10px] font-medium">
                   ✓
                 </span>
               ) : null}
               <span
-                className={`text-xs font-semibold tracking-wide transition-colors ${
+                className={`text-xs font-medium tracking-wide transition-colors ${
                   currentStep === 1
-                    ? "text-[#06143E] font-bold"
+                    ? "text-[#06143E] font-medium"
                     : currentStep > 1
-                    ? "text-slate-800"
-                    : "text-slate-400 group-hover:text-slate-600"
+                      ? "text-slate-800"
+                      : "text-slate-400 group-hover:text-slate-600"
                 }`}
               >
                 Step 1: Details
@@ -183,17 +188,17 @@ export default function CreatePackPage() {
           >
             <div className="flex items-center gap-1.5 mb-2">
               {currentStep > 2 ? (
-                <span className="w-4 h-4 rounded-full bg-[#06143E] text-[#E8A808] flex items-center justify-center text-[10px] font-bold">
+                <span className="w-4 h-4 rounded-full bg-[#06143E] text-[#E8A808] flex items-center justify-center text-[10px] font-medium">
                   ✓
                 </span>
               ) : null}
               <span
-                className={`text-xs font-semibold tracking-wide transition-colors ${
+                className={`text-xs font-medium tracking-wide transition-colors ${
                   currentStep === 2
-                    ? "text-[#06143E] font-bold"
+                    ? "text-[#06143E] font-medium"
                     : currentStep > 2
-                    ? "text-slate-800"
-                    : "text-slate-400 group-hover:text-slate-600"
+                      ? "text-slate-800"
+                      : "text-slate-400 group-hover:text-slate-600"
                 }`}
               >
                 Step 2: Upload Photos
@@ -214,9 +219,9 @@ export default function CreatePackPage() {
           >
             <div className="flex items-center gap-1.5 mb-2">
               <span
-                className={`text-xs font-semibold tracking-wide transition-colors ${
+                className={`text-xs font-medium tracking-wide transition-colors ${
                   currentStep === 3
-                    ? "text-[#06143E] font-bold"
+                    ? "text-[#06143E] font-medium"
                     : "text-slate-400 group-hover:text-slate-600"
                 }`}
               >
@@ -244,7 +249,7 @@ export default function CreatePackPage() {
           <div className="space-y-6">
             {/* Card Header */}
             <div>
-              <h2 className="font-heading font-bold text-xl sm:text-2xl text-slate-900 tracking-tight">
+              <h2 className="font-heading font-medium text-xl sm:text-2xl text-slate-900 tracking-tight">
                 Property Information
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -257,8 +262,9 @@ export default function CreatePackPage() {
             <div className="space-y-4 pt-2">
               {/* Estimated Listing Title */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 tracking-wider uppercase mb-1.5">
-                  ESTIMATED LISTING TITLE <span className="text-amber-500">*</span>
+                <label className="block text-[11px] font-medium text-slate-600 tracking-wider uppercase mb-1.5">
+                  ESTIMATED LISTING TITLE{" "}
+                  <span className="text-amber-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -272,7 +278,7 @@ export default function CreatePackPage() {
 
               {/* Full Property Address & Postcode */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 tracking-wider uppercase mb-1.5">
+                <label className="block text-[11px] font-medium text-slate-600 tracking-wider uppercase mb-1.5">
                   FULL PROPERTY ADDRESS & POSTCODE{" "}
                   <span className="text-amber-500">*</span>
                 </label>
@@ -289,7 +295,7 @@ export default function CreatePackPage() {
               {/* Price & Property Type (2 columns) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-600 tracking-wider uppercase mb-1.5">
+                  <label className="block text-[11px] font-medium text-slate-600 tracking-wider uppercase mb-1.5">
                     GUIDE / ASKING PRICE (£){" "}
                     <span className="text-amber-500">*</span>
                   </label>
@@ -304,7 +310,7 @@ export default function CreatePackPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-600 tracking-wider uppercase mb-1.5">
+                  <label className="block text-[11px] font-medium text-slate-600 tracking-wider uppercase mb-1.5">
                     PROPERTY TYPE <span className="text-amber-500">*</span>
                   </label>
                   <select
@@ -326,7 +332,7 @@ export default function CreatePackPage() {
               {/* Bedrooms, Bathrooms, Size (3 columns) */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-600 tracking-wider uppercase mb-1.5">
+                  <label className="block text-[11px] font-medium text-slate-600 tracking-wider uppercase mb-1.5">
                     BEDROOMS
                   </label>
                   <input
@@ -340,7 +346,7 @@ export default function CreatePackPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-600 tracking-wider uppercase mb-1.5">
+                  <label className="block text-[11px] font-medium text-slate-600 tracking-wider uppercase mb-1.5">
                     BATHROOMS
                   </label>
                   <input
@@ -354,7 +360,7 @@ export default function CreatePackPage() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-600 tracking-wider uppercase mb-1.5">
+                  <label className="block text-[11px] font-medium text-slate-600 tracking-wider uppercase mb-1.5">
                     PROPERTY SIZE (SQ FT)
                   </label>
                   <input
@@ -370,7 +376,7 @@ export default function CreatePackPage() {
 
               {/* Parking & Garage */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 tracking-wider uppercase mb-1.5">
+                <label className="block text-[11px] font-medium text-slate-600 tracking-wider uppercase mb-1.5">
                   PARKING & GARAGE
                 </label>
                 <input
@@ -385,7 +391,7 @@ export default function CreatePackPage() {
 
               {/* Property Highlights & Amenities */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 tracking-wider uppercase mb-1.5">
+                <label className="block text-[11px] font-medium text-slate-600 tracking-wider uppercase mb-1.5">
                   PROPERTY HIGHLIGHTS & AMENITIES
                 </label>
                 <textarea
@@ -403,7 +409,7 @@ export default function CreatePackPage() {
             <div className="pt-6 border-t border-slate-100 flex items-center justify-between">
               <Link
                 href="/agent-dashboard"
-                className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium text-xs transition inline-flex items-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Back</span>
@@ -412,7 +418,7 @@ export default function CreatePackPage() {
               <button
                 type="button"
                 onClick={() => setCurrentStep(2)}
-                className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer"
+                className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer"
               >
                 <span>Continue to Photos</span>
                 <ArrowRight className="w-3.5 h-3.5 stroke-[3]" />
@@ -428,11 +434,12 @@ export default function CreatePackPage() {
           <div className="space-y-6">
             {/* Card Header */}
             <div>
-              <h2 className="font-heading font-bold text-xl sm:text-2xl text-slate-900 tracking-tight">
+              <h2 className="font-heading font-medium text-xl sm:text-2xl text-slate-900 tracking-tight">
                 Upload Property Imagery
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                Provide at least 3 photos (up to 12 photos). Front photo will be used as the primary cover.
+                Provide at least 3 photos (up to 12 photos). Front photo will be
+                used as the primary cover.
               </p>
             </div>
 
@@ -454,24 +461,28 @@ export default function CreatePackPage() {
               <div className="w-12 h-12 rounded-full bg-slate-100 group-hover:bg-[#092167]/10 text-slate-500 group-hover:text-[#092167] flex items-center justify-center mx-auto mb-3 transition">
                 <Upload className="w-5 h-5" />
               </div>
-              <p className="font-semibold text-sm text-slate-800">
-                Drag photos here or <span className="text-[#092167] underline">click to browse</span>
+              <p className="font-medium text-sm text-slate-800">
+                Drag photos here or{" "}
+                <span className="text-[#092167] underline">
+                  click to browse
+                </span>
               </p>
               <p className="text-xs text-slate-400 mt-1">
-                Supports JPG, PNG or WEBP • Optimized automatically for print PDF
+                Supports JPG, PNG or WEBP • Optimized automatically for print
+                PDF
               </p>
             </div>
 
             {/* Uploaded Photos Grid */}
             <div className="space-y-3 pt-2">
               <div className="flex items-center justify-between">
-                <label className="text-[11px] font-bold text-slate-600 tracking-wider uppercase">
+                <label className="text-[11px] font-medium text-slate-600 tracking-wider uppercase">
                   UPLOADED PHOTOS ({photos.length} of 10)
                 </label>
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="text-xs font-semibold text-[#092167] hover:underline flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-medium text-[#092167] hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Add More</span>
@@ -495,11 +506,11 @@ export default function CreatePackPage() {
                     {/* Badge */}
                     <div className="absolute top-2 left-2 z-10">
                       {photo.isCover ? (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-[#E8A808] text-[#06143E] shadow-xs">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#E8A808] text-[#06143E] shadow-xs">
                           ★ COVER
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-900/80 text-white backdrop-blur-xs">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-900/80 text-white backdrop-blur-xs">
                           {idx + 1}. {photo.label}
                         </span>
                       )}
@@ -526,7 +537,7 @@ export default function CreatePackPage() {
                     >
                       <Plus className="w-4 h-4 stroke-[2]" />
                     </div>
-                  )
+                  ),
                 )}
               </div>
             </div>
@@ -536,7 +547,7 @@ export default function CreatePackPage() {
               <button
                 type="button"
                 onClick={() => setCurrentStep(1)}
-                className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium text-xs transition inline-flex items-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Back</span>
@@ -545,7 +556,7 @@ export default function CreatePackPage() {
               <button
                 type="button"
                 onClick={() => setCurrentStep(3)}
-                className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer"
+                className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer"
               >
                 <span>Continue to Review</span>
                 <ArrowRight className="w-3.5 h-3.5 stroke-[3]" />
@@ -561,11 +572,12 @@ export default function CreatePackPage() {
           <div className="space-y-6">
             {/* Card Header */}
             <div>
-              <h2 className="font-heading font-bold text-xl sm:text-2xl text-slate-900 tracking-tight">
+              <h2 className="font-heading font-medium text-xl sm:text-2xl text-slate-900 tracking-tight">
                 Review & Generate Brochure
               </h2>
               <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                Make sure your specifications are verified before generating your marketing materials and PDF.
+                Make sure your specifications are verified before generating
+                your marketing materials and PDF.
               </p>
             </div>
 
@@ -579,7 +591,7 @@ export default function CreatePackPage() {
                     <span className="text-slate-500 font-medium">
                       Listing Reference
                     </span>
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-medium text-slate-900">
                       16 Gorse Drive
                     </span>
                   </div>
@@ -589,7 +601,7 @@ export default function CreatePackPage() {
                     <span className="text-slate-500 font-medium">
                       Property Type
                     </span>
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-medium text-slate-900">
                       {formData.propertyType} - For Sale
                     </span>
                   </div>
@@ -597,23 +609,27 @@ export default function CreatePackPage() {
                   {/* Row 3 */}
                   <div className="py-3 flex items-center justify-between">
                     <span className="text-slate-500 font-medium">Location</span>
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-medium text-slate-900">
                       Chorlton, Manchester
                     </span>
                   </div>
 
                   {/* Row 4 */}
                   <div className="py-3 flex items-center justify-between">
-                    <span className="text-slate-500 font-medium">Guide Price</span>
-                    <span className="font-semibold text-slate-900">
+                    <span className="text-slate-500 font-medium">
+                      Guide Price
+                    </span>
+                    <span className="font-medium text-slate-900">
                       {formData.price}
                     </span>
                   </div>
 
                   {/* Row 5 */}
                   <div className="py-3 flex items-center justify-between">
-                    <span className="text-slate-500 font-medium">Total Space</span>
-                    <span className="font-semibold text-slate-900">
+                    <span className="text-slate-500 font-medium">
+                      Total Space
+                    </span>
+                    <span className="font-medium text-slate-900">
                       {formData.bedrooms.replace(" Bedrooms", " Beds")} •{" "}
                       {formData.bathrooms.replace(" Bathrooms", " Baths")} •{" "}
                       {formData.size}
@@ -625,7 +641,7 @@ export default function CreatePackPage() {
                     <span className="text-slate-500 font-medium">
                       Photos Included
                     </span>
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-medium text-slate-900">
                       {photos.length} / 12 photos optimized
                     </span>
                   </div>
@@ -635,7 +651,7 @@ export default function CreatePackPage() {
                     <span className="text-slate-500 font-medium">
                       Target Compliance
                     </span>
-                    <span className="font-semibold text-emerald-600 flex items-center gap-1.5">
+                    <span className="font-medium text-emerald-600 flex items-center gap-1.5">
                       <ShieldCheck className="w-4 h-4 text-emerald-600" />
                       <span>UK Trading Standards (CPR)</span>
                     </span>
@@ -646,7 +662,7 @@ export default function CreatePackPage() {
                     <span className="text-slate-500 font-medium">
                       Linked Agency Branding
                     </span>
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-medium text-slate-900">
                       Prestige Estates UK
                     </span>
                   </div>
@@ -664,7 +680,7 @@ export default function CreatePackPage() {
                     className="object-cover"
                   />
                   <div className="absolute top-2.5 left-2.5 z-10">
-                    <span className="inline-block px-2.5 py-1 rounded text-[10px] font-bold bg-slate-900/85 text-white tracking-wider uppercase backdrop-blur-xs">
+                    <span className="inline-block px-2.5 py-1 rounded text-[10px] font-medium bg-slate-900/85 text-white tracking-wider uppercase backdrop-blur-xs">
                       COVER PREVIEW
                     </span>
                   </div>
@@ -674,12 +690,14 @@ export default function CreatePackPage() {
                 <div className="bg-slate-50 rounded-xl p-4 border border-slate-200/80 space-y-1">
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-3.5 h-3.5 text-[#E8A808]" />
-                    <p className="font-semibold text-xs text-slate-900">
+                    <p className="font-medium text-xs text-slate-900">
                       1 Pack Credit will be used
                     </p>
                   </div>
                   <p className="text-[11px] text-slate-500 leading-relaxed">
-                    This pack will be compiled into brochure copy and printable PDF immediately. You can make adjustments and regenerations anytime before export.
+                    This pack will be compiled into brochure copy and printable
+                    PDF immediately. You can make adjustments and regenerations
+                    anytime before export.
                   </p>
                 </div>
               </div>
@@ -690,7 +708,7 @@ export default function CreatePackPage() {
               <button
                 type="button"
                 onClick={() => setCurrentStep(2)}
-                className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition inline-flex items-center gap-1.5 cursor-pointer"
+                className="h-10 px-5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium text-xs transition inline-flex items-center gap-1.5 cursor-pointer"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Back</span>
@@ -700,7 +718,7 @@ export default function CreatePackPage() {
                 type="button"
                 disabled={isGenerating}
                 onClick={handleGenerate}
-                className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer disabled:opacity-75"
+                className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer disabled:opacity-75"
               >
                 {isGenerating ? (
                   <>

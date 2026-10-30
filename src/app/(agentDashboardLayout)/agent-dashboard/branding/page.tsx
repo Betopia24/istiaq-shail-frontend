@@ -17,14 +17,14 @@ export default function AgencyBrandingPage() {
   const [agencyName, setAgencyName] = useState("Prestige Estates UK");
   const [tradingRegion, setTradingRegion] = useState("Manchester & Cheshire");
   const [licenseNumber, setLicenseNumber] = useState(
-    "CRN-08492011 / TPO-MB920"
+    "CRN-08492011 / TPO-MB920",
   );
   const [officePhone, setOfficePhone] = useState("+44 161 496 0200");
   const [inquiryEmail, setInquiryEmail] = useState(
-    "contact@prestigeestates.co.uk"
+    "contact@prestigeestates.co.uk",
   );
   const [officeAddress, setOfficeAddress] = useState(
-    "14 Wilmslow Road, Didsbury, Manchester, M20 2RN"
+    "14 Wilmslow Road, Didsbury, Manchester, M20 2RN",
   );
 
   // Logo state
@@ -40,7 +40,7 @@ export default function AgencyBrandingPage() {
 
   // Disclaimer text (dynamically adapts based on market or editable)
   const [disclaimerNotice, setDisclaimerNotice] = useState(
-    "These particulars do not constitute any part of an offer or contract. All measurements, fixtures, and room layouts are approximate and verified independently."
+    "These particulars do not constitute any part of an offer or contract. All measurements, fixtures, and room layouts are approximate and verified independently.",
   );
 
   // Save feedback state
@@ -60,11 +60,11 @@ export default function AgencyBrandingPage() {
     setSelectedMarket(market);
     if (market === "UK") {
       setDisclaimerNotice(
-        "These particulars do not constitute any part of an offer or contract. All measurements, fixtures, and room layouts are approximate and verified independently."
+        "These particulars do not constitute any part of an offer or contract. All measurements, fixtures, and room layouts are approximate and verified independently.",
       );
     } else {
       setDisclaimerNotice(
-        "Information is deemed reliable but not guaranteed. All properties are subject to prior sale, change, or withdrawal. Neither listing broker nor Property Pack AI shall be responsible for any typographical errors or misinformation."
+        "Information is deemed reliable but not guaranteed. All properties are subject to prior sale, change, or withdrawal. Neither listing broker nor Property Pack AI shall be responsible for any typographical errors or misinformation.",
       );
     }
   };
@@ -86,7 +86,7 @@ export default function AgencyBrandingPage() {
   };
 
   return (
-    <div className="mx-auto space-y-6 pb-12 max-w-6xl">
+    <div className="space-y-8 pb-12">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3.5 rounded-lg shadow-2xl border border-slate-700 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200">
@@ -100,13 +100,15 @@ export default function AgencyBrandingPage() {
       {/* =========================================================================
           PAGE HEADER
       ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-baseline gap-2">
-        <h1 className="font-heading font-bold text-xl sm:text-2xl text-slate-900 tracking-tight">
-          Agency Branding &amp; Localization
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500">
-          Single consolidated form to configure firm assets, primary currency, and legal defaults
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            Agency Branding &amp; Localization
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Single consolidated form to configure firm assets, primary currency, and legal defaults
+          </p>
+        </div>
       </div>
 
       {/* =========================================================================
@@ -121,11 +123,12 @@ export default function AgencyBrandingPage() {
         ======================================================================= */}
         <div className="space-y-6">
           <div>
-            <h2 className="font-heading font-bold text-base sm:text-lg text-slate-900">
+            <h2 className="font-heading font-medium text-base sm:text-lg text-slate-900">
               1. Agency Profile &amp; Regulatory Credentials
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Applied directly to PDF brochure covers, public links, and regulatory compliance notices
+              Applied directly to PDF brochure covers, public links, and
+              regulatory compliance notices
             </p>
           </div>
 
@@ -157,7 +160,7 @@ export default function AgencyBrandingPage() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="h-9 px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-semibold text-xs flex items-center gap-2 cursor-pointer transition shadow-2xs"
+                className="h-9 px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-medium text-xs flex items-center gap-2 cursor-pointer transition shadow-2xs"
               >
                 Upload Vector Logo
               </button>
@@ -171,7 +174,7 @@ export default function AgencyBrandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1">
             {/* Field 1: Commercial Name */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] font-medium text-slate-700 uppercase tracking-wider mb-1.5">
                 Agency Commercial Name
               </label>
               <input
@@ -185,7 +188,7 @@ export default function AgencyBrandingPage() {
 
             {/* Field 2: Trading Region */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] font-medium text-slate-700 uppercase tracking-wider mb-1.5">
                 Trading Region / Sub-Territory
               </label>
               <input
@@ -199,7 +202,7 @@ export default function AgencyBrandingPage() {
 
             {/* Field 3: Regulatory License */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] font-medium text-slate-700 uppercase tracking-wider mb-1.5">
                 Regulatory License / Company Reg. No. (CRN / DRE / TPO)
               </label>
               <input
@@ -213,7 +216,7 @@ export default function AgencyBrandingPage() {
 
             {/* Field 4: Office Telephone */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] font-medium text-slate-700 uppercase tracking-wider mb-1.5">
                 Office Telephone
               </label>
               <input
@@ -227,7 +230,7 @@ export default function AgencyBrandingPage() {
 
             {/* Field 5: Public Inquiry Email */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] font-medium text-slate-700 uppercase tracking-wider mb-1.5">
                 Public Inquiry Email
               </label>
               <input
@@ -241,7 +244,7 @@ export default function AgencyBrandingPage() {
 
             {/* Field 6: Registered Office Address */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+              <label className="block text-[11px] font-medium text-slate-700 uppercase tracking-wider mb-1.5">
                 Registered Office Address
               </label>
               <input
@@ -263,11 +266,12 @@ export default function AgencyBrandingPage() {
         ======================================================================= */}
         <div className="space-y-4">
           <div>
-            <h2 className="font-heading font-bold text-base sm:text-lg text-slate-900">
+            <h2 className="font-heading font-medium text-base sm:text-lg text-slate-900">
               2. Palette &amp; Brochure Accent Colors
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Defines styling for brochures, viewing buttons, and interactive cards
+              Defines styling for brochures, viewing buttons, and interactive
+              cards
             </p>
           </div>
 
@@ -280,7 +284,7 @@ export default function AgencyBrandingPage() {
                   style={{ backgroundColor: primaryColor }}
                 />
                 <div className="min-w-0">
-                  <p className="font-semibold text-xs sm:text-sm text-slate-900">
+                  <p className="font-medium text-xs sm:text-sm text-slate-900">
                     Primary Navy Color
                   </p>
                   <p className="text-[11px] text-slate-400 truncate mt-0.5">
@@ -305,7 +309,7 @@ export default function AgencyBrandingPage() {
                   style={{ backgroundColor: accentColor }}
                 />
                 <div className="min-w-0">
-                  <p className="font-semibold text-xs sm:text-sm text-slate-900">
+                  <p className="font-medium text-xs sm:text-sm text-slate-900">
                     Accent Gold Color
                   </p>
                   <p className="text-[11px] text-slate-400 truncate mt-0.5">
@@ -332,11 +336,12 @@ export default function AgencyBrandingPage() {
         ======================================================================= */}
         <div className="space-y-4">
           <div>
-            <h2 className="font-heading font-bold text-base sm:text-lg text-slate-900">
+            <h2 className="font-heading font-medium text-base sm:text-lg text-slate-900">
               3. Operating Market, Currency &amp; Legal Compliance
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Determines default currency symbols, spelling rules, and disclaimer notices across all generated assets
+              Determines default currency symbols, spelling rules, and
+              disclaimer notices across all generated assets
             </p>
           </div>
 
@@ -352,11 +357,11 @@ export default function AgencyBrandingPage() {
               }`}
             >
               <div className="flex items-center gap-3.5 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-[#06143E] text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-2xs">
+                <div className="w-8 h-8 rounded-full bg-[#06143E] text-white font-medium text-sm flex items-center justify-center shrink-0 shadow-2xs">
                   £
                 </div>
                 <div className="min-w-0">
-                  <p className="font-bold text-xs sm:text-sm text-slate-900">
+                  <p className="font-medium text-xs sm:text-sm text-slate-900">
                     United Kingdom (UK)
                   </p>
                   <p className="text-[11px] text-[#B58306] font-medium mt-0.5">
@@ -387,11 +392,11 @@ export default function AgencyBrandingPage() {
               }`}
             >
               <div className="flex items-center gap-3.5 min-w-0">
-                <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold text-sm flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-medium text-sm flex items-center justify-center shrink-0">
                   $
                 </div>
                 <div className="min-w-0">
-                  <p className="font-bold text-xs sm:text-sm text-slate-700">
+                  <p className="font-medium text-xs sm:text-sm text-slate-700">
                     United States (US)
                   </p>
                   <p className="text-[11px] text-slate-400 font-normal mt-0.5">
@@ -415,12 +420,16 @@ export default function AgencyBrandingPage() {
 
           {/* Mandatory Legal Disclaimer */}
           <div className="pt-2">
-            <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
+            <label className="block text-[11px] font-medium text-slate-700 uppercase tracking-wider mb-2">
               Mandatory Legal Disclaimer (Printed on PDF &amp; Web Footers)
             </label>
             <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-4 space-y-1">
-              <p className="font-mono font-bold text-xs text-slate-900 uppercase">
-                Compliance Notice ({selectedMarket === "UK" ? "UK CPR 2008" : "US Standard Disclosures"}):
+              <p className="font-mono font-medium text-xs text-slate-900 uppercase">
+                Compliance Notice (
+                {selectedMarket === "UK"
+                  ? "UK CPR 2008"
+                  : "US Standard Disclosures"}
+                ):
               </p>
               <textarea
                 rows={2}
@@ -439,7 +448,7 @@ export default function AgencyBrandingPage() {
           <button
             type="submit"
             disabled={isSaving}
-            className="h-11 px-7 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-bold text-sm shadow-[0_2px_10px_rgba(255,184,0,0.3)] transition cursor-pointer flex items-center justify-center gap-2 self-start sm:self-auto disabled:opacity-75"
+            className="h-11 px-7 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-medium text-sm shadow-[0_2px_10px_rgba(255,184,0,0.3)] transition cursor-pointer flex items-center justify-center gap-2 self-start sm:self-auto disabled:opacity-75"
           >
             {isSaving ? (
               <>
@@ -451,7 +460,8 @@ export default function AgencyBrandingPage() {
             )}
           </button>
           <p className="text-xs text-slate-500">
-            Changes take effect globally across all active packs, PDFs, and team links.
+            Changes take effect globally across all active packs, PDFs, and team
+            links.
           </p>
         </div>
       </form>

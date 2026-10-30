@@ -70,7 +70,7 @@ export default function SuperAdminSettingsPage() {
   const entropyBars = getEntropyLevel(newPassword);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="space-y-8 pb-12">
       {/* Toast Alert */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-[#E8A808]/40 animate-fade-in">
@@ -81,7 +81,7 @@ export default function SuperAdminSettingsPage() {
 
       {/* Header */}
       <div>
-        <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+        <h1 className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
           Super Admin Settings &amp; Security
         </h1>
         <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -94,7 +94,7 @@ export default function SuperAdminSettingsPage() {
         {/* Left Column: Super Admin Profile */}
         <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-8">
           <div>
-            <h2 className="font-heading font-bold text-lg text-slate-900">
+            <h2 className="font-heading font-medium text-lg text-slate-900">
               Super Admin Profile
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -104,14 +104,14 @@ export default function SuperAdminSettingsPage() {
 
           {/* Avatar Section */}
           <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-4 pb-6 border-b border-slate-100">
-            <div className="w-16 h-16 rounded-full bg-[#06143E] text-[#E8A808] font-heading font-bold text-xl flex items-center justify-center shrink-0 shadow-inner">
+            <div className="w-16 h-16 rounded-full bg-[#06143E] text-[#E8A808] font-heading font-medium text-xl flex items-center justify-center shrink-0 shadow-inner">
               IS
             </div>
             <div>
               <button
                 type="button"
                 onClick={() => showToast("Avatar upload feature ready")}
-                className="px-3.5 py-1.5 rounded-lg border border-slate-200 hover:border-slate-300 text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 transition cursor-pointer"
+                className="px-3.5 py-1.5 rounded-lg border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 transition cursor-pointer"
               >
                 Change Avatar
               </button>
@@ -124,7 +124,7 @@ export default function SuperAdminSettingsPage() {
           {/* Form Fields */}
           <form onSubmit={handleSaveProfile} className="mt-6 space-y-5">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+              <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-2">
                 Platform Owner Name
               </label>
               <input
@@ -137,7 +137,7 @@ export default function SuperAdminSettingsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+                <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-2">
                   Super Admin Login Email
                 </label>
                 <input
@@ -149,7 +149,7 @@ export default function SuperAdminSettingsPage() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
+                <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-2">
                   Platform Escalation Phone
                 </label>
                 <input
@@ -164,7 +164,7 @@ export default function SuperAdminSettingsPage() {
             <div className="pt-3 flex justify-end">
               <button
                 type="submit"
-                className="h-11 px-6 rounded-lg bg-[#E8A808] hover:bg-[#d89b05] text-[#06143E] font-bold text-sm shadow-sm transition cursor-pointer"
+                className="h-11 px-6 rounded-lg bg-[#E8A808] hover:bg-[#d89b05] text-[#06143E] font-medium text-sm shadow-sm transition cursor-pointer"
               >
                 Save Admin Profile
               </button>
@@ -177,7 +177,7 @@ export default function SuperAdminSettingsPage() {
           {/* Top Card: Change Password */}
           <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-7">
             <div>
-              <h2 className="font-heading font-bold text-lg text-slate-900">
+              <h2 className="font-heading font-medium text-lg text-slate-900">
                 Change Password
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -187,7 +187,7 @@ export default function SuperAdminSettingsPage() {
 
             <form onSubmit={handleUpdatePassword} className="mt-5 space-y-4">
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1.5">
                   Current Password
                 </label>
                 <input
@@ -200,7 +200,7 @@ export default function SuperAdminSettingsPage() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1.5">
                   New Password
                 </label>
                 <input
@@ -230,7 +230,7 @@ export default function SuperAdminSettingsPage() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1.5">
                   Confirm Password
                 </label>
                 <input
@@ -245,7 +245,7 @@ export default function SuperAdminSettingsPage() {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full h-10 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white text-xs sm:text-sm font-semibold shadow-sm transition cursor-pointer"
+                  className="w-full h-10 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white text-xs sm:text-sm font-medium shadow-sm transition cursor-pointer"
                 >
                   Update Password
                 </button>
@@ -256,7 +256,7 @@ export default function SuperAdminSettingsPage() {
           {/* Bottom Card: Admin Session & Sign Out */}
           <div className="bg-white rounded-2xl border border-rose-200/80 shadow-sm p-6 sm:p-7">
             <div>
-              <h2 className="font-heading font-bold text-base text-rose-600">
+              <h2 className="font-heading font-medium text-base text-rose-600">
                 Admin Session &amp; Sign Out
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
@@ -268,7 +268,7 @@ export default function SuperAdminSettingsPage() {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="w-full h-11 rounded-lg border border-rose-200 bg-rose-50/60 hover:bg-rose-100/70 text-rose-600 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer"
+                className="w-full h-11 rounded-lg border border-rose-200 bg-rose-50/60 hover:bg-rose-100/70 text-rose-600 font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
                 <span>Log Out of Super Admin</span>

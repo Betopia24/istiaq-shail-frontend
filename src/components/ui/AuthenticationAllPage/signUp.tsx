@@ -3,7 +3,16 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, Building2, Mail, Lock, Eye, EyeOff, Loader2, CheckCircle2 } from "lucide-react";
+import {
+  User,
+  Building2,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Loader2,
+  CheckCircle2,
+} from "lucide-react";
 import { useSignUpMutation } from "@/redux/api/auth/authApi";
 import { useAppDispatch } from "@/redux/hook";
 import { setCredentials } from "@/feature/user/userSlice";
@@ -14,7 +23,9 @@ export default function SignUpForm() {
   const [companyName, setCompanyName] = useState("Vance Prestige Properties");
   const [email, setEmail] = useState("eleanor@vanceprestige.com");
   const [password, setPassword] = useState("KensingtonVault2024!");
-  const [confirmPassword, setConfirmPassword] = useState("KensingtonVault2024!");
+  const [confirmPassword, setConfirmPassword] = useState(
+    "KensingtonVault2024!",
+  );
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -55,7 +66,7 @@ export default function SignUpForm() {
               role: res.data.role || "AGENT",
             },
             accessToken: res.data.accessToken,
-          })
+          }),
         );
       }
 
@@ -67,7 +78,9 @@ export default function SignUpForm() {
     } catch (err: any) {
       // In demo mode or if server is offline
       const errorMsg =
-        err?.data?.message || err?.message || "Account created (demo workstation mode)";
+        err?.data?.message ||
+        err?.message ||
+        "Account created (demo workstation mode)";
       toast.success(errorMsg);
 
       dispatch(
@@ -79,7 +92,7 @@ export default function SignUpForm() {
             role: "AGENT",
           },
           accessToken: "demo-jwt-token",
-        })
+        }),
       );
 
       setIsSuccess(true);
@@ -95,7 +108,7 @@ export default function SignUpForm() {
     <div className="w-full max-w-[520px] bg-white rounded-[28px] p-8 sm:p-10 lg:p-11 shadow-[0_20px_50px_rgba(11,23,54,0.08),0_4px_16px_rgba(11,23,54,0.02)] border border-slate-100/80 transition-all duration-300">
       {/* Header */}
       <div className="mb-7">
-        <h1 className="font-heading font-bold text-2xl sm:text-[30px] text-[#020618] tracking-tight mb-2">
+        <h1 className="font-heading font-medium text-2xl sm:text-[30px] text-[#020618] tracking-tight mb-2">
           Create your account
         </h1>
         <p className="font-sans text-sm sm:text-[14.5px] text-[#62748E] leading-relaxed">
@@ -217,7 +230,9 @@ export default function SignUpForm() {
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none transition-colors"
-              aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+              aria-label={
+                showConfirmPassword ? "Hide password" : "Show password"
+              }
             >
               {showConfirmPassword ? (
                 <Eye className="w-5 h-5 stroke-[1.75]" />
@@ -233,7 +248,7 @@ export default function SignUpForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-semibold text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full h-[50px] bg-[#0A2168] hover:bg-[#06143E] active:bg-[#040E2C] text-white font-sans font-medium text-[15px] rounded-lg shadow-[0_4px_14px_rgba(10,33,104,0.25)] hover:shadow-[0_6px_18px_rgba(10,33,104,0.35)] active:scale-[0.99] transition-all duration-150 flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
           >
             {isLoading ? (
               <>
@@ -257,7 +272,7 @@ export default function SignUpForm() {
             Already have an account?{" "}
             <Link
               href="/login"
-              className="font-semibold text-[#0A2168] hover:text-[#06143E] hover:underline transition-colors"
+              className="font-medium text-[#0A2168] hover:text-[#06143E] hover:underline transition-colors"
             >
               Sign in
             </Link>
@@ -268,11 +283,17 @@ export default function SignUpForm() {
         <div className="text-center pt-2 pb-1">
           <p className="font-sans text-xs text-slate-400 leading-normal max-w-sm mx-auto">
             By creating an account, you agree to our{" "}
-            <Link href="/terms" className="text-[#0A2168] font-medium hover:underline">
+            <Link
+              href="/terms"
+              className="text-[#0A2168] font-medium hover:underline"
+            >
               Terms of Use
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="text-[#0A2168] font-medium hover:underline">
+            <Link
+              href="/privacy"
+              className="text-[#0A2168] font-medium hover:underline"
+            >
               Privacy Policy
             </Link>
             .
