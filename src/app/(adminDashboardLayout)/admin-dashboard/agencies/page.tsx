@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { DangerModal } from "@/components/ui/DangerModal";
 import {
   Search,
   ChevronDown,
@@ -91,10 +92,22 @@ export default function AgenciesAndUsersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [agentToSuspend, setAgentToSuspend] = useState<AgentRecord | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const confirmSuspendAgent = () => {
+    if (!agentToSuspend) return;
+    setAgents((prev) =>
+      prev.map((a) =>
+        a.id === agentToSuspend.id ? { ...a, status: "SUSPENDED" } : a
+      )
+    );
+    showToast(`Access suspended for ${agentToSuspend.name} (${agentToSuspend.agency})`);
+    setAgentToSuspend(null);
   };
 
   const handleToggleStatus = (id: string, name: string) => {
@@ -158,6 +171,18 @@ export default function AgenciesAndUsersPage() {
           </h1>
         </div>
       </div>
+
+      {/* Destructive Action Modal */}
+      <DangerModal
+        isOpen={!!agentToSuspend}
+        onClose={() => setAgentToSuspend(null)}
+        onConfirm={confirmSuspendAgent}
+        title="Suspend Agency Account"
+        description="Are you sure you want to suspend this agency user account? Their valuers and active API keys will be immediately revoked."
+        itemName={agentToSuspend ? `${agentToSuspend.name} - ${agentToSuspend.agency} (${agentToSuspend.email})` : undefined}
+        confirmText="Suspend Account"
+        icon="warning"
+      />
 
       {/* Main Table Card */}
       <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">

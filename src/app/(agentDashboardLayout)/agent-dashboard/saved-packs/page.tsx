@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
+import { DangerModal } from "@/components/ui/DangerModal";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -136,6 +137,7 @@ export default function SavedPacksPage() {
   const [sortOption, setSortOption] = useState<SortOption>("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [packToDelete, setPackToDelete] = useState<SavedPack | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const ITEMS_PER_PAGE = 3;
@@ -151,6 +153,13 @@ export default function SavedPacksPage() {
     setCopiedId(packId);
     showToast("Shareable link copied to clipboard!");
     setTimeout(() => setCopiedId(null), 2500);
+  };
+
+  const confirmDeletePack = () => {
+    if (!packToDelete) return;
+    setPacks((prev) => prev.filter((p) => p.id !== packToDelete.id));
+    showToast(`Property pack for ${packToDelete.address} permanently deleted.`);
+    setPackToDelete(null);
   };
 
   const deletePack = (packId: string) => {
@@ -482,7 +491,7 @@ export default function SavedPacksPage() {
                   {/* Delete Trash Button */}
                   <button
                     type="button"
-                    onClick={() => deletePack(pack.id)}
+                    onClick={() => setPackToDelete(pack)}
                     className="ml-auto p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition cursor-pointer"
                     title="Delete saved pack"
                   >

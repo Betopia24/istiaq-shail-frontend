@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { DangerModal } from "@/components/ui/DangerModal";
 
 type InquiryStatus = "Pending Action" | "Confirmed" | "Completed" | "Cancelled";
 
@@ -64,6 +65,7 @@ export default function LeadsInquiriesPage() {
   );
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [leadToDelete, setLeadToDelete] = useState<LeadInquiry | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -215,6 +217,13 @@ export default function LeadsInquiriesPage() {
     );
     setOpenStatusMenuId(null);
     showToast(`Inquiry status updated to ${newStatus}`);
+  };
+
+  const confirmDeleteLead = () => {
+    if (!leadToDelete) return;
+    setLeads((prev) => prev.filter((item) => item.id !== leadToDelete.id));
+    showToast(`Viewing inquiry from ${leadToDelete.buyerName} permanently removed.`);
+    setLeadToDelete(null);
   };
 
   const handleDeleteLead = (leadId: string) => {
@@ -632,7 +641,7 @@ export default function LeadsInquiriesPage() {
 
                         <button
                           type="button"
-                          onClick={() => handleDeleteLead(lead.id)}
+                          onClick={() => setLeadToDelete(lead)}
                           className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition cursor-pointer"
                           title="Delete inquiry"
                         >

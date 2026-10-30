@@ -253,6 +253,15 @@ export default function SettingsBillingPage() {
     showToast(`Invitation sent to ${newInvite.email}`);
   };
 
+  const [memberToRemove, setMemberToRemove] = useState<TeamMember | null>(null);
+
+  const confirmRemoveMember = () => {
+    if (!memberToRemove) return;
+    setTeamMembers((prev) => prev.filter((m) => m.id !== memberToRemove.id));
+    showToast('Team member "' + memberToRemove.name + '" removed from workspace');
+    setMemberToRemove(null);
+  };
+
   // Member Action Handler
   const handleMemberAction = (
     action: "edit" | "deactivate" | "remove",
@@ -1144,7 +1153,7 @@ export default function SettingsBillingPage() {
                                 <button
                                   type="button"
                                   onClick={() =>
-                                    handleMemberAction("remove", member.id)
+                                    setMemberToRemove(member)
                                   }
                                   className="w-full px-3 py-2 text-xs text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2 cursor-pointer transition font-medium"
                                 >
