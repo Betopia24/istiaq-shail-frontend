@@ -44,7 +44,10 @@ interface AdminSidebarProps {
   isMobile?: boolean;
 }
 
-export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = {}) {
+export function AdminSidebar({
+  onClose,
+  isMobile = false,
+}: AdminSidebarProps = {}) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
 
@@ -60,7 +63,7 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
       <div>
         {isCollapsed ? (
           /* Collapsed Header */
-          <div className="py-4 px-2 flex flex-col items-center gap-2.5 border-b border-[#14254D]/70">
+          <div className="py-4 px-2 flex flex-col items-center gap-2.5 border-b border-[#14254D]/40">
             <Link
               href="/admin-dashboard"
               className="w-10 h-10 rounded-xl bg-[#14254D] border border-[#E8A808]/40 flex items-center justify-center text-[#E8A808] font-heading font-bold text-base shadow-xs transition hover:scale-105 active:scale-95"
@@ -127,11 +130,7 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
         )}
 
         {/* Navigation Items */}
-        <nav
-          className={`space-y-1 mt-3 ${
-            isCollapsed ? "px-2" : "px-3"
-          }`}
-        >
+        <nav className={`space-y-1 mt-3 ${isCollapsed ? "px-2" : "px-3"}`}>
           {adminNavItems.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -145,9 +144,7 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
                 href={item.href}
                 onClick={isMobile ? onClose : undefined}
                 className={`group relative flex items-center rounded-xl transition-all duration-150 ${
-                  isCollapsed
-                    ? "w-11 h-11 mx-auto justify-center"
-                    : "h-11 px-3"
+                  isCollapsed ? "w-11 h-11 mx-auto justify-center" : "h-11 px-3"
                 } ${
                   isActive
                     ? "bg-[#14254D] text-white font-semibold shadow-xs border border-[#E8A808]/30"

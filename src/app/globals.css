@@ -79,8 +79,10 @@
 /* -------------------------------------------------------------------------
    Base Typography & Global Resets
 ------------------------------------------------------------------------- */
-* {
-  border-color: hsl(var(--border));
+@layer base {
+  *, ::before, ::after {
+    border-color: hsl(var(--border));
+  }
 }
 
 html {
