@@ -70,11 +70,11 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="w-full bg-white text-slate-900 selection:bg-[#E8A808]/30 selection:text-[#06143E]">
+    <div className="w-full bg-white text-slate-900 selection:bg-[#E8A808]/30 selection:text-[#06143E] min-h-screen">
       {/* =========================================================================
           SECTION 1: HERO SECTION (Exact Figma Implementation)
       ========================================================================= */}
-      <section className="relative overflow-hidden bg-[#0A132C] text-white pt-12 pb-24 lg:pt-20 lg:pb-36 section-breathable">
+      <section className="relative overflow-hidden bg-[#0A132C] text-white pt-12 pb-24 lg:pt-20 lg:pb-50 section-breathable">
         {/* Figma Background Image & Multi-Breakpoint Gradient Overlay for 100% Readability on All Screens */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -107,10 +107,10 @@ export default function HomePage() {
           />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center min-h-[560px]">
+        <div className="relative z-10 max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 xl:gap-12 items-center min-h-[540px]">
             {/* Left Copy */}
-            <div className="lg:col-span-6 space-y-7 text-center lg:text-left">
+            <div className="lg:col-span-5 min-w-0 space-y-5 sm:space-y-6 text-center lg:text-left">
               {/* Prominent Flagship Positioning Badge */}
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#E8A808]/15 border border-[#E8A808]/45 text-[#FFC024] text-xs font-medium shadow-xs backdrop-blur-xs hover:border-[#E8A808] transition-colors">
                 <TrendingUp className="w-4 h-4 text-[#E8A808] shrink-0" />
@@ -121,14 +121,14 @@ export default function HomePage() {
               </div>
 
               {/* Main Headline */}
-              <h1 className="font-heading font-medium text-3xl sm:text-5xl lg:text-[56px] text-white tracking-tight leading-[1.12] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
+              <h1 className="font-heading font-semibold text-3xl sm:text-4xl lg:text-[42px] text-white tracking-tight leading-[1.15] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
                 One Property. One Upload.
                 <br className="hidden sm:inline" /> Your Complete Marketing
                 Pack.
               </h1>
 
               {/* Subheading: Full Value Proposition highlighting Valuation Presentation */}
-              <p className="font-sans text-base sm:text-lg text-slate-100 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal drop-shadow-sm">
+              <p className="font-sans text-sm sm:text-base text-slate-200 max-w-lg mx-auto lg:mx-0 leading-relaxed font-normal drop-shadow-sm">
                 Turn a single property upload into all ten essential marketing
                 outputs — anchored by our flagship{" "}
                 <strong className="text-[#FFC024] font-medium">
@@ -164,7 +164,7 @@ export default function HomePage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 sm:gap-4">
+              <div className="pt-2 flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-2.5 sm:gap-3">
                 <Link
                   href="/sign-up"
                   className="w-full sm:w-auto h-10 sm:h-12 px-5 sm:px-7 rounded-lg sm:rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs sm:text-sm shadow-[0_4px_16px_rgba(232,168,8,0.4)] hover:shadow-[0_6px_24px_rgba(232,168,8,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
@@ -183,7 +183,7 @@ export default function HomePage() {
             </div>
 
             {/* Right Visual: Animated PropertyPackHeroDemo */}
-            <div className="@container lg:col-span-6 flex justify-center lg:justify-end">
+            <div className="@container lg:col-span-7 min-w-0 flex justify-center lg:justify-end w-full">
               <div className="relative w-full">
                 <PropertyPackHeroDemo />
               </div>
