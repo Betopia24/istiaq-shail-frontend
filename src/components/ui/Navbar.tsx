@@ -1,15 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
 import { logout } from "@/feature/user/userSlice";
 import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
 
+interface NavLinkItem {
+  id: string;
+  label: string;
+  href: string;
+  isSpecial?: boolean;
+}
+
+const navLinks: NavLinkItem[] = [
+  { id: "valuation-presentation", label: "Valuation Feature", href: "/#valuation-presentation", isSpecial: true },
+  { id: "how-it-works", label: "How It Works", href: "/#how-it-works" },
+  { id: "marketing-outputs", label: "10 Marketing Outputs", href: "/#marketing-outputs" },
+  { id: "pricing", label: "Pricing", href: "/#pricing" },
+  { id: "faq", label: "FAQ", href: "/#faq" },
+];
+
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("");
+  const pathname = usePathname();
   const user = useSelector((state: RootState) => state.user.user);
   const hasToken = useSelector((state: RootState) => !!state.user.accessToken);
   const dispatch = useDispatch();
@@ -18,8 +36,51 @@ export default function Navbar() {
     dispatch(logout());
   };
 
+  // Scroll spy to dynamically track active section on homepage
+  useEffect(() => {
+    if (pathname !== "/") {
+      setActiveSection("");
+      return;
+    }
+
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 140; // Offset for sticky navbar
+      const sectionElements = navLinks
+        .map((link) => {
+          const el = document.getElementById(link.id);
+          return el ? { id: link.id, top: el.offsetTop, height: el.offsetHeight } : null;
+        })
+        .filter(Boolean) as { id: string; top: number; height: number }[];
+
+      let current = "";
+      for (let i = sectionElements.length - 1; i >= 0; i--) {
+        const sec = sectionElements[i];
+        if (scrollPosition >= sec.top - 80) {
+          current = sec.id;
+          break;
+        }
+      }
+      setActiveSection(current);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    // Listen for hash changes
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash) setActiveSection(hash);
+    };
+    window.addEventListener("hashchange", handleHashChange);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, [pathname]);
+
   return (
-    <header className="sticky top-0 z-50 w-full py-1 bg-[#0A132C]/90 backdrop-blur-md text-white transition-all">
+    <header className="sticky top-0 z-50 w-full py-1 bg-[#0A132C]/90 backdrop-blur-md text-white transition-all border-b border-white/5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3">
@@ -33,29 +94,55 @@ export default function Navbar() {
           />
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-7 text-sm font-sans font-medium text-white/85">
-          <Link href="#valuation-presentation" className="text-[#FFC024] hover:text-white transition-colors flex items-center gap-1.5 font-semibold">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#E8A808] animate-pulse" />
-            <span>Valuation Feature</span>
-          </Link>
-          <Link href="#how-it-works" className="hover:text-[#E8A808] transition-colors">
-            How It Works
-          </Link>
-          <Link href="#marketing-outputs" className="hover:text-[#E8A808] transition-colors">
-            10 Marketing Outputs
-          </Link>
-          <Link href="#pricing" className="hover:text-[#E8A808] transition-colors">
-            Pricing
-          </Link>
-          <Link href="#faq" className="hover:text-[#E8A808] transition-colors">
-            FAQ
-          </Link>
+        {/* Desktop Navigation Links with Dynamic Active Indicator */}
+        <nav className="hidden md:flex items-center gap-7 text-sm font-sans font-medium">
+          {navLinks.map((link) => {
+            const isActive = activeSection === link.id;
+
+            if (link.isSpecial) {
+              return (
+                <Link
+                  key={link.id}
+                  href={link.href}
+                  onClick={() => setActiveSection(link.id)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+                    isActive
+                      ? "bg-[#E8A808] text-[#06143E] shadow-[0_2px_12px_rgba(232,168,8,0.35)] ring-2 ring-[#FFB800]/50"
+                      : "bg-[#E8A808]/15 text-[#FFC024] hover:bg-[#E8A808]/25 hover:text-white border border-[#E8A808]/30"
+                  }`}
+                >
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full ${
+                      isActive ? "bg-[#06143E]" : "bg-[#E8A808] animate-pulse"
+                    }`}
+                  />
+                  <span>{link.label}</span>
+                </Link>
+              );
+            }
+
+            return (
+              <Link
+                key={link.id}
+                href={link.href}
+                onClick={() => setActiveSection(link.id)}
+                className={`relative py-1 transition-colors duration-200 text-sm ${
+                  isActive
+                    ? "text-[#FFC024] font-semibold"
+                    : "text-white/85 hover:text-[#E8A808]"
+                }`}
+              >
+                <span>{link.label}</span>
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#E8A808] rounded-full shadow-[0_0_8px_rgba(232,168,8,0.8)]" />
+                )}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Auth / CTA Buttons */}
         <div className="hidden md:flex items-center gap-4">
-
           {hasToken ? (
             <div className="flex items-center gap-3">
               <Link
@@ -75,7 +162,7 @@ export default function Navbar() {
             </div>
           ) : (
             <>
-              {/* Log In (Figma outline button) */}
+              {/* Log In */}
               <Link
                 href="/login"
                 className="h-9 px-4 rounded-lg border border-[#E8A808] text-[#E8A808] hover:bg-[#E8A808]/10 text-sm font-sans font-semibold flex items-center justify-center transition cursor-pointer"
@@ -83,10 +170,10 @@ export default function Navbar() {
                 Log In
               </Link>
 
-              {/* Get Started (Figma solid gold button) */}
+              {/* Get Started */}
               <Link
                 href="/sign-up"
-                className="h-9 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] text-sm font-sans font-bold flex items-center justify-center shadow-[0_2px_10px_rgba(232,168,8,0.35)] hover:shadow-[0_4px_16px_rgba(232,168,8,0.45)] active:scale-[0.98] transition cursor-pointer"
+                className="h-9 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] text-sm font-sans font-semibold flex items-center justify-center shadow-[0_2px_10px_rgba(232,168,8,0.35)] hover:shadow-[0_4px_16px_rgba(232,168,8,0.45)] active:scale-[0.98] transition cursor-pointer"
               >
                 <span>Get Started</span>
               </Link>
@@ -109,51 +196,63 @@ export default function Navbar() {
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-white/10 bg-[#0A132C] px-4 pt-2 pb-6 space-y-4 shadow-xl">
-          <nav className="flex flex-col space-y-3 font-sans font-medium text-white/90">
-            <Link
-              href="#valuation-presentation"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-2 py-1.5 text-[#FFC024] font-semibold flex items-center gap-2"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E8A808]" />
-              <span>Valuation Feature</span>
-            </Link>
-            <Link
-              href="#how-it-works"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-2 py-1.5 hover:text-[#E8A808] transition-colors"
-            >
-              How It Works
-            </Link>
-            <Link
-              href="#marketing-outputs"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-2 py-1.5 text-[#E8A808] font-semibold"
-            >
-              10 Marketing Outputs
-            </Link>
-            <Link
-              href="#pricing"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-2 py-1.5 hover:text-[#E8A808] transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="#faq"
-              onClick={() => setMobileMenuOpen(false)}
-              className="px-2 py-1.5 hover:text-[#E8A808] transition-colors"
-            >
-              FAQ
-            </Link>
+          <nav className="flex flex-col space-y-2 font-sans font-medium text-white/90">
+            {navLinks.map((link) => {
+              const isActive = activeSection === link.id;
+
+              if (link.isSpecial) {
+                return (
+                  <Link
+                    key={link.id}
+                    href={link.href}
+                    onClick={() => {
+                      setActiveSection(link.id);
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition ${
+                      isActive
+                        ? "bg-[#E8A808] text-[#06143E]"
+                        : "bg-[#E8A808]/15 text-[#FFC024]"
+                    }`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        isActive ? "bg-[#06143E]" : "bg-[#E8A808]"
+                      }`}
+                    />
+                    <span>{link.label}</span>
+                  </Link>
+                );
+              }
+
+              return (
+                <Link
+                  key={link.id}
+                  href={link.href}
+                  onClick={() => {
+                    setActiveSection(link.id);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between ${
+                    isActive
+                      ? "bg-white/10 text-[#FFC024] font-semibold"
+                      : "hover:bg-white/5 hover:text-[#E8A808]"
+                  }`}
+                >
+                  <span>{link.label}</span>
+                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#E8A808]" />}
+                </Link>
+              );
+            })}
           </nav>
+
           <div className="pt-3 border-t border-white/10 flex flex-col gap-2.5">
             {hasToken ? (
               <>
                 <Link
                   href={user?.role?.toUpperCase() === "ADMIN" ? "/admin-dashboard" : "/agent-dashboard"}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full h-11 rounded-lg bg-[#E8A808] text-[#06143E] text-center flex items-center justify-center font-bold"
+                  className="w-full h-11 rounded-lg bg-[#E8A808] text-[#06143E] text-center flex items-center justify-center font-semibold"
                 >
                   Go to Workstation
                 </Link>
@@ -180,7 +279,7 @@ export default function Navbar() {
                 <Link
                   href="/sign-up"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full h-11 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] text-[#06143E] flex items-center justify-center font-bold shadow-md"
+                  className="w-full h-11 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] text-[#06143E] flex items-center justify-center font-semibold shadow-md"
                 >
                   Get Started
                 </Link>
