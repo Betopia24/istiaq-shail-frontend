@@ -57,66 +57,81 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
       }`}
     >
       {/* Top Section */}
-      <div className="p-5">
-        {/* Header & Logo */}
-        <div className="flex items-start justify-between">
-          {!isCollapsed ? (
-            <div className="flex flex-col">
-              <Link
-                href="/admin-dashboard"
-                className="block"
-                onClick={isMobile ? onClose : undefined}
-              >
-                <Image
-                  src="/logo-light.svg"
-                  alt="Property Pack AI"
-                  width={155}
-                  height={44}
-                  priority
-                  className="w-[145px] h-auto object-contain"
-                />
-              </Link>
-              {/* Super Admin Pill Badge */}
-              <div className="mt-2.5">
-                <span className="inline-block px-2.5 py-0.5 rounded bg-[#14254D] text-[#8E9BB0] text-[9px] font-medium tracking-wider uppercase border border-[#1E356D]">
-                  SUPER ADMIN
-                </span>
+      <div>
+        {isCollapsed ? (
+          /* Collapsed Header */
+          <div className="py-4 px-2 flex flex-col items-center gap-2.5 border-b border-[#14254D]/60">
+            <Link
+              href="/admin-dashboard"
+              className="w-10 h-10 rounded-xl bg-[#14254D] border border-[#E8A808]/40 flex items-center justify-center text-[#E8A808] font-heading font-semibold text-base shadow-inner transition hover:scale-105"
+              title="Property Pack AI - Super Admin"
+            >
+              P
+            </Link>
+            <button
+              onClick={() => setCollapsed(false)}
+              className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer"
+              aria-label="Expand sidebar"
+              title="Expand sidebar"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          /* Expanded Header */
+          <div className="p-5">
+            <div className="flex items-start justify-between">
+              <div className="flex flex-col">
+                <Link
+                  href="/admin-dashboard"
+                  className="block"
+                  onClick={isMobile ? onClose : undefined}
+                >
+                  <Image
+                    src="/logo-light.svg"
+                    alt="Property Pack AI"
+                    width={155}
+                    height={44}
+                    priority
+                    className="w-[145px] h-auto object-contain"
+                  />
+                </Link>
+                {/* Super Admin Pill Badge */}
+                <div className="mt-2.5">
+                  <span className="inline-block px-2.5 py-0.5 rounded bg-[#14254D] text-[#8E9BB0] text-[9px] font-medium tracking-wider uppercase border border-[#1E356D]">
+                    SUPER ADMIN
+                  </span>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="mx-auto flex flex-col items-center">
-              <div className="w-9 h-9 rounded-xl bg-[#14254D] border border-[#E8A808]/40 flex items-center justify-center text-[#E8A808] font-medium text-sm shadow-inner">
-                P
-              </div>
-            </div>
-          )}
 
-          {/* Toggle or Close Button */}
-          {isMobile ? (
-            <button
-              onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#14254D] transition cursor-pointer"
-              aria-label="Close menu"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          ) : (
-            <button
-              onClick={() => setCollapsed(!collapsed)}
-              className="hidden md:flex p-1 rounded-md text-slate-400 hover:text-white hover:bg-[#14254D] transition mt-1 cursor-pointer"
-              aria-label="Toggle sidebar collapse"
-            >
-              {collapsed ? (
-                <ChevronRight className="w-4 h-4" />
+              {isMobile ? (
+                <button
+                  onClick={onClose}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#14254D] transition cursor-pointer"
+                  aria-label="Close menu"
+                >
+                  <X className="w-5 h-5" />
+                </button>
               ) : (
-                <ChevronLeft className="w-4 h-4" />
+                <button
+                  onClick={() => setCollapsed(true)}
+                  className="hidden md:flex p-1 rounded-md text-slate-400 hover:text-white hover:bg-[#14254D] transition mt-1 cursor-pointer"
+                  aria-label="Collapse sidebar"
+                  title="Collapse sidebar"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
               )}
-            </button>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
 
         {/* Navigation Items */}
-        <nav className="mt-8 space-y-1.5">
+        <nav
+          className={`space-y-1.5 mt-2.5 ${
+            isCollapsed ? "px-2" : "px-3.5"
+          }`}
+        >
           {adminNavItems.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -129,14 +144,18 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
                 key={item.href}
                 href={item.href}
                 onClick={isMobile ? onClose : undefined}
-                className={`group relative flex items-center h-11 rounded-lg transition-all duration-150 ${
+                className={`group relative flex items-center rounded-xl transition-all duration-150 ${
+                  isCollapsed
+                    ? "w-11 h-11 mx-auto justify-center"
+                    : "h-11 px-3"
+                } ${
                   isActive
-                    ? "bg-[#14254D] text-white shadow-sm"
+                    ? "bg-[#14254D] text-white shadow-sm border border-[#E8A808]/30"
                     : "bg-transparent text-[#8E9BB0] hover:text-slate-100 hover:bg-[#14254D]/50"
-                } ${isCollapsed ? "justify-center px-0" : "px-3"}`}
+                }`}
                 title={isCollapsed ? item.title : undefined}
               >
-                {/* Active Left Gold Vertical Pill Indicator */}
+                {/* Active Left Gold Vertical Pill Indicator (expanded only) */}
                 {!isCollapsed && (
                   <div
                     className={`w-[3px] h-4 rounded-full mr-2.5 shrink-0 transition-colors ${
@@ -173,29 +192,44 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
       </div>
 
       {/* Bottom Profile Section with Lock Admin Console action */}
-      <div className="p-4">
-        <div
-          className={`flex items-center justify-between bg-[#14254D] rounded-lg p-3 shadow-sm ${
-            isCollapsed ? "justify-center" : ""
-          }`}
-        >
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-[#E8A808] text-[#080F24] font-medium text-xs flex items-center justify-center shrink-0 shadow-sm">
+      <div className={`mt-auto ${isCollapsed ? "p-2 pb-4" : "p-4"}`}>
+        {isCollapsed ? (
+          /* Collapsed Bottom Profile */
+          <div className="flex flex-col items-center gap-2">
+            <div
+              className="w-10 h-10 rounded-xl bg-[#E8A808] text-[#080F24] font-heading font-semibold text-xs flex items-center justify-center shadow-sm cursor-pointer"
+              title="Ishtiaq Sohail (Owner Access)"
+            >
               IS
             </div>
-            {!isCollapsed && (
+            <button
+              onClick={() => {
+                Cookies.remove("adminAuthorized", { path: "/" });
+                window.location.reload();
+              }}
+              title="Lock Admin Console"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-[#1E356D] transition cursor-pointer"
+            >
+              <Lock className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        ) : (
+          /* Expanded Bottom Profile */
+          <div className="flex items-center justify-between bg-[#14254D] rounded-xl p-3 shadow-sm border border-[#1E356D]">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-full bg-[#E8A808] text-[#080F24] font-semibold text-xs flex items-center justify-center shrink-0 shadow-sm">
+                IS
+              </div>
               <div className="min-w-0">
-                <div className="text-xs font-medium text-white truncate leading-tight">
+                <div className="text-xs font-semibold text-white truncate leading-tight">
                   Ishtiaq Sohail
                 </div>
                 <div className="text-[10px] text-[#E8A808] font-medium truncate leading-tight mt-0.5">
                   Owner Access
                 </div>
               </div>
-            )}
-          </div>
+            </div>
 
-          {!isCollapsed && (
             <button
               onClick={() => {
                 Cookies.remove("adminAuthorized", { path: "/" });
@@ -206,8 +240,8 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
             >
               <Lock className="w-3.5 h-3.5" />
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </aside>
   );
