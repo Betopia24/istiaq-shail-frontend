@@ -167,14 +167,14 @@ export default function HomePage() {
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 sm:gap-4">
                 <Link
                   href="/sign-up"
-                  className="w-full sm:w-auto h-12 px-7 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-sm shadow-[0_4px_16px_rgba(232,168,8,0.4)] hover:shadow-[0_6px_24px_rgba(232,168,8,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full sm:w-auto h-10 sm:h-12 px-5 sm:px-7 rounded-lg sm:rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs sm:text-sm shadow-[0_4px_16px_rgba(232,168,8,0.4)] hover:shadow-[0_6px_24px_rgba(232,168,8,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>Create Your Property Pack</span>
                   <ArrowRight className="w-4 h-4 text-[#06143E]" />
                 </Link>
                 <a
                   href="#valuation-presentation"
-                  className="w-full sm:w-auto h-12 px-6 rounded-xl bg-white/10 hover:bg-white/20 border border-white/30 text-white font-sans font-medium text-sm hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-xs"
+                  className="w-full sm:w-auto h-10 sm:h-12 px-4 sm:px-6 rounded-lg sm:rounded-xl bg-white/10 hover:bg-white/20 border border-white/30 text-white font-sans font-medium text-xs sm:text-sm hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer backdrop-blur-xs"
                 >
                   <TrendingUp className="w-4 h-4 text-[#E8A808]" />
                   <span>Explore Valuation Feature</span>
@@ -1429,7 +1429,7 @@ export default function HomePage() {
 
                 <Link
                   href="/sign-up"
-                  className="w-full h-12 rounded-xl border border-slate-300 hover:border-slate-400 hover:bg-slate-50 active:scale-[0.98] text-slate-800 font-medium text-sm flex items-center justify-center transition-all mb-8 shadow-2xs"
+                  className="w-full h-10 sm:h-12 rounded-xl border border-slate-300 hover:border-slate-400 hover:bg-slate-50 active:scale-[0.98] text-slate-800 font-medium text-xs sm:text-sm flex items-center justify-center transition-all mb-8 shadow-2xs"
                 >
                   Get Started
                 </Link>
@@ -1488,7 +1488,7 @@ export default function HomePage() {
 
                 <Link
                   href="/sign-up"
-                  className="w-full h-12 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:scale-[0.98] text-[#06143E] font-medium text-sm flex items-center justify-center transition-all shadow-[0_4px_16px_rgba(232,168,8,0.4)] hover:shadow-[0_6px_22px_rgba(232,168,8,0.5)] mb-8 cursor-pointer"
+                  className="w-full h-10 sm:h-12 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:scale-[0.98] text-[#06143E] font-medium text-xs sm:text-sm flex items-center justify-center transition-all shadow-[0_4px_16px_rgba(232,168,8,0.4)] hover:shadow-[0_6px_22px_rgba(232,168,8,0.5)] mb-8 cursor-pointer"
                 >
                   Create Your Property Pack
                 </Link>
@@ -1544,7 +1544,7 @@ export default function HomePage() {
 
                 <Link
                   href="/sign-up"
-                  className="w-full h-12 rounded-xl border border-slate-300 hover:border-slate-400 hover:bg-slate-50 active:scale-[0.98] text-slate-800 font-medium text-sm flex items-center justify-center transition-all mb-8 shadow-2xs"
+                  className="w-full h-10 sm:h-12 rounded-xl border border-slate-300 hover:border-slate-400 hover:bg-slate-50 active:scale-[0.98] text-slate-800 font-medium text-xs sm:text-sm flex items-center justify-center transition-all mb-8 shadow-2xs"
                 >
                   Get Started
                 </Link>
@@ -1692,14 +1692,14 @@ export default function HomePage() {
                 <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                   <Link
                     href="/sign-up"
-                    className="w-full sm:w-auto h-12 px-8 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-sm shadow-[0_4px_16px_rgba(232,168,8,0.35)] hover:shadow-[0_6px_24px_rgba(232,168,8,0.5)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full sm:w-auto h-10 sm:h-12 px-5 sm:px-8 rounded-lg sm:rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs sm:text-sm shadow-[0_4px_16px_rgba(232,168,8,0.35)] hover:shadow-[0_6px_24px_rgba(232,168,8,0.5)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <span>Create Your Property Pack</span>
                     <ArrowRight className="w-4 h-4 text-[#06143E]" />
                   </Link>
                   <a
                     href="#marketing-outputs"
-                    className="w-full sm:w-auto h-12 px-6 rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-sm border border-white/20 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer"
+                    className="w-full sm:w-auto h-10 sm:h-12 px-4 sm:px-6 rounded-lg sm:rounded-xl bg-white/10 hover:bg-white/15 text-white font-medium text-xs sm:text-sm border border-white/20 active:scale-[0.98] transition-all flex items-center justify-center cursor-pointer"
                   >
                     Explore 10 Outputs
                   </a>

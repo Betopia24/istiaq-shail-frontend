@@ -198,11 +198,11 @@ h6 {
   align-items: center;
   justify-content: center;
   font-family: var(--font-manrope), sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;   /* 13px mobile */
   font-weight: 600;
-  height: 2.75rem;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
+  height: 2.375rem;       /* 38px mobile */
+  padding-left: 1rem;
+  padding-right: 1rem;
   border-radius: 8px;
   background-color: #e8a808;
   color: #06143e;
@@ -211,6 +211,14 @@ h6 {
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   text-decoration: none;
+}
+@media (min-width: 640px) {
+  .btn-primary {
+    font-size: 0.875rem;  /* 14px desktop */
+    height: 2.75rem;      /* 44px desktop */
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
 }
 .btn-primary:hover {
   background-color: #ffb800;
@@ -231,11 +239,11 @@ h6 {
   align-items: center;
   justify-content: center;
   font-family: var(--font-manrope), sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  height: 2.75rem;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
+  height: 2.375rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
   border-radius: 8px;
   background-color: #0b1736;
   color: #ffffff;
@@ -244,6 +252,14 @@ h6 {
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   text-decoration: none;
+}
+@media (min-width: 640px) {
+  .btn-secondary {
+    font-size: 0.875rem;
+    height: 2.75rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
 }
 .btn-secondary:hover {
   background-color: #06143e;
@@ -258,11 +274,11 @@ h6 {
   align-items: center;
   justify-content: center;
   font-family: var(--font-manrope), sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  height: 2.75rem;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
+  height: 2.375rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
   border-radius: 8px;
   background-color: #ffffff;
   color: #1f2328;
@@ -270,6 +286,14 @@ h6 {
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   text-decoration: none;
+}
+@media (min-width: 640px) {
+  .btn-outline {
+    font-size: 0.875rem;
+    height: 2.75rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
 }
 .btn-outline:hover {
   background-color: #f1f5f9;
@@ -284,16 +308,24 @@ h6 {
   align-items: center;
   justify-content: center;
   font-family: var(--font-manrope), sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  height: 2.75rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  height: 2.375rem;
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
   border-radius: 8px;
   background-color: transparent;
   color: #45556c;
   cursor: pointer;
   transition: all 0.15s ease-in-out;
+}
+@media (min-width: 640px) {
+  .btn-ghost {
+    font-size: 0.875rem;
+    height: 2.75rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 .btn-ghost:hover {
   background-color: #f1f5f9;
