@@ -146,95 +146,91 @@ export default function CreatePackPage() {
       </div>
 
       {/* =========================================================================
-          STEPPER TABS
+          STEPPER TABS (Modern Segmented High-Contrast Design)
       ========================================================================= */}
-      <div className="max-w-2xl mx-auto w-full">
-        <div className="grid grid-cols-3 gap-3 sm:gap-6 text-center select-none">
-          {/* Step 1 Tab */}
-          <button
-            onClick={() => setCurrentStep(1)}
-            className="group cursor-pointer flex flex-col items-center"
-          >
-            <div className="flex items-center gap-1.5 mb-2">
-              {currentStep > 1 ? (
-                <span className="w-4 h-4 rounded-full bg-[#06143E] text-[#E8A808] flex items-center justify-center text-[10px] font-medium">
-                  ✓
-                </span>
-              ) : null}
+      <div className="w-full max-w-2xl mx-auto">
+        <div className="bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/90 shadow-2xs select-none">
+          <div className="grid grid-cols-3 gap-1.5">
+            {/* Step 1 Tab */}
+            <button
+              type="button"
+              onClick={() => setCurrentStep(1)}
+              className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl transition-all cursor-pointer ${
+                currentStep === 1
+                  ? "bg-[#06143E] text-white shadow-xs font-semibold"
+                  : currentStep > 1
+                    ? "bg-white text-slate-800 hover:bg-slate-50 font-semibold border border-slate-200/60 shadow-2xs"
+                    : "text-slate-500 hover:text-slate-800 hover:bg-white/60 font-medium"
+              }`}
+            >
               <span
-                className={`text-xs font-medium tracking-wide transition-colors ${
+                className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors ${
                   currentStep === 1
-                    ? "text-[#06143E] font-medium"
+                    ? "bg-[#E8A808] text-[#06143E]"
                     : currentStep > 1
-                      ? "text-slate-800"
-                      : "text-slate-400 group-hover:text-slate-600"
+                      ? "bg-emerald-600 text-white"
+                      : "bg-slate-200 text-slate-600"
                 }`}
               >
-                Step 1: Details
+                {currentStep > 1 ? <Check className="w-3 h-3 stroke-[2.5]" /> : "1"}
               </span>
-            </div>
-            {/* Step Underline Bar */}
-            <div
-              className={`w-full h-1 rounded-full transition-all duration-300 ${
-                currentStep >= 1 ? "bg-[#06143E]" : "bg-slate-200"
-              }`}
-            />
-          </button>
+              <span className="text-xs tracking-tight truncate">
+                <span className="hidden sm:inline">Step 1: </span>Details
+              </span>
+            </button>
 
-          {/* Step 2 Tab */}
-          <button
-            onClick={() => setCurrentStep(2)}
-            className="group cursor-pointer flex flex-col items-center"
-          >
-            <div className="flex items-center gap-1.5 mb-2">
-              {currentStep > 2 ? (
-                <span className="w-4 h-4 rounded-full bg-[#06143E] text-[#E8A808] flex items-center justify-center text-[10px] font-medium">
-                  ✓
-                </span>
-              ) : null}
+            {/* Step 2 Tab */}
+            <button
+              type="button"
+              onClick={() => setCurrentStep(2)}
+              className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl transition-all cursor-pointer ${
+                currentStep === 2
+                  ? "bg-[#06143E] text-white shadow-xs font-semibold"
+                  : currentStep > 2
+                    ? "bg-white text-slate-800 hover:bg-slate-50 font-semibold border border-slate-200/60 shadow-2xs"
+                    : "text-slate-500 hover:text-slate-800 hover:bg-white/60 font-medium"
+              }`}
+            >
               <span
-                className={`text-xs font-medium tracking-wide transition-colors ${
+                className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors ${
                   currentStep === 2
-                    ? "text-[#06143E] font-medium"
+                    ? "bg-[#E8A808] text-[#06143E]"
                     : currentStep > 2
-                      ? "text-slate-800"
-                      : "text-slate-400 group-hover:text-slate-600"
+                      ? "bg-emerald-600 text-white"
+                      : "bg-slate-200 text-slate-600"
                 }`}
               >
-                Step 2: Upload Photos
+                {currentStep > 2 ? <Check className="w-3 h-3 stroke-[2.5]" /> : "2"}
               </span>
-            </div>
-            {/* Step Underline Bar */}
-            <div
-              className={`w-full h-1 rounded-full transition-all duration-300 ${
-                currentStep >= 2 ? "bg-[#06143E]" : "bg-slate-200"
-              }`}
-            />
-          </button>
+              <span className="text-xs tracking-tight truncate">
+                <span className="hidden sm:inline">Step 2: </span>Upload Photos
+              </span>
+            </button>
 
-          {/* Step 3 Tab */}
-          <button
-            onClick={() => setCurrentStep(3)}
-            className="group cursor-pointer flex flex-col items-center"
-          >
-            <div className="flex items-center gap-1.5 mb-2">
+            {/* Step 3 Tab */}
+            <button
+              type="button"
+              onClick={() => setCurrentStep(3)}
+              className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl transition-all cursor-pointer ${
+                currentStep === 3
+                  ? "bg-[#06143E] text-white shadow-xs font-semibold"
+                  : "text-slate-500 hover:text-slate-800 hover:bg-white/60 font-medium"
+              }`}
+            >
               <span
-                className={`text-xs font-medium tracking-wide transition-colors ${
+                className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0 transition-colors ${
                   currentStep === 3
-                    ? "text-[#06143E] font-medium"
-                    : "text-slate-400 group-hover:text-slate-600"
+                    ? "bg-[#E8A808] text-[#06143E]"
+                    : "bg-slate-200 text-slate-600"
                 }`}
               >
-                Step 3: Review & Launch
+                3
               </span>
-            </div>
-            {/* Step Underline Bar */}
-            <div
-              className={`w-full h-1 rounded-full transition-all duration-300 ${
-                currentStep === 3 ? "bg-[#06143E]" : "bg-slate-200"
-              }`}
-            />
-          </button>
+              <span className="text-xs tracking-tight truncate">
+                <span className="hidden sm:inline">Step 3: </span>Review & Launch
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
