@@ -37,11 +37,29 @@ export default function PlatformOverviewPage() {
 
   return (
     <div className="space-y-7 max-w-7xl mx-auto">
-      {/* Title */}
-      <div>
-        <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
-          Platform Performance &amp; Revenue Analytics
-        </h1>
+      {/* Super Admin Top Header with Demo / Live Telemetry Indicator */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex flex-wrap items-center gap-2 mb-1.5">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 uppercase tracking-wider">
+              DEMO DATA MODE ACTIVE
+            </span>
+            <span className="text-xs text-slate-500">
+              · All metrics use sample agency data until live webhooks are connected
+            </span>
+          </div>
+          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            Platform Performance &amp; Revenue Analytics
+          </h1>
+        </div>
+
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs text-slate-600 flex items-center gap-2 shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+            <span className="font-semibold text-slate-700">Telemetry Status:</span>
+            <span className="font-mono text-slate-500 text-[11px]">Demo Sandbox</span>
+          </div>
+        </div>
       </div>
 
       {/* KPI Cards (4 in a row) */}
@@ -130,8 +148,8 @@ export default function PlatformOverviewPage() {
       {/* Two Main Visual Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Card: MRR Revenue Growth */}
-        <div className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between">
-          <div className="flex items-start justify-between gap-4">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 sm:gap-4">
             <div>
               <h2 className="font-heading font-bold text-lg text-slate-900">
                 MRR Revenue Growth (Last 6 Months)
@@ -140,7 +158,7 @@ export default function PlatformOverviewPage() {
                 Stripe verified recurring subscription trajectory
               </p>
             </div>
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded shrink-0">
+            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded self-start sm:self-auto">
               Demo data
             </span>
           </div>
@@ -237,8 +255,8 @@ export default function PlatformOverviewPage() {
         </div>
 
         {/* Right Card: Weekly Packs Generated */}
-        <div className="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between">
-          <div className="flex items-start justify-between gap-4">
+        <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
             <div>
               <h2 className="font-heading font-bold text-lg text-slate-900">
                 Weekly Packs Generated
@@ -247,11 +265,12 @@ export default function PlatformOverviewPage() {
                 AI brochure output volume across agencies
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded shrink-0">
+            {/* Badges container: wraps on mobile so the percentage badge never clips */}
+            <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+              <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded">
                 Demo data
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 shrink-0">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 whitespace-nowrap shadow-2xs">
                 ▲ +24% highest week
               </span>
             </div>
@@ -259,7 +278,7 @@ export default function PlatformOverviewPage() {
 
           {/* Bar Chart Container */}
           <div className="mt-8 pt-4">
-            <div className="flex items-end justify-between gap-4 sm:gap-6 h-52 px-4 sm:px-8 border-b border-slate-200 pb-2">
+            <div className="flex items-end justify-between gap-3 sm:gap-6 h-52 px-2 sm:px-8 border-b border-slate-200 pb-2">
               {weeklyPacks.map((item, index) => (
                 <div
                   key={item.week}
@@ -286,7 +305,7 @@ export default function PlatformOverviewPage() {
             </div>
 
             {/* X-axis labels */}
-            <div className="flex justify-between px-4 sm:px-8 text-[12px] font-semibold text-slate-500 pt-3">
+            <div className="flex justify-between px-2 sm:px-8 text-[12px] font-semibold text-slate-500 pt-3">
               {weeklyPacks.map((item) => (
                 <div key={item.week} className="flex-1 text-center">
                   {item.week}
@@ -297,9 +316,15 @@ export default function PlatformOverviewPage() {
         </div>
       </div>
 
-      {/* Row 3: Infrastructure / System Status Strip */}
-      <div className="bg-[#EDF4FB] rounded-2xl border border-slate-200/80 px-6 py-4 sm:py-5 shadow-sm">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
+      {/* Row 3: Infrastructure / System Status Strip with Explicit Demo Telemetry Label */}
+      <div className="bg-[#EDF4FB] rounded-2xl border border-slate-200/80 px-4 sm:px-6 py-4 sm:py-5 shadow-sm space-y-2">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-200/70 text-[11px] text-slate-500">
+          <span className="font-semibold text-slate-700">Production Infrastructure &amp; Latency</span>
+          <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+            Demo data telemetry
+          </span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs sm:text-sm pt-1">
           {/* Item 1 */}
           <div className="flex items-center gap-2 text-slate-700 font-medium">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />

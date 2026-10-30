@@ -13,7 +13,9 @@ import {
   ChevronRight,
   Menu,
   X,
+  Lock,
 } from "lucide-react";
+import Cookies from "js-cookie";
 
 export const adminNavItems = [
   {
@@ -182,25 +184,40 @@ export function AdminSidebar() {
           </nav>
         </div>
 
-        {/* Bottom Profile Section (Floating Rounded Card like Figma) */}
+        {/* Bottom Profile Section with Lock Admin Console action */}
         <div className="p-4">
           <div
-            className={`flex items-center gap-3 bg-[#14254D] rounded-lg p-3 shadow-sm ${
+            className={`flex items-center justify-between bg-[#14254D] rounded-lg p-3 shadow-sm ${
               collapsed ? "justify-center" : ""
             }`}
           >
-            <div className="w-8 h-8 rounded-full bg-[#E8A808] text-[#080F24] font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
-              IS
-            </div>
-            {!collapsed && (
-              <div className="min-w-0">
-                <div className="text-xs font-semibold text-white truncate leading-tight">
-                  Ishtiaq Sohail
-                </div>
-                <div className="text-[10px] text-[#E8A808] font-medium truncate leading-tight mt-0.5">
-                  Owner Access
-                </div>
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-8 h-8 rounded-full bg-[#E8A808] text-[#080F24] font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
+                IS
               </div>
+              {!collapsed && (
+                <div className="min-w-0">
+                  <div className="text-xs font-semibold text-white truncate leading-tight">
+                    Ishtiaq Sohail
+                  </div>
+                  <div className="text-[10px] text-[#E8A808] font-medium truncate leading-tight mt-0.5">
+                    Owner Access
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {!collapsed && (
+              <button
+                onClick={() => {
+                  Cookies.remove("adminAuthorized", { path: "/" });
+                  window.location.reload();
+                }}
+                title="Lock Admin Console"
+                className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-[#1E356D] rounded-md transition cursor-pointer shrink-0"
+              >
+                <Lock className="w-3.5 h-3.5" />
+              </button>
             )}
           </div>
         </div>

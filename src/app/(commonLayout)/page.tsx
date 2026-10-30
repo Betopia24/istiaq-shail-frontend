@@ -73,7 +73,7 @@ export default function HomePage() {
           SECTION 1: HERO SECTION (Exact Figma Implementation)
       ========================================================================= */}
       <section className="relative overflow-hidden bg-[#0A132C] text-white pt-10 pb-20 lg:pt-16 lg:pb-28">
-        {/* Figma Background Image & Linear Gradient Overlay */}
+        {/* Figma Background Image & Multi-Breakpoint Gradient Overlay for 100% Readability on All Screens */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/hero-bg-image.svg"
@@ -83,12 +83,24 @@ export default function HomePage() {
             sizes="100vw"
             className="object-cover object-center"
           />
-          {/* Exact Figma Linear Gradient: Left 80% Black (#000000 80%) to Right Transparent (#000000 0%) */}
+          {/* Base darkening tint to guarantee text contrast on all devices */}
+          <div className="absolute inset-0 z-5 bg-[#0A132C]/45 pointer-events-none" />
+
+          {/* Mobile & Tablet (< lg): Deep directional gradient ensuring zero contrast loss over bright photos */}
           <div
-            className="absolute inset-0 z-10 pointer-events-none"
+            className="block lg:hidden absolute inset-0 z-10 pointer-events-none"
             style={{
               background:
-                "linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%)",
+                "linear-gradient(180deg, rgba(10, 19, 44, 0.96) 0%, rgba(10, 19, 44, 0.90) 50%, rgba(10, 19, 44, 0.78) 100%)",
+            }}
+          />
+
+          {/* Desktop (lg+): Rich horizontal gradient with deep left backing for text and crisp artwork on right */}
+          <div
+            className="hidden lg:block absolute inset-0 z-10 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(10, 19, 44, 0.98) 0%, rgba(10, 19, 44, 0.93) 42%, rgba(10, 19, 44, 0.65) 65%, rgba(10, 19, 44, 0.25) 85%, rgba(10, 19, 44, 0.05) 100%)",
             }}
           />
         </div>
@@ -97,31 +109,43 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center min-h-[540px]">
             {/* Left Copy */}
             <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
+              {/* Prominent Flagship Positioning Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E8A808]/15 border border-[#E8A808]/45 text-[#FFC024] text-xs font-semibold shadow-xs backdrop-blur-xs">
+                <TrendingUp className="w-4 h-4 text-[#E8A808] shrink-0" />
+                <span>★ Key Positioning: Professional Valuation Presentations to Win Vendor Instructions</span>
+              </div>
+
               {/* Main Headline */}
-              <h1 className="font-heading font-extrabold text-3xl sm:text-5xl lg:text-[54px] text-white tracking-tight leading-[1.14]">
+              <h1 className="font-heading font-extrabold text-3xl sm:text-5xl lg:text-[54px] text-white tracking-tight leading-[1.14] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]">
                 One Property. One Upload.<br className="hidden sm:inline" /> Your Complete Marketing Pack.
               </h1>
 
-              {/* Subheading: Full Value Proposition */}
-              <p className="font-sans text-base sm:text-lg text-white/90 max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                Turn a single property upload into all ten essential marketing outputs — from professional valuation presentations to portal copy and social campaigns. Built for estate and letting agents.
+              {/* Subheading: Full Value Proposition highlighting Valuation Presentation */}
+              <p className="font-sans text-base sm:text-lg text-slate-100 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal drop-shadow-sm">
+                Turn a single property upload into all ten essential marketing outputs — anchored by our flagship <strong className="text-[#FFC024] font-semibold">Professional Valuation Presentation</strong> for vendor appraisals, plus portal copy, digital brochures, and social campaigns.
               </p>
 
-              {/* Flexibility Indicators: Complete Pack vs Individual Outputs */}
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4 text-xs text-white/90 pt-1">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15">
+              {/* Flexibility Indicators: Valuation Presentation & Complete Pack */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5 sm:gap-3 text-xs text-white/95 pt-1">
+                <a
+                  href="#valuation-presentation"
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8A808]/20 border border-[#E8A808]/60 text-[#FFC024] hover:bg-[#E8A808]/30 transition shadow-xs"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-[#E8A808]" />
+                  <span className="font-bold">Output 01: Valuation Proposal</span>
+                </a>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-xs">
                   <Check className="w-3.5 h-3.5 text-[#E8A808] stroke-[3]" />
                   <span className="font-semibold text-white">Complete 10-Output Pack</span>
                 </div>
-                <span className="text-white/40 hidden sm:inline">•</span>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-xs">
                   <Check className="w-3.5 h-3.5 text-[#E8A808] stroke-[3]" />
                   <span className="font-semibold text-white">Select Individual Outputs</span>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 sm:gap-4">
                 <Link
                   href="/sign-up"
                   className="w-full sm:w-auto h-12 px-7 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-bold text-sm shadow-[0_4px_16px_rgba(232,168,8,0.4)] active:scale-[0.98] transition flex items-center justify-center gap-2 cursor-pointer"
@@ -130,10 +154,11 @@ export default function HomePage() {
                   <ArrowRight className="w-4 h-4 text-[#06143E]" />
                 </Link>
                 <a
-                  href="#marketing-outputs"
-                  className="w-full sm:w-auto h-12 px-6 rounded-lg border border-white/40 hover:bg-white/10 text-white font-sans font-semibold text-sm transition flex items-center justify-center cursor-pointer"
+                  href="#valuation-presentation"
+                  className="w-full sm:w-auto h-12 px-5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/30 text-white font-sans font-semibold text-sm transition flex items-center justify-center gap-2 cursor-pointer backdrop-blur-xs"
                 >
-                  Explore 10 Outputs
+                  <TrendingUp className="w-4 h-4 text-[#E8A808]" />
+                  <span>Explore Valuation Feature</span>
                 </a>
               </div>
             </div>
@@ -675,16 +700,24 @@ export default function HomePage() {
           {/* =========================================================================
               FEATURED CORE OUTPUT: PROFESSIONAL VALUATION PRESENTATION (SPOTLIGHT)
           ========================================================================= */}
-          <div className="relative rounded-3xl bg-gradient-to-br from-[#06143E] via-[#091D4E] to-[#0A132C] text-white p-6 sm:p-9 lg:p-10 border-2 border-[#E8A808] shadow-2xl overflow-hidden">
+          <div
+            id="valuation-presentation"
+            className="scroll-mt-28 relative rounded-3xl bg-gradient-to-br from-[#06143E] via-[#091D4E] to-[#0A132C] text-white p-6 sm:p-9 lg:p-11 border-2 border-[#E8A808] shadow-[0_12px_40px_rgba(232,168,8,0.25)] overflow-hidden"
+          >
             {/* Ambient radiant glow */}
-            <div className="absolute top-0 right-0 w-80 h-80 bg-[#E8A808]/15 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 right-0 w-96 h-96 bg-[#E8A808]/20 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
               {/* Left Column: Output #1 Details */}
               <div className="lg:col-span-7 space-y-5">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E8A808] text-[#06143E] text-xs font-bold uppercase tracking-wider shadow-sm">
-                  <TrendingUp className="w-3.5 h-3.5 stroke-[2.5]" />
-                  <span>★ Featured Output 01 · Vendor-Ready Proposal</span>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E8A808] text-[#06143E] text-xs font-bold uppercase tracking-wider shadow-sm">
+                    <TrendingUp className="w-3.5 h-3.5 stroke-[2.5]" />
+                    <span>★ Core Flagship Feature · Vendor Instruction Winner</span>
+                  </div>
+                  <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-white/10 text-slate-200 border border-white/15">
+                    Output 01 of 10
+                  </span>
                 </div>
 
                 <div className="space-y-2">
@@ -692,7 +725,7 @@ export default function HomePage() {
                     Professional Valuation Presentation
                   </h3>
                   <p className="font-sans text-sm sm:text-base text-slate-200 leading-relaxed">
-                    Win vendor instructions at market appraisals with an authoritative, data-backed presentation. Features AI-calculated market brackets, local comparable transactions, and three clear vendor pricing strategies.
+                    Win instructions on market appraisals by providing vendors with an authoritative, data-backed presentation. Features calculated valuation brackets, verified local comparable sales, and 3 clear vendor pricing strategies designed to convert valuation meetings into signed sole-agency agreements.
                   </p>
                 </div>
 

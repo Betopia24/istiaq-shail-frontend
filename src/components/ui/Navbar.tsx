@@ -34,7 +34,11 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-sans font-medium text-white/85">
+        <nav className="hidden md:flex items-center gap-7 text-sm font-sans font-medium text-white/85">
+          <Link href="#valuation-presentation" className="text-[#FFC024] hover:text-white transition-colors flex items-center gap-1.5 font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E8A808] animate-pulse" />
+            <span>Valuation Feature</span>
+          </Link>
           <Link href="#how-it-works" className="hover:text-[#E8A808] transition-colors">
             How It Works
           </Link>
@@ -106,6 +110,14 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-white/10 bg-[#0A132C] px-4 pt-2 pb-6 space-y-4 shadow-xl">
           <nav className="flex flex-col space-y-3 font-sans font-medium text-white/90">
+            <Link
+              href="#valuation-presentation"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-2 py-1.5 text-[#FFC024] font-semibold flex items-center gap-2"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E8A808]" />
+              <span>Valuation Feature</span>
+            </Link>
             <Link
               href="#how-it-works"
               onClick={() => setMobileMenuOpen(false)}

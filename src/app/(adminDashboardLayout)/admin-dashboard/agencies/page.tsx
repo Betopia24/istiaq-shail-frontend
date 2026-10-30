@@ -143,10 +143,18 @@ export default function AgenciesAndUsersPage() {
       )}
 
       {/* Title */}
-      <div>
-        <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
-          Agency Teams &amp; User Access Control
-        </h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+              Demo data
+            </span>
+            <span className="text-xs text-slate-400">· 6 Sample Institutional Agent Accounts</span>
+          </div>
+          <h1 className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+            Agency Teams &amp; User Access Control
+          </h1>
+        </div>
       </div>
 
       {/* Main Table Card */}
