@@ -501,3 +501,110 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.35;
   color: #90a1b9;
 }
+
+/* -------------------------------------------------------------------------
+   Container Queries & Component-Level Fluid Responsiveness
+------------------------------------------------------------------------- */
+.cq-container {
+  container-type: inline-size;
+}
+
+.cq-card {
+  container-type: inline-size;
+  container-name: card;
+}
+
+.cq-panel {
+  container-type: inline-size;
+  container-name: panel;
+}
+
+.cq-widget {
+  container-type: inline-size;
+  container-name: widget;
+}
+
+/* -------------------------------------------------------------------------
+   Micro-interactions, Transitions & Breathable Design Tokens
+------------------------------------------------------------------------- */
+.interactive-scale {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.interactive-scale:hover {
+  transform: translateY(-2px);
+}
+.interactive-scale:active {
+  transform: scale(0.98);
+}
+
+.interactive-lift {
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.2s ease;
+}
+.interactive-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -8px rgba(6, 20, 62, 0.12), 0 4px 12px -2px rgba(6, 20, 62, 0.06);
+}
+
+.interactive-glow-gold {
+  transition: all 0.25s ease;
+}
+.interactive-glow-gold:hover {
+  box-shadow: 0 0 20px -2px rgba(232, 168, 8, 0.35);
+  border-color: rgba(232, 168, 8, 0.7);
+}
+
+.interactive-glow-navy {
+  transition: all 0.25s ease;
+}
+.interactive-glow-navy:hover {
+  box-shadow: 0 8px 24px -4px rgba(9, 33, 103, 0.25);
+}
+
+/* Breathable Spacing & Open Canvas Rhythm */
+.section-breathable {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+@media (min-width: 1024px) {
+  .section-breathable {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+  }
+}
+
+.breathable-card {
+  padding: 1.5rem;
+}
+@media (min-width: 640px) {
+  .breathable-card {
+    padding: 2.25rem;
+  }
+}
+
+/* Shimmer & Ambient Animations */
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.animate-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer-sweep 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes pulse-gentle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.02); }
+}
+
+.animate-pulse-gentle {
+  animation: pulse-gentle 3.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

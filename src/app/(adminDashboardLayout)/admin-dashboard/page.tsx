@@ -62,15 +62,15 @@ export default function PlatformOverviewPage() {
         </div>
       </div>
 
-      {/* KPI Cards (4 in a row) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+      {/* KPI Cards (4 in a row with Container Queries & Lift Effects) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Card 1: MRR */}
-        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition">
-          <div className="flex items-center justify-between mb-2">
+        <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Monthly Recurring Revenue
             </span>
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
               Demo data
             </span>
           </div>
@@ -78,19 +78,19 @@ export default function PlatformOverviewPage() {
             <span className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
               £24,650
             </span>
-            <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+            <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
               ▲ +12.4%
             </span>
           </div>
         </div>
 
         {/* Card 2: Active Agencies */}
-        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition">
-          <div className="flex items-center justify-between mb-2">
+        <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Total Active Agencies
             </span>
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
               Demo data
             </span>
           </div>
@@ -105,12 +105,12 @@ export default function PlatformOverviewPage() {
         </div>
 
         {/* Card 3: Packs Generated */}
-        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition">
-          <div className="flex items-center justify-between mb-2">
+        <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Packs Generated (Oct)
             </span>
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
               Demo data
             </span>
           </div>
@@ -118,19 +118,19 @@ export default function PlatformOverviewPage() {
             <span className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
               820
             </span>
-            <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+            <span className="inline-flex items-center gap-0.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
               ▲ +18% MoM
             </span>
           </div>
         </div>
 
         {/* Card 4: Gross SaaS Margin */}
-        <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200/90 shadow-sm hover:shadow-md transition">
-          <div className="flex items-center justify-between mb-2">
+        <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Gross SaaS Margin
             </span>
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
               Demo data
             </span>
           </div>
@@ -138,27 +138,27 @@ export default function PlatformOverviewPage() {
             <span className="font-heading font-extrabold text-2xl sm:text-3xl text-emerald-600 tracking-tight">
               88.2%
             </span>
-            <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
+            <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 border border-slate-200 px-2.5 py-0.5 rounded-full">
               £0.42 API/PACK
             </span>
           </div>
         </div>
       </div>
 
-      {/* Two Main Visual Cards */}
+      {/* Two Main Visual Cards with Container Queries */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Card: MRR Revenue Growth */}
-        <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+        <div className="@container cq-panel bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 sm:gap-4">
             <div>
-              <h2 className="font-heading font-bold text-lg text-slate-900">
+              <h2 className="font-heading font-bold text-lg sm:text-xl text-slate-900">
                 MRR Revenue Growth (Last 6 Months)
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
                 Stripe verified recurring subscription trajectory
               </p>
             </div>
-            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded self-start sm:self-auto">
+            <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 rounded-full self-start sm:self-auto">
               Demo data
             </span>
           </div>
@@ -254,23 +254,23 @@ export default function PlatformOverviewPage() {
           </div>
         </div>
 
-        {/* Right Card: Weekly Packs Generated */}
-        <div className="bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+        {/* Right Card: Weekly Packs Generated with Container Queries & Micro-interactions */}
+        <div className="@container cq-panel bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/90 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
             <div>
-              <h2 className="font-heading font-bold text-lg text-slate-900">
+              <h2 className="font-heading font-bold text-lg sm:text-xl text-slate-900">
                 Weekly Packs Generated
               </h2>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
                 AI brochure output volume across agencies
               </p>
             </div>
             {/* Badges container: wraps on mobile so the percentage badge never clips */}
             <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-              <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded">
+              <span className="text-[10px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 rounded-full">
                 Demo data
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 whitespace-nowrap shadow-2xs">
+              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60 whitespace-nowrap shadow-2xs">
                 ▲ +24% highest week
               </span>
             </div>
@@ -288,15 +288,15 @@ export default function PlatformOverviewPage() {
                 >
                   {/* Tooltip */}
                   {hoveredWeek === index && (
-                    <div className="absolute -top-10 px-2.5 py-1 rounded-lg bg-[#06143E] text-white text-xs font-bold shadow-lg pointer-events-none whitespace-nowrap z-10">
+                    <div className="absolute -top-10 px-2.5 py-1 rounded-lg bg-[#06143E] text-white text-xs font-bold shadow-lg pointer-events-none whitespace-nowrap z-10 animate-in fade-in zoom-in-95 duration-150">
                       {item.count} packs
                     </div>
                   )}
 
                   {/* Bar */}
-                  <div className="w-full max-w-[58px] bg-slate-100 rounded-t-lg h-44 flex items-end overflow-hidden p-0.5">
+                  <div className="w-full max-w-[58px] bg-slate-100 rounded-t-xl h-44 flex items-end overflow-hidden p-0.5">
                     <div
-                      className={`w-full rounded-t-lg transition-all duration-300 group-hover:opacity-90 ${item.color}`}
+                      className={`w-full rounded-t-xl transition-all duration-300 group-hover:scale-y-[1.03] group-hover:brightness-110 origin-bottom ${item.color}`}
                       style={{ height: `${item.height}%` }}
                     />
                   </div>
@@ -307,7 +307,7 @@ export default function PlatformOverviewPage() {
             {/* X-axis labels */}
             <div className="flex justify-between px-2 sm:px-8 text-[12px] font-semibold text-slate-500 pt-3">
               {weeklyPacks.map((item) => (
-                <div key={item.week} className="flex-1 text-center">
+                <div key={item.week} className="flex-1 text-center group-hover:text-slate-900 transition-colors">
                   {item.week}
                 </div>
               ))}
