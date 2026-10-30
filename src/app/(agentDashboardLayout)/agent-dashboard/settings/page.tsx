@@ -258,7 +258,9 @@ export default function SettingsBillingPage() {
   const confirmRemoveMember = () => {
     if (!memberToRemove) return;
     setTeamMembers((prev) => prev.filter((m) => m.id !== memberToRemove.id));
-    showToast('Team member "' + memberToRemove.name + '" removed from workspace');
+    showToast(
+      'Team member "' + memberToRemove.name + '" removed from workspace',
+    );
     setMemberToRemove(null);
   };
 
@@ -327,8 +329,6 @@ export default function SettingsBillingPage() {
             <span className="w-2 h-2 rounded-full bg-[#E8A808] animate-pulse" />
             <span>14 Packs Remaining</span>
           </div>
-
-          
         </div>
       </div>
 
@@ -1152,9 +1152,7 @@ export default function SettingsBillingPage() {
                                 </button>
                                 <button
                                   type="button"
-                                  onClick={() =>
-                                    setMemberToRemove(member)
-                                  }
+                                  onClick={() => setMemberToRemove(member)}
                                   className="w-full px-3 py-2 text-xs text-red-600 hover:bg-red-50 rounded-lg flex items-center gap-2 cursor-pointer transition font-medium"
                                 >
                                   <UserX className="w-3.5 h-3.5 text-red-500" />
