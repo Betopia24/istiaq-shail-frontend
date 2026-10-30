@@ -37,118 +37,35 @@ import {
 import PropertyPackHeroDemo from "@/components/ui/PropertyPackHeroDemo";
 
 export default function HomePage() {
-  // FAQ accordion state & categories
+  // FAQ accordion state
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [faqCategory, setFaqCategory] = useState<string>("all");
 
-  const faqCategories = [
-    { id: "all", label: "All Questions" },
-    { id: "outputs", label: "Marketing Outputs" },
-    { id: "workflow", label: "Workflow & Speed" },
-    { id: "branding", label: "Branding & Customization" },
-    { id: "agency", label: "Agency & Collaboration" },
-  ];
-
-  interface FaqItem {
-    id: number;
-    category: "outputs" | "branding" | "workflow" | "agency";
-    categoryLabel: string;
-    q: string;
-    a: string;
-    deliverables?: string[];
-    highlights?: string[];
-  }
-
-  const faqData: FaqItem[] = [
+  const faqData = [
     {
-      id: 0,
-      category: "outputs",
-      categoryLabel: "Marketing Outputs",
-      q: "What ten marketing outputs are included in Property Pack AI?",
-      a: "From a single property upload, Property Pack AI automatically crafts 10 complete, agency-grade marketing deliverables tailored to your local market and property specifications:",
-      deliverables: [
-        "Professional Valuation Presentation",
-        "Portal-Optimized Listing Description",
-        "Print-Ready PDF Property Brochure",
-        "Rightmove & Zoopla Key Specs",
-        "Feature Highlights & Bullet Points",
-        "Multi-Platform Social Media Posts",
-        "Video Walkthrough & Reel Scripts",
-        "Buyer FAQs & Local Area Guide",
-        "Ready-to-Send Email Inquiries",
-        "Instant Digital Shareable Web Pack",
-      ],
+      q: "What is Property Pack AI?",
+      a: "Property Pack AI is an AI-powered property marketing platform built specifically for estate and letting agents. From a single property upload, it produces all ten essential marketing outputs — from vendor-ready valuation presentations to portal copy and digital brochures.",
     },
     {
-      id: 1,
-      category: "workflow",
-      categoryLabel: "Workflow & Speed",
-      q: "How fast is a complete property marketing pack generated?",
-      a: "In under 60 seconds. Simply input the property address, price, key features, and upload photos. Our AI pipeline analyzes the attributes, matches portal copywriting best practices, and generates all 10 assets simultaneously ready for your review.",
-      highlights: [
-        "Under 60 seconds end-to-end turnaround",
-        "Parallel generation of all 10 formats",
-        "Direct one-click export to PDF and web links",
-      ],
+      q: "Can I generate the complete pack or select individual outputs?",
+      a: "Both! You can generate the entire 10-output marketing pack with one click, or select and export individual outputs whenever you need them — such as just a valuation proposal, Rightmove description, or social media scripts.",
     },
     {
-      id: 2,
-      category: "branding",
-      categoryLabel: "Agency Branding",
-      q: "Can we customize the packs with our agency branding, logos, and colours?",
-      a: "Yes, completely. Every generated deliverable — from PDF brochures to web links — inherits your agency's logo, primary and secondary brand palette, negotiator contact details, and compliance disclaimers. Your brand stays 100% front-and-centre.",
-      highlights: [
-        "Custom agency logo & bespoke hex brand colors",
-        "Agent photo & branch contact details automatically embedded",
-        "Approved regulatory disclaimers and CPR compliance statements",
-      ],
+      q: "What ten marketing outputs does Property Pack AI include?",
+      a: "The ten outputs are: Professional Valuation Presentation, Full Property Description, Print-Ready PDF Brochure, Portal Specifications (Rightmove & Zoopla), Key Feature Highlights, Multi-Channel Social Content, Video Walkthrough & Reel Scripts, Buyer FAQs & Answers, Email Inquiry Responses, and an Instant Digital Shareable Property Pack.",
     },
     {
-      id: 3,
-      category: "workflow",
-      categoryLabel: "Editorial Control",
-      q: "Can I edit and refine the content before publishing or sending to clients?",
-      a: "Always. You retain full editorial control over every generated element. Our interactive inline editor allows you to polish descriptions, amend room dimensions, reorder bullet points, or regenerate specific sections with custom prompts before sharing.",
-      highlights: [
-        "Full inline text editing and instant preview",
-        "Regenerate individual sections with custom agent prompts",
-        "Save custom agency tone presets for future listings",
-      ],
+      q: "Can I customize packs with my agency branding?",
+      a: "Yes, completely. Every deliverable inherits your agency logo, brand colours, negotiator contact details, and compliance disclaimers. Your brand stays front-and-centre on every output.",
     },
     {
-      id: 4,
-      category: "outputs",
-      categoryLabel: "Portal Compliance",
-      q: "Are the property descriptions compliant with Rightmove and Zoopla standards?",
-      a: "Yes. Property Pack AI is engineered specifically around UK property portals and Consumer Protection from Unfair Trading Regulations (CPRs). It structures descriptions with accurate room dimensions, EPC ratings, council tax bands, and key tenure information in the exact format required by top UK portals.",
+      q: "Can I edit the AI-generated content before publishing?",
+      a: "Yes. You retain full editorial control over every element. The built-in review editor lets you adjust valuation figures, polish descriptions, edit bullet points, and approve all copy before downloading or sharing.",
     },
     {
-      id: 5,
-      category: "agency",
-      categoryLabel: "Client Sharing",
-      q: "How do buyers and vendors view the digital shareable property pack?",
-      a: "Each pack includes an instant, secure web link optimized for mobile and desktop. You can share it directly with buyers or vendors via WhatsApp, SMS, QR code, or email. Prospective buyers can explore high-res photos, floor plans, specs, and local school data on any device without opening clunky attachments.",
-    },
-    {
-      id: 6,
-      category: "agency",
-      categoryLabel: "Team & Multi-Branch",
-      q: "Can multiple negotiators and office branches collaborate on Property Pack AI?",
-      a: "Yes. Our Team and Agency tiers include multi-seat access, shared branch libraries, brand presets for different office locations, and centralized credit management so your entire agency delivers consistent marketing across all instructions.",
-    },
-    {
-      id: 7,
-      category: "outputs",
-      categoryLabel: "Export Flexibility",
-      q: "Can I export individual deliverables or only the complete pack?",
-      a: "Both! You can download the complete 10-item marketing pack with a single click, or copy and export individual outputs whenever you need them — such as grabbing just the Instagram caption, downloading the vendor valuation PDF, or exporting portal copy into your CRM.",
+      q: "Can I download the property pack as a PDF and share via link?",
+      a: "Yes. With one click you can export a print-ready, branded PDF brochure, or generate a secure mobile-friendly digital link to send directly to buyers and vendors via WhatsApp, SMS, or email.",
     },
   ];
-
-  const filteredFaqs =
-    faqCategory === "all"
-      ? faqData
-      : faqData.filter((item) => item.category === faqCategory);
 
   return (
     <div className="w-full bg-white text-slate-900 selection:bg-[#E8A808]/30 selection:text-[#06143E] min-h-screen">
@@ -1661,211 +1578,74 @@ export default function HomePage() {
       ========================================================================= */}
       <section
         id="faq"
-        className="py-24 sm:py-32 bg-slate-50/70 border-t border-slate-200/80 relative overflow-hidden"
+        className="py-20 sm:py-28 bg-slate-50 border-t border-slate-200/80"
       >
-        {/* Subtle decorative glow */}
-        <div className="absolute top-1/4 -left-40 w-96 h-96 bg-[#E8A808]/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#06143E]/5 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
-            {/* Left Column: Sticky Header, Interactive Filters & Specialist Support Box */}
-            <div className="lg:col-span-5 lg:sticky lg:top-28 space-y-6">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-xs font-medium text-[#8C6605]">
-                <HelpCircle className="w-3.5 h-3.5 text-[#E8A808]" />
-                <span className="uppercase tracking-wider">Help & Knowledge Base</span>
-              </div>
-              <h2 className="font-heading font-medium text-3xl sm:text-4xl text-[#06143E] tracking-tight leading-tight">
-                Frequently asked questions.
-              </h2>
-              <p className="font-sans text-sm sm:text-base text-slate-600 leading-relaxed">
-                Clear answers about generating, customizing, and sharing high-converting property marketing packs in seconds.
-              </p>
-
-              {/* Interactive Category Filter Pills */}
-              <div className="pt-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2.5">
-                  Filter by Topic
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {faqCategories.map((cat) => {
-                    const isSelected = faqCategory === cat.id;
-                    const count =
-                      cat.id === "all"
-                        ? faqData.length
-                        : faqData.filter((f) => f.category === cat.id).length;
-                    return (
-                      <button
-                        key={cat.id}
-                        type="button"
-                        onClick={() => {
-                          setFaqCategory(cat.id);
-                          const match = faqData.find(
-                            (f) => cat.id === "all" || f.category === cat.id
-                          );
-                          if (match) setOpenFaq(match.id);
-                        }}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
-                          isSelected
-                            ? "bg-[#06143E] text-white shadow-xs font-semibold"
-                            : "bg-white text-slate-600 border border-slate-200/90 hover:border-slate-300 hover:bg-slate-50"
-                        }`}
-                      >
-                        <span>{cat.label}</span>
-                        <span
-                          className={`text-[10px] px-1.5 py-0.5 rounded-full ${
-                            isSelected
-                              ? "bg-white/20 text-white"
-                              : "bg-slate-100 text-slate-500"
-                          }`}
-                        >
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Dedicated Support Box */}
-              <div className="rounded-2xl bg-white border border-slate-200/90 p-6 shadow-xs relative overflow-hidden mt-6">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#E8A808]/10 rounded-full blur-2xl pointer-events-none" />
-                <div className="flex items-start gap-3.5 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#06143E] text-[#E8A808] flex items-center justify-center shrink-0 shadow-xs">
-                    <MessageSquare className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-heading font-medium text-slate-900 text-sm">
-                      Have a specific question?
-                    </h3>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      Talk with our real estate marketing team
-                    </p>
-                  </div>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed mb-4">
-                  Need a custom agency workflow, multi-branch licensing, or assistance getting your first property uploaded?
-                </p>
-                <div className="flex flex-col sm:flex-row gap-2.5">
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#06143E] hover:bg-[#0A1A4A] text-white text-xs font-medium transition-all shadow-xs"
-                  >
-                    <span>Talk to Team</span>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-[#E8A808]" />
-                  </Link>
-                  <a
-                    href="mailto:support@propertypack.ai"
-                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-medium transition-all"
-                  >
-                    <span>Email Support</span>
-                  </a>
-                </div>
-              </div>
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center mb-12 space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-xs font-medium text-[#8C6605]">
+              <HelpCircle className="w-3.5 h-3.5 text-[#E8A808]" />
+              <span className="uppercase tracking-wider">FAQ</span>
             </div>
+            <h2 className="font-heading font-medium text-3xl sm:text-4xl text-[#06143E] tracking-tight">
+              Frequently asked questions
+            </h2>
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-xl mx-auto">
+              Practical answers about creating, reviewing and sharing property packs.
+            </p>
+          </div>
 
-            {/* Right Accordion List */}
-            <div className="@container lg:col-span-7 space-y-3.5">
-              {filteredFaqs.map((item) => {
-                const isOpen = openFaq === item.id;
-                return (
-                  <div
-                    key={item.id}
-                    className={`bg-white rounded-2xl border transition-all duration-200 overflow-hidden ${
-                      isOpen
-                        ? "border-[#E8A808] shadow-md ring-1 ring-[#E8A808]/20"
-                        : "border-slate-200/90 hover:border-slate-300 hover:shadow-xs"
-                    }`}
+          {/* Accordion */}
+          <div className="space-y-3">
+            {faqData.map((item, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div
+                  key={index}
+                  className={`bg-white rounded-2xl border transition-all duration-200 overflow-hidden ${
+                    isOpen
+                      ? "border-[#E8A808] shadow-md ring-1 ring-[#E8A808]/20"
+                      : "border-slate-200/90 hover:border-slate-300 hover:shadow-xs"
+                  }`}
+                >
+                  <button
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    className="w-full px-5 py-4 sm:px-6 sm:py-5 text-left flex items-center justify-between gap-4 cursor-pointer focus:outline-none"
+                    aria-expanded={isOpen}
                   >
-                    <button
-                      onClick={() => setOpenFaq(isOpen ? null : item.id)}
-                      className="w-full p-5 sm:p-6 text-left flex items-start justify-between gap-4 cursor-pointer focus:outline-none transition-colors"
-                      aria-expanded={isOpen}
+                    <span className="font-heading font-medium text-sm sm:text-base text-slate-900 leading-snug">
+                      {item.q}
+                    </span>
+                    <motion.div
+                      animate={{ rotate: isOpen ? 180 : 0 }}
+                      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors ${
+                        isOpen
+                          ? "bg-[#06143E] text-[#E8A808]"
+                          : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                      }`}
                     >
-                      <div className="space-y-1.5 pr-2">
-                        <div className="flex items-center gap-2">
-                          <span className="inline-block text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
-                            {item.categoryLabel}
-                          </span>
-                        </div>
-                        <h3 className="font-heading font-medium text-sm sm:text-base text-slate-900 leading-snug">
-                          {item.q}
-                        </h3>
-                      </div>
+                      <Plus className="w-4 h-4" />
+                    </motion.div>
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
                       <motion.div
-                        animate={{ rotate: isOpen ? 180 : 0 }}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors mt-0.5 ${
-                          isOpen
-                            ? "bg-[#06143E] text-[#E8A808]"
-                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                        }`}
+                        className="overflow-hidden"
                       >
-                        {isOpen ? (
-                          <Minus className="w-4 h-4" />
-                        ) : (
-                          <Plus className="w-4 h-4" />
-                        )}
+                        <p className="px-5 sm:px-6 pb-5 pt-1 text-sm text-slate-600 leading-relaxed border-t border-slate-100">
+                          {item.a}
+                        </p>
                       </motion.div>
-                    </button>
-
-                    <AnimatePresence initial={false}>
-                      {isOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{
-                            duration: 0.28,
-                            ease: [0.16, 1, 0.3, 1],
-                          }}
-                          className="overflow-hidden"
-                        >
-                          <div className="px-5 sm:px-6 pb-6 pt-1 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100">
-                            <p className="text-slate-600 leading-relaxed">{item.a}</p>
-
-                            {/* Deliverables pill grid if present */}
-                            {item.deliverables && (
-                              <div className="mt-4 pt-4 border-t border-slate-100">
-                                <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2.5">
-                                  Included Marketing Deliverables:
-                                </div>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                  {item.deliverables.map((deliv, dIdx) => (
-                                    <div
-                                      key={dIdx}
-                                      className="flex items-center gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200/70 text-slate-700 text-xs font-medium"
-                                    >
-                                      <Check className="w-3.5 h-3.5 text-[#E8A808] shrink-0" />
-                                      <span className="truncate">{deliv}</span>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Highlights bullet checklist if present */}
-                            {item.highlights && (
-                              <ul className="mt-4 pt-4 border-t border-slate-100 space-y-2">
-                                {item.highlights.map((h, hIdx) => (
-                                  <li
-                                    key={hIdx}
-                                    className="flex items-center gap-2 text-xs text-slate-700 font-medium"
-                                  >
-                                    <CheckCircle2 className="w-3.5 h-3.5 text-[#E8A808] shrink-0" />
-                                    <span>{h}</span>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                );
-              })}
-            </div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
