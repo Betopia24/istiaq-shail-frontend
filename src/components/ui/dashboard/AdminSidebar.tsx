@@ -57,7 +57,7 @@ export function AdminSidebar() {
             height={36}
             className="w-[115px] h-auto object-contain"
           />
-          <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-[#14254D] text-[#8E9BB0] border border-[#1E356D] uppercase tracking-wider">
+          <span className="text-[9px] font-semibold px-2 py-0.5 rounded bg-[#14254D] text-[#8E9BB0] border border-[#1E356D] uppercase tracking-wider">
             SUPER ADMIN
           </span>
         </div>
@@ -102,14 +102,14 @@ export function AdminSidebar() {
                 </Link>
                 {/* Super Admin Pill Badge */}
                 <div className="mt-2.5">
-                  <span className="inline-block px-2.5 py-0.5 rounded bg-[#14254D] text-[#8E9BB0] text-[9px] font-bold tracking-wider uppercase border border-[#1E356D]">
+                  <span className="inline-block px-2.5 py-0.5 rounded bg-[#14254D] text-[#8E9BB0] text-[9px] font-semibold tracking-wider uppercase border border-[#1E356D]">
                     SUPER ADMIN
                   </span>
                 </div>
               </div>
             ) : (
               <div className="mx-auto flex flex-col items-center">
-                <div className="w-9 h-9 rounded-xl bg-[#14254D] border border-[#E8A808]/40 flex items-center justify-center text-[#E8A808] font-bold text-sm shadow-inner">
+                <div className="w-9 h-9 rounded-xl bg-[#14254D] border border-[#E8A808]/40 flex items-center justify-center text-[#E8A808] font-semibold text-sm shadow-inner">
                   P
                 </div>
               </div>
@@ -192,7 +192,7 @@ export function AdminSidebar() {
             }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-full bg-[#E8A808] text-[#080F24] font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
+              <div className="w-8 h-8 rounded-full bg-[#E8A808] text-[#080F24] font-semibold text-xs flex items-center justify-center shrink-0 shadow-sm">
                 IS
               </div>
               {!collapsed && (

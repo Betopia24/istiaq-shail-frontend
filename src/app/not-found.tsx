@@ -51,10 +51,10 @@ export default function NotFound() {
       <main className="relative z-10 max-w-xl mx-auto px-6 py-12 text-center flex flex-col items-center justify-center my-auto">
         {/* Stylized 404 Display */}
         <div className="relative select-none mb-2">
-          <h1 className="font-heading font-extrabold text-8xl sm:text-9xl md:text-[120px] leading-none tracking-tight bg-gradient-to-b from-white via-slate-100 to-white/40 bg-clip-text text-transparent drop-shadow-xl">
+          <h1 className="font-heading font-semibold text-8xl sm:text-9xl md:text-[120px] leading-none tracking-tight bg-gradient-to-b from-white via-slate-100 to-white/40 bg-clip-text text-transparent drop-shadow-xl">
             404
           </h1>
-          <div className="absolute -top-2 -right-3 w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-[#FFB800] text-[#06143E] font-extrabold text-base sm:text-lg flex items-center justify-center shadow-md rotate-12">
+          <div className="absolute -top-2 -right-3 w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-[#FFB800] text-[#06143E] font-semibold text-base sm:text-lg flex items-center justify-center shadow-md rotate-12">
             ?
           </div>
         </div>

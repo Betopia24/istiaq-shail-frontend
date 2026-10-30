@@ -10,89 +10,70 @@
 
 :root {
   /* Font Families */
-  --font-manrope: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-sora: 'Sora', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-manrope:
+    "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-sora:
+    "Sora", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-inter:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   /* Surface & Base */
-  --background: 210 40% 98%;          /* #F8FAFC (Slate 50) */
-  --foreground: 222 47% 5%;           /* #020618 (Slate 950 / Deep Charcoal) */
+  --background: 210 40% 98%; /* #F8FAFC (Slate 50) */
+  --foreground: 222 47% 5%; /* #020618 (Slate 950 / Deep Charcoal) */
 
   /* Cards & Elevating Surfaces */
-  --card: 0 0% 100%;                  /* #FFFFFF */
-  --card-foreground: 222 47% 5%;      /* #020618 */
+  --card: 0 0% 100%; /* #FFFFFF */
+  --card-foreground: 222 47% 5%; /* #020618 */
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 5%;
 
   /* Brand Primary Accent (Figma Warm Gold/Amber: #E8A808) */
-  --primary: 43 93% 47%;              /* #E8A808 */
-  --primary-foreground: 228 82% 13%;  /* #06143E (Midnight Navy text on gold) */
-  --primary-hover: 43 100% 50%;       /* #FFB800 */
-  --primary-dark: 43 94% 37%;         /* #B58306 */
-  --primary-deep: 43 94% 28%;         /* #8C6605 */
-  --primary-light: 48 94% 88%;        /* #FEF3C7 */
+  --primary: 43 93% 47%; /* #E8A808 */
+  --primary-foreground: 228 82% 13%; /* #06143E (Midnight Navy text on gold) */
+  --primary-hover: 43 100% 50%; /* #FFB800 */
+  --primary-dark: 43 94% 37%; /* #B58306 */
+  --primary-deep: 43 94% 28%; /* #8C6605 */
+  --primary-light: 48 94% 88%; /* #FEF3C7 */
 
   /* Brand Secondary / Navy System (Figma Deep Navy: #0B1736 & #06143E) */
-  --secondary: 223 66% 13%;           /* #0B1736 */
-  --secondary-foreground: 0 0% 100%;  /* #FFFFFF */
-  --navy-midnight: 228 82% 13%;       /* #06143E */
-  --navy-deep: 223 66% 13%;           /* #0B1736 */
-  --navy-royal: 226 84% 22%;          /* #092167 */
-  --navy-hover: 226 84% 24%;          /* #0A2471 */
-  --navy-surface: 217 35% 18%;        /* #1D293D */
-  --navy-border: 221 40% 25%;         /* #26365A */
-  --navy-muted: 225 28% 49%;          /* #5B6CA0 */
+  --secondary: 223 66% 13%; /* #0B1736 */
+  --secondary-foreground: 0 0% 100%; /* #FFFFFF */
+  --navy-midnight: 228 82% 13%; /* #06143E */
+  --navy-deep: 223 66% 13%; /* #0B1736 */
+  --navy-royal: 226 84% 22%; /* #092167 */
+  --navy-hover: 226 84% 24%; /* #0A2471 */
+  --navy-surface: 217 35% 18%; /* #1D293D */
+  --navy-border: 221 40% 25%; /* #26365A */
+  --navy-muted: 225 28% 49%; /* #5B6CA0 */
 
   /* Neutral Slate Scale */
-  --muted: 210 40% 96%;               /* #F1F5F9 */
-  --muted-foreground: 215 16% 47%;    /* #62748E */
-  --accent: 48 94% 88%;               /* #FEF3C7 (Gold light tint) */
-  --accent-foreground: 43 94% 28%;    /* #8C6605 */
+  --muted: 210 40% 96%; /* #F1F5F9 */
+  --muted-foreground: 215 16% 47%; /* #62748E */
+  --accent: 48 94% 88%; /* #FEF3C7 (Gold light tint) */
+  --accent-foreground: 43 94% 28%; /* #8C6605 */
 
   /* Semantic Feedback */
-  --destructive: 0 84% 60%;           /* #EF4444 */
+  --destructive: 0 84% 60%; /* #EF4444 */
   --destructive-foreground: 0 0% 100%;
-  --success: 142 71% 45%;             /* #16A34A */
+  --success: 142 71% 45%; /* #16A34A */
   --success-foreground: 0 0% 100%;
-  --warning: 43 93% 47%;              /* #E8A808 */
-  --info: 217 91% 60%;                /* #3B82F6 */
+  --warning: 43 93% 47%; /* #E8A808 */
+  --info: 217 91% 60%; /* #3B82F6 */
 
   /* Borders & Inputs */
-  --border: 214 32% 91%;              /* #E2E8F0 */
-  --border-strong: 215 25% 84%;       /* #CAD5E2 */
-  --input: 215 25% 84%;               /* #CAD5E2 */
-  --input-focus: 43 93% 47%;          /* #E8A808 */
-  --ring: 43 93% 47%;                 /* #E8A808 */
+  --border: 214 32% 91%; /* #E2E8F0 */
+  --border-strong: 215 25% 84%; /* #CAD5E2 */
+  --input: 215 25% 84%; /* #CAD5E2 */
+  --input-focus: 43 93% 47%; /* #E8A808 */
+  --ring: 43 93% 47%; /* #E8A808 */
 
   /* Border Radiuses (Tokens from Figma) */
-  --radius: 0.75rem;                  /* 12px default */
-  --radius-sm: 0.375rem;              /* 6px */
-  --radius-md: 0.5rem;                /* 8px */
-  --radius-lg: 0.75rem;               /* 12px */
-  --radius-xl: 1rem;                  /* 16px */
-  --radius-2xl: 1.25rem;              /* 20px */
-}
-
-.dark {
-  --background: 228 82% 13%;          /* #06143E */
-  --foreground: 210 40% 98%;          /* #F8FAFC */
-  --card: 223 66% 13%;                /* #0B1736 */
-  --card-foreground: 210 40% 98%;
-  --popover: 223 66% 13%;
-  --popover-foreground: 210 40% 98%;
-  --primary: 43 93% 47%;              /* #E8A808 */
-  --primary-foreground: 228 82% 13%;
-  --secondary: 217 35% 18%;           /* #1D293D */
-  --secondary-foreground: 0 0% 100%;
-  --muted: 217 35% 18%;
-  --muted-foreground: 215 16% 65%;
-  --accent: 217 35% 22%;
-  --accent-foreground: 43 93% 47%;
-  --destructive: 0 62% 30%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 221 40% 25%;              /* #26365A */
-  --input: 221 40% 25%;
-  --ring: 43 93% 47%;
+  --radius: 0.75rem; /* 12px default */
+  --radius-sm: 0.375rem; /* 6px */
+  --radius-md: 0.5rem; /* 8px */
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-xl: 1rem; /* 16px */
+  --radius-2xl: 1.25rem; /* 20px */
 }
 
 /* -------------------------------------------------------------------------
@@ -114,7 +95,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-sora), sans-serif;
 }
 
@@ -179,7 +165,9 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  box-shadow: 0 4px 12px -2px rgba(30, 22, 69, 0.06), 0 2px 4px -1px rgba(30, 22, 69, 0.04);
+  box-shadow:
+    0 4px 12px -2px rgba(30, 22, 69, 0.06),
+    0 2px 4px -1px rgba(30, 22, 69, 0.04);
 }
 
 .app-card-hover {
@@ -187,7 +175,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 .app-card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px -4px rgba(30, 22, 69, 0.12), 0 4px 10px -2px rgba(30, 22, 69, 0.06);
+  box-shadow:
+    0 12px 28px -4px rgba(30, 22, 69, 0.12),
+    0 4px 10px -2px rgba(30, 22, 69, 0.06);
   border-color: #cad5e2;
 }
 
@@ -528,7 +518,9 @@ h1, h2, h3, h4, h5, h6 {
    Micro-interactions, Transitions & Breathable Design Tokens
 ------------------------------------------------------------------------- */
 .interactive-scale {
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .interactive-scale:hover {
   transform: translateY(-2px);
@@ -538,11 +530,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .interactive-lift {
-  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.2s ease;
+  transition:
+    transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.2s ease;
 }
 .interactive-lift:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 32px -8px rgba(6, 20, 62, 0.12), 0 4px 12px -2px rgba(6, 20, 62, 0.06);
+  box-shadow:
+    0 16px 32px -8px rgba(6, 20, 62, 0.12),
+    0 4px 12px -2px rgba(6, 20, 62, 0.06);
 }
 
 .interactive-glow-gold {
@@ -583,8 +580,12 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Shimmer & Ambient Animations */
 @keyframes shimmer-sweep {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .animate-shimmer {
@@ -592,17 +593,32 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 .animate-shimmer::after {
-  content: '';
+  content: "";
   position: absolute;
-  top: 0; right: 0; bottom: 0; left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   animation: shimmer-sweep 3s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes pulse-gentle {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.02); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
 }
 
 .animate-pulse-gentle {

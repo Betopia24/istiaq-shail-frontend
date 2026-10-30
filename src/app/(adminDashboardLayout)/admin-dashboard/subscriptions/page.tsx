@@ -453,7 +453,7 @@ export default function SubscriptionsAndBillingPage() {
               </div>
               <div className="flex justify-between pt-1">
                 <span className="text-slate-900 font-bold">Total Paid:</span>
-                <span className="font-heading font-extrabold text-lg text-emerald-600">
+                <span className="font-heading font-semibold text-lg text-emerald-600">
                   {selectedReceipt.planAmount.replace("/mo", "")}
                 </span>
               </div>

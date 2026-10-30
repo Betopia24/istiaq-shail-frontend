@@ -409,7 +409,7 @@ export default function SettingsBillingPage() {
                 onChange={handleHeadshotUpload}
               />
 
-              <div className="relative w-16 h-16 rounded-full overflow-hidden bg-[#06143E] text-white flex items-center justify-center font-heading font-extrabold text-xl shadow-md border-2 border-slate-200 shrink-0">
+              <div className="relative w-16 h-16 rounded-full overflow-hidden bg-[#06143E] text-white flex items-center justify-center font-heading font-semibold text-xl shadow-md border-2 border-slate-200 shrink-0">
                 {headshotPreview ? (
                   <Image
                     src={headshotPreview}
@@ -818,7 +818,7 @@ export default function SettingsBillingPage() {
               <div className="rounded-xl border border-slate-200 p-5 bg-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2.5">
-                    <h4 className="font-heading font-extrabold text-base text-slate-900">
+                    <h4 className="font-heading font-semibold text-base text-slate-900">
                       Pro Agency Plan
                     </h4>
                     <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
@@ -876,7 +876,7 @@ export default function SettingsBillingPage() {
               {/* Credit Card Box */}
               <div className="rounded-xl border border-slate-200 p-4 flex items-center justify-between bg-slate-50/60">
                 <div className="flex items-center gap-3.5">
-                  <div className="w-10 h-7 rounded bg-[#06143E] text-white flex items-center justify-center font-extrabold text-[10px] tracking-wider shrink-0">
+                  <div className="w-10 h-7 rounded bg-[#06143E] text-white flex items-center justify-center font-semibold text-[10px] tracking-wider shrink-0">
                     VISA
                   </div>
                   <div>
