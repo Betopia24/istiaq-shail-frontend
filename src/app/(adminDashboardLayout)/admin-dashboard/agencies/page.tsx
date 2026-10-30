@@ -221,7 +221,7 @@ export default function AgenciesAndUsersPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-white border-b border-slate-200/70 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+              <tr className="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-600">
                 <th className="px-6 py-4">User / Agent Name</th>
                 <th className="px-6 py-4">Agency Affiliation</th>
                 <th className="px-6 py-4">Role</th>

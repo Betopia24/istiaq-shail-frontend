@@ -231,12 +231,12 @@ export default function SavedPacksPage() {
       {/* =========================================================================
           TOP HEADER
       ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200/70">
         <div>
           <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
             Saved Property Packs
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-600 mt-0.5">
             Manage, edit, export and share all generated property assets
           </p>
         </div>

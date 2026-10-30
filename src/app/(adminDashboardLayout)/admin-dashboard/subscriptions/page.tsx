@@ -190,7 +190,7 @@ export default function SubscriptionsAndBillingPage() {
       )}
 
       {/* Header with Title and Export Button */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200/70">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
@@ -281,7 +281,7 @@ export default function SubscriptionsAndBillingPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-white border-b border-slate-200/70 text-[11px] font-medium uppercase tracking-wider text-slate-500">
+              <tr className="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-600">
                 <th className="px-6 py-4">Invoice &amp; Stripe ID</th>
                 <th className="px-6 py-4">Agency / Subscriber</th>
                 <th className="px-6 py-4">Plan Tier (Current)</th>

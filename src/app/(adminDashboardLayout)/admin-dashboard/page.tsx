@@ -38,7 +38,7 @@ export default function PlatformOverviewPage() {
   return (
     <div className="space-y-6">
       {/* Super Admin Top Header with Demo / Live Telemetry Indicator */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200/70">
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-1.5">
             <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 uppercase tracking-wider">
@@ -72,7 +72,7 @@ export default function PlatformOverviewPage() {
         {/* Card 1: MRR */}
         <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">
               Monthly Recurring Revenue
             </span>
             <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
@@ -92,7 +92,7 @@ export default function PlatformOverviewPage() {
         {/* Card 2: Active Agencies */}
         <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">
               Total Active Agencies
             </span>
             <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
@@ -112,7 +112,7 @@ export default function PlatformOverviewPage() {
         {/* Card 3: Packs Generated */}
         <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">
               Packs Generated (Oct)
             </span>
             <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
@@ -132,7 +132,7 @@ export default function PlatformOverviewPage() {
         {/* Card 4: Gross SaaS Margin */}
         <div className="@container cq-card bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-slate-500">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-600">
               Gross SaaS Margin
             </span>
             <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">

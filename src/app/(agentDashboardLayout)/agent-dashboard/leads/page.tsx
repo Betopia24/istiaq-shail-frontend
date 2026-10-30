@@ -283,12 +283,12 @@ export default function LeadsInquiriesPage() {
       {/* =========================================================================
           TOP PAGE HEADER (Concise & Clean Typography)
       ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200/70">
         <div>
           <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
             Buyer Inquiries &amp; Viewing Requests
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-600 mt-0.5">
             Captured via Public Buyer Property Pages &amp; QR Codes
           </p>
         </div>
@@ -309,10 +309,10 @@ export default function LeadsInquiriesPage() {
       {/* =========================================================================
           TOP 4 METRICS CARDS (Clean, Concise Semibold Metrics)
       ========================================================================= */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+      <div className="@container"><div className="grid grid-cols-1 @sm:grid-cols-2 @xl:grid-cols-4 gap-4 sm:gap-5">
         {/* Card 1: Total Inquiries */}
         <div className="@container bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow space-y-3">
-          <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
+          <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider block">
             TOTAL INQUIRIES
           </span>
           <div className="flex items-baseline justify-between">
@@ -328,7 +328,7 @@ export default function LeadsInquiriesPage() {
 
         {/* Card 2: Pending Review */}
         <div className="@container bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow space-y-3">
-          <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
+          <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider block">
             PENDING REVIEW
           </span>
           <div className="flex items-baseline justify-between">
@@ -343,7 +343,7 @@ export default function LeadsInquiriesPage() {
 
         {/* Card 3: Confirmed Viewings */}
         <div className="@container bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow space-y-3">
-          <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
+          <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider block">
             CONFIRMED VIEWINGS
           </span>
           <div className="flex items-baseline justify-between">
@@ -359,7 +359,7 @@ export default function LeadsInquiriesPage() {
 
         {/* Card 4: Viewing Conversion */}
         <div className="@container bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow space-y-3">
-          <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider block">
+          <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider block">
             VIEWING CONVERSION
           </span>
           <div className="flex items-baseline justify-between">
@@ -371,6 +371,7 @@ export default function LeadsInquiriesPage() {
             </span>
           </div>
         </div>
+      </div>
       </div>
 
       {/* =========================================================================
@@ -450,7 +451,7 @@ export default function LeadsInquiriesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs min-w-[760px]">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/70 text-slate-400 uppercase text-[10px] font-medium tracking-wider">
+              <tr className="border-b border-slate-100 bg-slate-50/70 text-slate-600 uppercase text-xs font-semibold tracking-wider bg-slate-50/90 border-b border-slate-200">
                 <th className="py-3.5 pl-6 font-medium">BUYER DETAILS</th>
                 <th className="py-3.5 font-medium">INTERESTED PROPERTY</th>
                 <th className="py-3.5 font-medium">REQUESTED VIEWING</th>

@@ -126,12 +126,12 @@ export default function AgentDashboardPage() {
       {/* =========================================================================
           SECTION 1: AGENT OVERVIEW HEADER
       ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200/70">
         <div>
           <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
             Agent Overview
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-slate-600 mt-0.5">
             Manage your property marketing collateral &amp; PDF reports
           </p>
         </div>
@@ -244,7 +244,7 @@ export default function AgentDashboardPage() {
       {/* =========================================================================
           SECTION 3: STATS CARDS (3 COLUMNS WITH CONTAINER QUERIES)
       ========================================================================= */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="@container"><div className="grid grid-cols-1 @sm:grid-cols-2 @xl:grid-cols-3 gap-5">
         {/* Card 1: Total Packs Created */}
         <div className="@container cq-card bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-7 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
           <div className="flex items-center justify-between">
@@ -336,6 +336,7 @@ export default function AgentDashboardPage() {
           </div>
         </div>
       </div>
+      </div>
 
       {/* =========================================================================
           SECTION 4: RECENT PROPERTY MARKETING PACKS TABLE (CONTAINER QUERY & MICRO-INTERACTIONS)
@@ -364,7 +365,7 @@ export default function AgentDashboardPage() {
         <div className="overflow-x-auto -mx-6 sm:mx-0">
           <table className="w-full text-left min-w-[680px]">
             <thead>
-              <tr className="border-b border-slate-100 text-[11px] font-medium text-slate-400 uppercase tracking-wider">
+              <tr className="border-b border-slate-100 text-xs font-semibold text-slate-600 uppercase tracking-wider bg-slate-50/80 border-b border-slate-200">
                 <th className="py-3.5 px-6 sm:px-3 w-[42%]">
                   Property Address
                 </th>
