@@ -408,7 +408,7 @@ export default function SettingsBillingPage() {
                 onChange={handleHeadshotUpload}
               />
 
-              <div className="relative w-16 h-16 rounded-full overflow-hidden bg-[#06143E] text-white flex items-center justify-center font-heading font-medium text-xl shadow-md border-2 border-slate-200 shrink-0">
+              <div className="relative w-16 h-16 rounded-full overflow-hidden bg-[#06143E] text-white flex items-center justify-center font-heading font-medium text-xl shadow-md border-2 border-white/20 shrink-0">
                 {headshotPreview ? (
                   <Image
                     src={headshotPreview}

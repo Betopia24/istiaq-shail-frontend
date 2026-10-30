@@ -617,7 +617,7 @@ export default function HomePage() {
                   </div>
 
                   {/* Card Agency Footer Strip */}
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 bg-[#092167] text-white -mx-6 -mb-6 p-4">
+                  <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-500 bg-[#092167] text-white -mx-6 -mb-6 p-4">
                     <span className="font-medium text-white">
                       Your Agency Name
                     </span>
