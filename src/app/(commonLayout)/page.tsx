@@ -32,6 +32,7 @@ import {
   CheckCircle2,
   SlidersHorizontal,
 } from "lucide-react";
+import PropertyPackHeroDemo from "@/components/ui/PropertyPackHeroDemo";
 
 export default function HomePage() {
   // FAQ accordion state
@@ -181,17 +182,10 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Right Visual: Exact Figma Hero Right Visual SVG with Container Query */}
+            {/* Right Visual: Animated PropertyPackHeroDemo */}
             <div className="@container lg:col-span-6 flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-[568px] drop-shadow-2xl interactive-scale">
-                <Image
-                  src="/hero-right-image.svg"
-                  alt="Property Information and Property Pack AI Transformation"
-                  width={568}
-                  height={547}
-                  priority
-                  className="w-full h-auto object-contain select-none"
-                />
+              <div className="relative w-full max-w-[540px]">
+                <PropertyPackHeroDemo />
               </div>
             </div>
           </div>
