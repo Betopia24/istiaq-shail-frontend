@@ -241,21 +241,19 @@ export default function SavedPacksPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3 self-start sm:self-auto">
+        <div className="flex items-center gap-2.5 self-start sm:self-auto">
           {/* Credits Badge */}
-          <div className="h-10 px-4 rounded-xl border border-amber-200/80 bg-amber-50/60 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FFB800]" />
-            <span className="text-xs font-medium text-slate-800">
-              14 Credits Left
-            </span>
+          <div className="h-9 px-3 rounded-lg border border-amber-200/80 bg-amber-50/70 flex items-center gap-2 text-xs font-semibold text-slate-800">
+            <span className="w-2 h-2 rounded-full bg-[#E8A808] animate-pulse" />
+            <span>14 Credits Left</span>
           </div>
 
           {/* New Property Pack Button */}
           <Link
             href="/agent-dashboard/create"
-            className="h-10 px-5 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-medium text-xs sm:text-sm transition flex items-center gap-1.5 shadow-xs"
+            className="h-9 px-3.5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#D49800] text-[#06143E] font-heading font-semibold text-xs transition flex items-center gap-1.5 shadow-xs"
           >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
+            <Sparkles className="w-3.5 h-3.5" />
             <span>New Property Pack</span>
           </Link>
         </div>

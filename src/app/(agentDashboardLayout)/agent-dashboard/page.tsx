@@ -136,17 +136,17 @@ export default function AgentDashboardPage() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 self-start sm:self-auto">
+        <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
           {/* Clarified Available Credits Pill with Animated Popover Breakdown */}
           <div className="relative">
             <button
               onClick={() => setShowCreditDetails(!showCreditDetails)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-[#8C6605] text-xs font-medium shadow-2xs hover:bg-[#FDE68A]/60 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-[#8C6605] text-xs font-semibold shadow-2xs hover:bg-[#FDE68A]/60 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
               title="Click to view credits relationship breakdown"
             >
               <span className="w-2 h-2 rounded-full bg-[#E8A808] shrink-0 animate-pulse" />
               <span>78 Packs Available</span>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-[#E8A808]/25 text-[#715003] font-medium">
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#E8A808]/25 text-[#715003] font-semibold">
                 64 Monthly + 14 Add-on
               </span>
             </button>
@@ -205,12 +205,13 @@ export default function AgentDashboardPage() {
             </AnimatePresence>
           </div>
 
-          {/* Buy Packs Button with Micro-Interaction */}
+          {/* Buy Packs Button with Concise Sizing */}
           <button
             onClick={() => setShowBuyModal(true)}
-            className="h-10 px-5 rounded-xl bg-[#071330] hover:bg-[#0B1E48] active:bg-[#040C1E] active:scale-[0.98] text-white text-xs font-medium flex items-center justify-center transition-all shadow-sm cursor-pointer"
+            className="h-9 px-3.5 rounded-lg bg-[#06143E] hover:bg-[#0B1E48] active:bg-[#040C1E] active:scale-[0.98] text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
           >
-            + Buy Packs
+            <Plus className="w-3.5 h-3.5" />
+            <span>Buy Packs</span>
           </button>
         </div>
       </div>
@@ -218,12 +219,12 @@ export default function AgentDashboardPage() {
       {/* =========================================================================
           SECTION 2: MARKET A NEW PROPERTY LISTING BANNER
       ========================================================================= */}
-      <div className="@container cq-panel bg-[#07153B] rounded-3xl p-7 sm:p-9 text-white flex flex-col md:flex-row md:items-center md:justify-between gap-6 shadow-md border border-[#162758]/50 relative overflow-hidden interactive-lift">
+      <div className="@container cq-panel bg-[#07153B] rounded-3xl p-6 sm:p-7 text-white flex flex-col md:flex-row md:items-center md:justify-between gap-5 shadow-md border border-[#162758]/50 relative overflow-hidden interactive-lift">
         {/* Subtle background glow */}
         <div className="absolute right-0 top-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 max-w-2xl space-y-2">
-          <h2 className="font-heading font-medium text-xl sm:text-2xl text-white tracking-tight">
+        <div className="relative z-10 max-w-2xl space-y-1.5">
+          <h2 className="font-heading font-semibold text-lg sm:text-xl text-white tracking-tight">
             Market a New Property Listing
           </h2>
           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-xl">
@@ -234,9 +235,9 @@ export default function AgentDashboardPage() {
 
         <Link
           href="/agent-dashboard/create"
-          className="relative z-10 h-12 px-7 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-sm shadow-[0_2px_12px_rgba(232,168,8,0.35)] hover:shadow-[0_4px_18px_rgba(232,168,8,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer self-start md:self-auto"
+          className="relative z-10 h-10 px-4.5 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#D49800] text-[#06143E] font-heading font-semibold text-xs sm:text-sm shadow-xs hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 shrink-0 cursor-pointer self-start md:self-auto"
         >
-          <Plus className="w-4 h-4 stroke-[3]" />
+          <Sparkles className="w-4 h-4 stroke-[2.2]" />
           <span>Create Property Pack</span>
         </Link>
       </div>
@@ -353,8 +354,8 @@ export default function AgentDashboardPage() {
             </p>
           </div>
           <Link
-            href="/agent-dashboard/packs"
-            className="text-xs font-medium text-slate-900 hover:text-[#092167] flex items-center gap-1.5 transition-all hover:translate-x-0.5 self-start sm:self-auto group"
+            href="/agent-dashboard/saved-packs"
+            className="text-xs font-semibold text-slate-900 hover:text-[#092167] flex items-center gap-1.5 transition-all hover:translate-x-0.5 self-start sm:self-auto group"
           >
             <span>View All (18)</span>
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 text-[#E8A808]" />
@@ -431,9 +432,10 @@ export default function AgentDashboardPage() {
                     <div className="inline-flex items-center gap-2">
                       <button
                         onClick={() => handleDownloadPdf(pack.address)}
-                        className="h-8 px-3.5 rounded-lg bg-slate-100 hover:bg-slate-200 active:bg-slate-300 hover:scale-105 active:scale-95 text-slate-800 text-xs font-medium transition-all cursor-pointer shadow-2xs"
+                        className="h-8 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 text-xs font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
                       >
-                        PDF Report
+                        <Download className="w-3.5 h-3.5 text-slate-500" />
+                        <span>PDF Report</span>
                       </button>
                       <Link
                         href="/agent-dashboard/editor"

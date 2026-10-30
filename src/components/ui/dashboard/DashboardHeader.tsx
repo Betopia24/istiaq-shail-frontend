@@ -1,12 +1,11 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
 import { logout } from "@/feature/user/userSlice";
-import { ChevronRight, LogOut, Menu, Sparkles } from "lucide-react";
+import { ChevronRight, LogOut, Menu } from "lucide-react";
 import Cookies from "js-cookie";
 
 interface DashboardHeaderProps {
@@ -104,21 +103,10 @@ export function DashboardHeader({
           </div>
         </div>
 
-        {/* Right: Quick Action & Profile Card */}
+        {/* Right: User Profile Card & Logout (Uncluttered, no action buttons) */}
         <div className="flex items-center gap-3 shrink-0">
-          {/* Quick Create Pack Action for Agents */}
-          {role === "agent" && (
-            <Link
-              href="/agent-dashboard/create"
-              className="hidden md:inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#D49800] text-[#06143E] text-xs font-semibold shadow-xs transition hover:scale-[1.02] active:scale-[0.98]"
-            >
-              <Sparkles className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>New Pack</span>
-            </Link>
-          )}
-
           {/* User Profile Card */}
-          <div className="flex items-center gap-2.5 pl-2 sm:pl-3 border-l border-slate-200/80">
+          <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-lg bg-[#06143E] text-[#E8A808] font-heading font-semibold text-xs flex items-center justify-center shadow-xs shrink-0">
               {initials}
             </div>
@@ -135,7 +123,7 @@ export function DashboardHeader({
           <button
             onClick={handleLogout}
             title={role === "admin" ? "Lock Admin Console" : "Log out"}
-            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer shrink-0 ml-0.5"
+            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer shrink-0 ml-1"
             aria-label="Log out"
           >
             <LogOut className="w-4 h-4" />
