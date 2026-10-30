@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/redux/store";
 import { logout } from "@/feature/user/userSlice";
-import { ChevronRight, LogOut, Menu, Plus } from "lucide-react";
+import { ChevronRight, LogOut, Menu, Sparkles } from "lucide-react";
 import Cookies from "js-cookie";
 
 interface DashboardHeaderProps {
@@ -112,7 +112,7 @@ export function DashboardHeader({
               href="/agent-dashboard/create"
               className="hidden md:inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#D49800] text-[#06143E] text-xs font-semibold shadow-xs transition hover:scale-[1.02] active:scale-[0.98]"
             >
-              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+              <Sparkles className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>New Pack</span>
             </Link>
           )}

@@ -9,7 +9,7 @@ import { RootState } from "@/redux/store";
 import { logout } from "@/feature/user/userSlice";
 import {
   LayoutGrid,
-  Plus,
+  Sparkles,
   FolderOpen,
   PenLine,
   Settings,
@@ -35,7 +35,7 @@ const navItems = [
   {
     title: "Create Pack",
     href: "/agent-dashboard/create",
-    icon: Plus,
+    icon: Sparkles,
   },
   {
     title: "Saved Packs",
@@ -96,17 +96,17 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
       <div>
         {isCollapsed ? (
           /* Collapsed Header: Centered stacked logo & expand toggle */
-          <div className="py-4 px-2 flex flex-col items-center gap-2.5 border-b border-[#0D1D45]/60">
+          <div className="py-4 px-2 flex flex-col items-center gap-2.5 border-b border-[#0D1D45]/70">
             <Link
               href="/"
-              className="w-10 h-10 rounded-xl bg-[#092167] border border-[#E8A808]/40 flex items-center justify-center text-[#E8A808] font-heading font-semibold text-base shadow-sm transition hover:scale-105"
+              className="w-10 h-10 rounded-xl bg-[#0E2052] border border-[#E8A808]/40 flex items-center justify-center text-[#E8A808] font-heading font-bold text-base shadow-xs transition hover:scale-105 active:scale-95"
               title="Property Pack AI"
             >
               P
             </Link>
             <button
               onClick={() => setCollapsed(false)}
-              className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer"
+              className="w-8 h-8 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer"
               aria-label="Expand sidebar"
               title="Expand sidebar"
             >
@@ -150,8 +150,8 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
 
         {/* Navigation Items */}
         <nav
-          className={`space-y-1.5 mt-2.5 ${
-            isCollapsed ? "px-2" : "p-3.5"
+          className={`space-y-1 mt-3 ${
+            isCollapsed ? "px-2" : "px-3"
           }`}
         >
           {navItems.map((item) => {
@@ -165,47 +165,56 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
                 key={item.href}
                 href={item.href}
                 onClick={isMobile ? onClose : undefined}
-                className={`relative flex items-center rounded-xl font-sans transition-all group ${
+                className={`group relative flex items-center rounded-xl transition-all duration-150 ${
                   isCollapsed
                     ? "w-11 h-11 mx-auto justify-center"
-                    : "px-4 py-3 justify-between"
+                    : "h-11 px-3 justify-between"
                 } ${
                   isActive
-                    ? "bg-[#092167] text-white font-medium shadow-sm border border-[#E8A808]/30"
-                    : "text-slate-400 hover:text-white hover:bg-[#092167]/40 font-medium"
+                    ? "bg-[#102253] text-white font-semibold shadow-xs border border-[#E8A808]/30"
+                    : "text-slate-300 hover:text-white hover:bg-white/[0.06] font-medium"
                 }`}
                 title={isCollapsed ? item.title : undefined}
               >
-                {/* Active Left Indicator Bar (Expanded only) */}
-                {!isCollapsed && isActive && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-[#FFB800] rounded-full" />
-                )}
-
+                {/* Left Content */}
                 <div
-                  className={`flex items-center gap-3.5 min-w-0 ${
-                    isCollapsed ? "justify-center" : ""
+                  className={`flex items-center min-w-0 ${
+                    isCollapsed ? "justify-center" : "gap-2.5"
                   }`}
                 >
+                  {/* Active Indicator Bar (Expanded mode) */}
+                  {!isCollapsed && (
+                    <span
+                      className={`w-1 h-4 rounded-full shrink-0 transition-colors ${
+                        isActive ? "bg-[#E8A808]" : "bg-transparent"
+                      }`}
+                    />
+                  )}
+
                   <Icon
-                    className={`w-5 h-5 shrink-0 transition-colors ${
+                    className={`shrink-0 transition-colors ${
+                      isCollapsed ? "w-5 h-5" : "w-4.5 h-4.5"
+                    } ${
                       isActive
-                        ? "text-[#FFB800]"
+                        ? "text-[#E8A808]"
                         : "text-slate-400 group-hover:text-slate-200"
                     }`}
                   />
+
                   {!isCollapsed && (
-                    <span className="truncate text-sm font-medium">
+                    <span className="truncate text-xs font-semibold tracking-tight">
                       {item.title}
                     </span>
                   )}
                 </div>
 
+                {/* Badge (Expanded mode) */}
                 {!isCollapsed && item.badge !== undefined && (
                   <span
-                    className={`ml-2 px-2 py-0.5 rounded-full text-[11px] font-medium transition-colors ${
+                    className={`ml-2 px-2 py-0.5 rounded-full text-[11px] font-semibold transition-colors ${
                       isActive
-                        ? "bg-[#FFB800] text-[#06143E]"
-                        : "bg-[#0B1A42] text-slate-300"
+                        ? "bg-[#E8A808]/20 text-[#E8A808] border border-[#E8A808]/35"
+                        : "bg-white/[0.08] text-slate-300 border border-white/10"
                     }`}
                   >
                     {item.badge}
@@ -218,33 +227,40 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
       </div>
 
       {/* Bottom Profile Section */}
-      <div className={`mt-auto ${isCollapsed ? "p-2 pb-4" : "p-3.5"}`}>
+      <div className={`mt-auto ${isCollapsed ? "p-2 pb-4" : "p-3 pb-4"}`}>
         {isCollapsed ? (
           /* Collapsed Bottom Profile */
-          <div className="flex flex-col items-center gap-2">
-            <div
-              className="w-10 h-10 rounded-xl bg-[#E8A808] text-[#06143E] font-heading font-semibold text-xs flex items-center justify-center shadow-sm"
-              title={`${displayName} (${displayAgency})`}
-            >
-              {initials}
+          <div className="flex flex-col items-center gap-2.5">
+            <div className="relative">
+              <div
+                className="w-10 h-10 rounded-xl bg-[#E8A808] text-[#06143E] font-heading font-bold text-xs flex items-center justify-center shadow-xs cursor-default"
+                title={`${displayName} (${displayAgency})`}
+              >
+                {initials}
+              </div>
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-[#06143E]" />
             </div>
             <button
               onClick={handleLogout}
               title="Sign Out"
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
+              aria-label="Sign Out"
             >
               <LogOut className="w-4 h-4" />
             </button>
           </div>
         ) : (
           /* Expanded Bottom Profile */
-          <div className="bg-[#092167] rounded-xl p-2.5 flex items-center justify-between border border-[#142B6A]">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-9 h-9 rounded-full bg-[#E8A808] text-[#06143E] font-semibold text-xs flex items-center justify-center shrink-0 shadow-sm">
-                {initials}
+          <div className="bg-[#0C1B42] rounded-xl p-3 flex items-center justify-between border border-[#172D6B]/70 shadow-xs">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="relative shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-[#E8A808] text-[#06143E] font-heading font-bold text-xs flex items-center justify-center shadow-xs">
+                  {initials}
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-[#0C1B42]" />
               </div>
               <div className="min-w-0 leading-tight">
-                <p className="text-sm font-semibold text-white truncate">
+                <p className="text-xs font-semibold text-white truncate">
                   {displayName}
                 </p>
                 <p className="text-[11px] text-slate-400 truncate mt-0.5">
@@ -256,7 +272,8 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
             <button
               onClick={handleLogout}
               title="Sign Out"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition cursor-pointer ml-1"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer shrink-0 ml-1"
+              aria-label="Sign Out"
             >
               <LogOut className="w-4 h-4" />
             </button>

@@ -60,17 +60,17 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
       <div>
         {isCollapsed ? (
           /* Collapsed Header */
-          <div className="py-4 px-2 flex flex-col items-center gap-2.5 border-b border-[#14254D]/60">
+          <div className="py-4 px-2 flex flex-col items-center gap-2.5 border-b border-[#14254D]/70">
             <Link
               href="/admin-dashboard"
-              className="w-10 h-10 rounded-xl bg-[#14254D] border border-[#E8A808]/40 flex items-center justify-center text-[#E8A808] font-heading font-semibold text-base shadow-inner transition hover:scale-105"
+              className="w-10 h-10 rounded-xl bg-[#14254D] border border-[#E8A808]/40 flex items-center justify-center text-[#E8A808] font-heading font-bold text-base shadow-xs transition hover:scale-105 active:scale-95"
               title="Property Pack AI - Super Admin"
             >
               P
             </Link>
             <button
               onClick={() => setCollapsed(false)}
-              className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white flex items-center justify-center transition cursor-pointer"
+              className="w-8 h-8 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white flex items-center justify-center transition cursor-pointer"
               aria-label="Expand sidebar"
               title="Expand sidebar"
             >
@@ -98,7 +98,7 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
                 </Link>
                 {/* Super Admin Pill Badge */}
                 <div className="mt-2.5">
-                  <span className="inline-block px-2.5 py-0.5 rounded bg-[#14254D] text-[#8E9BB0] text-[9px] font-medium tracking-wider uppercase border border-[#1E356D]">
+                  <span className="inline-block px-2.5 py-0.5 rounded bg-[#14254D] text-[#8E9BB0] text-[9px] font-semibold tracking-wider uppercase border border-[#1E356D]">
                     SUPER ADMIN
                   </span>
                 </div>
@@ -115,7 +115,7 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
               ) : (
                 <button
                   onClick={() => setCollapsed(true)}
-                  className="hidden md:flex p-1 rounded-md text-slate-400 hover:text-white hover:bg-[#14254D] transition mt-1 cursor-pointer"
+                  className="hidden md:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#14254D] transition mt-1 cursor-pointer"
                   aria-label="Collapse sidebar"
                   title="Collapse sidebar"
                 >
@@ -128,8 +128,8 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
 
         {/* Navigation Items */}
         <nav
-          className={`space-y-1.5 mt-2.5 ${
-            isCollapsed ? "px-2" : "px-3.5"
+          className={`space-y-1 mt-3 ${
+            isCollapsed ? "px-2" : "px-3"
           }`}
         >
           {adminNavItems.map((item) => {
@@ -150,15 +150,15 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
                     : "h-11 px-3"
                 } ${
                   isActive
-                    ? "bg-[#14254D] text-white shadow-sm border border-[#E8A808]/30"
-                    : "bg-transparent text-[#8E9BB0] hover:text-slate-100 hover:bg-[#14254D]/50"
+                    ? "bg-[#14254D] text-white font-semibold shadow-xs border border-[#E8A808]/30"
+                    : "bg-transparent text-[#8E9BB0] hover:text-slate-100 hover:bg-white/[0.05] font-medium"
                 }`}
                 title={isCollapsed ? item.title : undefined}
               >
-                {/* Active Left Gold Vertical Pill Indicator (expanded only) */}
+                {/* Active Indicator Bar (expanded only) */}
                 {!isCollapsed && (
-                  <div
-                    className={`w-[3px] h-4 rounded-full mr-2.5 shrink-0 transition-colors ${
+                  <span
+                    className={`w-1 h-4 rounded-full mr-2.5 shrink-0 transition-colors ${
                       isActive ? "bg-[#E8A808]" : "bg-transparent"
                     }`}
                   />
@@ -166,7 +166,9 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
 
                 {/* Icon */}
                 <Icon
-                  className={`w-4 h-4 shrink-0 transition-colors ${
+                  className={`shrink-0 transition-colors ${
+                    isCollapsed ? "w-5 h-5" : "w-4.5 h-4.5"
+                  } ${
                     isActive
                       ? "text-[#E8A808]"
                       : "text-[#7A8A9E] group-hover:text-slate-200"
@@ -176,7 +178,7 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
                 {/* Title */}
                 {!isCollapsed && (
                   <span
-                    className={`ml-2.5 text-xs font-medium truncate ${
+                    className={`ml-2.5 text-xs font-semibold truncate ${
                       isActive
                         ? "text-white"
                         : "text-[#8E9BB0] group-hover:text-white"
@@ -192,15 +194,18 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
       </div>
 
       {/* Bottom Profile Section with Lock Admin Console action */}
-      <div className={`mt-auto ${isCollapsed ? "p-2 pb-4" : "p-4"}`}>
+      <div className={`mt-auto ${isCollapsed ? "p-2 pb-4" : "p-3 pb-4"}`}>
         {isCollapsed ? (
           /* Collapsed Bottom Profile */
-          <div className="flex flex-col items-center gap-2">
-            <div
-              className="w-10 h-10 rounded-xl bg-[#E8A808] text-[#080F24] font-heading font-semibold text-xs flex items-center justify-center shadow-sm cursor-pointer"
-              title="Ishtiaq Sohail (Owner Access)"
-            >
-              IS
+          <div className="flex flex-col items-center gap-2.5">
+            <div className="relative">
+              <div
+                className="w-10 h-10 rounded-xl bg-[#E8A808] text-[#080F24] font-heading font-bold text-xs flex items-center justify-center shadow-xs cursor-default"
+                title="Ishtiaq Sohail (Owner Access)"
+              >
+                IS
+              </div>
+              <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-[#080F24]" />
             </div>
             <button
               onClick={() => {
@@ -208,17 +213,21 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
                 window.location.reload();
               }}
               title="Lock Admin Console"
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-[#1E356D] transition cursor-pointer"
+              className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
+              aria-label="Lock Admin Console"
             >
-              <Lock className="w-3.5 h-3.5" />
+              <Lock className="w-4 h-4" />
             </button>
           </div>
         ) : (
           /* Expanded Bottom Profile */
-          <div className="flex items-center justify-between bg-[#14254D] rounded-xl p-3 shadow-sm border border-[#1E356D]">
+          <div className="flex items-center justify-between bg-[#122143] rounded-xl p-3 shadow-xs border border-[#1E356D]">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-full bg-[#E8A808] text-[#080F24] font-semibold text-xs flex items-center justify-center shrink-0 shadow-sm">
-                IS
+              <div className="relative shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-[#E8A808] text-[#080F24] font-heading font-bold text-xs flex items-center justify-center shadow-xs">
+                  IS
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-[#122143]" />
               </div>
               <div className="min-w-0">
                 <div className="text-xs font-semibold text-white truncate leading-tight">
@@ -236,9 +245,10 @@ export function AdminSidebar({ onClose, isMobile = false }: AdminSidebarProps = 
                 window.location.reload();
               }}
               title="Lock Admin Console"
-              className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-[#1E356D] rounded-md transition cursor-pointer shrink-0"
+              className="p-1.5 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition cursor-pointer shrink-0 ml-1"
+              aria-label="Lock Admin Console"
             >
-              <Lock className="w-3.5 h-3.5" />
+              <Lock className="w-4 h-4" />
             </button>
           </div>
         )}
