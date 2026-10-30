@@ -344,11 +344,7 @@ function AnimatedAIButton({
         transition={{ duration: 1.8, repeat: Infinity }}
         className="mt-1 text-[8px] @[540px]:text-[9px] font-bold text-[#FFD700] text-center leading-tight whitespace-nowrap drop-shadow-sm"
       >
-        {/* {stage === "result"
-          ? "Play ⇄"
-          : isGenerating
-            ? "Building…"
-            : "AI builds ✦"} */}
+        {stage === "result" ? "Play ⇄" : isGenerating ? "Building…" : "AI builds ✦"}
       </motion.p>
     </div>
   );
@@ -436,7 +432,7 @@ export default function PropertyPackHeroDemo() {
   return (
     <div
       ref={ref}
-      className="@container w-full max-w-[600px] mx-auto select-none min-w-0"
+      className="@container w-full max-w-[600px] w-full mx-auto select-none min-w-0"
     >
       {/* ── Ambient Glow behind cards ── */}
       <div className="absolute -inset-3 bg-[#E8A808]/8 rounded-full blur-2xl pointer-events-none" />
