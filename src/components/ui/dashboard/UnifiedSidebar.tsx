@@ -199,7 +199,7 @@ export function UnifiedSidebar({
               isAdmin ? "border-[#14254D]/40" : "border-[#0D1D45]/70"
             }`}
           >
-            <Link href={rootHref} className="flex items-center gap-2 min-w-0">
+            <Link href={rootHref} className="flex items-center p-1 min-w-0">
               <Image
                 src="/logo-light.svg"
                 alt="Property Pack AI"
