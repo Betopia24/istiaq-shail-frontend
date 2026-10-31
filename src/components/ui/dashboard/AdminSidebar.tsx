@@ -101,7 +101,7 @@ export function AdminSidebar({
                 </Link>
                 {/* Super Admin Pill Badge */}
                 <div className="mt-2.5">
-                  <span className="inline-block px-2.5 py-0.5 rounded bg-[#14254D] text-[#8E9BB0] text-[9px] font-semibold tracking-wider uppercase border border-[#1E356D]">
+                  <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#E8A808]/15 text-[#E8A808] text-[9px] font-semibold tracking-wider uppercase border border-[#E8A808]/30">
                     SUPER ADMIN
                   </span>
                 </div>
@@ -148,7 +148,7 @@ export function AdminSidebar({
                 } ${
                   isActive
                     ? "bg-[#14254D] text-white border-[#E8A808]/30 shadow-xs"
-                    : "bg-transparent border-transparent text-[#8E9BB0] hover:text-slate-100 hover:bg-white/[0.05]"
+                    : "bg-transparent border-transparent text-slate-300 hover:text-white hover:bg-white/[0.08]"
                 }`}
                 title={isCollapsed ? item.title : undefined}
               >
@@ -168,7 +168,7 @@ export function AdminSidebar({
                   } ${
                     isActive
                       ? "text-[#E8A808]"
-                      : "text-[#7A8A9E] group-hover:text-slate-200"
+                      : "text-slate-400 group-hover:text-slate-200"
                   }`}
                 />
 
@@ -178,7 +178,7 @@ export function AdminSidebar({
                     className={`ml-2.5 text-xs font-semibold truncate ${
                       isActive
                         ? "text-white"
-                        : "text-[#8E9BB0] group-hover:text-white"
+                        : "text-slate-300 group-hover:text-white"
                     }`}
                   >
                     {item.title}

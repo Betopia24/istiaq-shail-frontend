@@ -263,7 +263,7 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
                 <p className="text-xs font-semibold text-white truncate">
                   {displayName}
                 </p>
-                <p className="text-[11px] text-slate-400 truncate mt-0.5">
+                <p className="text-[11px] text-slate-300 truncate mt-0.5">
                   {displayAgency}
                 </p>
               </div>
@@ -272,7 +272,7 @@ export function AgentSidebar({ onClose, isMobile = false }: AgentSidebarProps) {
             <button
               onClick={handleLogout}
               title="Sign Out"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer shrink-0 ml-1"
+              className="p-1.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer shrink-0 ml-1"
               aria-label="Sign Out"
             >
               <LogOut className="w-4 h-4" />

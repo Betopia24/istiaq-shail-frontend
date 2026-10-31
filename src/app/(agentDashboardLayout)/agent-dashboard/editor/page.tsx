@@ -112,87 +112,60 @@ export default function PackEditorPage() {
           TOP HEADER
       ========================================================================= */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        {activeTab === "valuation" ? (
-          <div className="flex items-center gap-2 text-xs sm:text-sm font-medium">
-            <span className="text-slate-400">Saved Packs</span>
-            <span className="text-slate-400">/</span>
-            <span className="font-medium text-slate-900">
+        <div>
+          <div className="flex items-center gap-2 text-xs text-slate-500 font-medium mb-1">
+            <Link
+              href="/agent-dashboard/saved-packs"
+              className="hover:text-slate-800 transition"
+            >
+              Saved Packs
+            </Link>
+            <span>/</span>
+            <span className="font-semibold text-slate-900">
               16 Gorse Drive, Chorlton (M21 8XQ)
             </span>
           </div>
-        ) : (
-          <div>
-            <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
-              Pack Results & Live Editor
-            </h1>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-medium text-emerald-600">
-                Generated Successfully (Claude 3.5)
-              </span>
-            </div>
-          </div>
-        )}
+          <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
+            Pack Results &amp; Live Editor
+          </h1>
+        </div>
 
-        {activeTab === "valuation" ? (
-          <div className="flex items-center gap-3 self-start sm:self-auto">
-            {/* Present to Vendor Button */}
-            <button
-              type="button"
-              onClick={() => showToast("Opening Vendor Presentation mode...")}
-              className="h-10 px-5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-800 font-medium text-xs transition cursor-pointer shadow-2xs"
-            >
-              Present to Vendor
-            </button>
+        <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
+          {/* View Buyer Public Page */}
+          <Link
+            href="/property/16-gorse-drive"
+            target="_blank"
+            className="h-10 px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-medium text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+          >
+            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+            <span>Buyer Public Page</span>
+          </Link>
 
-            {/* Valuation PDF Button */}
-            <button
-              type="button"
-              onClick={() => showToast("Downloading Valuation PDF...")}
-              className="h-10 px-5 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-medium text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer"
-            >
-              <ArrowDown className="w-3.5 h-3.5 stroke-[2.5]" />
-              <span>Valuation PDF</span>
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
-            {/* View Buyer Public Page */}
-            <Link
-              href="/property/16-gorse-drive"
-              target="_blank"
-              className="h-10 px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-medium text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-              <span>Buyer Public Page</span>
-            </Link>
+          {/* 2-Page A4 PDF Button */}
+          <Link
+            href="/property/16-gorse-drive/pdf"
+            target="_blank"
+            className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-semibold text-xs shadow-sm transition flex items-center gap-2 cursor-pointer"
+          >
+            <Download className="w-4 h-4" />
+            <span>2-Page A4 PDF</span>
+          </Link>
 
-            {/* 2-Page A4 PDF Button */}
-            <Link
-              href="/property/16-gorse-drive/pdf"
-              target="_blank"
-              className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition flex items-center gap-2 cursor-pointer"
-            >
-              <Download className="w-4 h-4" />
-              <span>2-Page A4 PDF</span>
-            </Link>
-
-            {/* Share Link Button */}
-            <button
-              onClick={() =>
-                copyToClipboard(
-                  window.location.origin + "/property/16-gorse-drive",
-                  "share-link",
-                )
-              }
-              className="h-10 px-3.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-medium text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
-              title="Copy Public Link"
-            >
-              <Share2 className="w-3.5 h-3.5 text-slate-400" />
-              <span>Share</span>
-            </button>
-          </div>
-        )}
+          {/* Share Link Button */}
+          <button
+            onClick={() =>
+              copyToClipboard(
+                window.location.origin + "/property/16-gorse-drive",
+                "share-link",
+              )
+            }
+            className="h-10 px-3.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-medium text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+            title="Copy Public Link"
+          >
+            <Share2 className="w-3.5 h-3.5 text-slate-400" />
+            <span>Share</span>
+          </button>
+        </div>
       </div>
 
       {/* =========================================================================

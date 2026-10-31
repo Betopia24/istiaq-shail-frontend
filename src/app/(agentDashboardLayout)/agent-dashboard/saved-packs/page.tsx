@@ -243,9 +243,9 @@ export default function SavedPacksPage() {
 
         <div className="flex items-center gap-2.5 self-start sm:self-auto">
           {/* Credits Badge */}
-          <div className="h-9 px-3 rounded-lg border border-amber-200/80 bg-amber-50/70 flex items-center gap-2 text-xs font-semibold text-slate-800">
+          <div className="h-9 px-3 rounded-lg border border-[#FDE68A] bg-[#FEF3C7] flex items-center gap-2 text-xs font-semibold text-[#8C6605]">
             <span className="w-2 h-2 rounded-full bg-[#E8A808] animate-pulse" />
-            <span>14 Credits Left</span>
+            <span>78 Packs Available</span>
           </div>
 
           {/* New Property Pack Button */}

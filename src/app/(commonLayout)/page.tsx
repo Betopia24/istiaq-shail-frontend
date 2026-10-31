@@ -342,7 +342,7 @@ export default function HomePage() {
             {/* Step 01 */}
             <div className="@container cq-card bg-slate-50/90 rounded-2xl p-6 border border-slate-200/90 hover:border-[#E8A808]/70 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
               <div>
-                <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">
+                <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">
                   01
                 </span>
                 <h4 className="font-heading font-medium text-sm text-slate-900 mb-2">
@@ -370,7 +370,7 @@ export default function HomePage() {
             {/* Step 02 */}
             <div className="@container cq-card bg-slate-50/90 rounded-2xl p-6 border border-slate-200/90 hover:border-[#E8A808]/70 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
               <div>
-                <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">
+                <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">
                   02
                 </span>
                 <h4 className="font-heading font-medium text-sm text-slate-900 mb-2">
@@ -394,7 +394,7 @@ export default function HomePage() {
             {/* Step 03 */}
             <div className="@container cq-card bg-slate-50/90 rounded-2xl p-6 border border-slate-200/90 hover:border-[#E8A808]/70 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
               <div>
-                <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">
+                <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">
                   03
                 </span>
                 <h4 className="font-heading font-medium text-sm text-slate-900 mb-2">
@@ -415,7 +415,7 @@ export default function HomePage() {
             {/* Step 04 */}
             <div className="@container cq-card bg-slate-50/90 rounded-2xl p-6 border border-slate-200/90 hover:border-[#E8A808]/70 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
               <div>
-                <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">
+                <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">
                   04
                 </span>
                 <h4 className="font-heading font-medium text-sm text-slate-900 mb-2">
@@ -437,7 +437,7 @@ export default function HomePage() {
             {/* Step 05 */}
             <div className="@container cq-card bg-slate-50/90 rounded-2xl p-6 border border-slate-200/90 hover:border-[#E8A808]/70 hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between group">
               <div>
-                <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">
+                <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A] inline-block mb-3 group-hover:scale-105 transition-transform">
                   05
                 </span>
                 <h4 className="font-heading font-medium text-sm text-slate-900 mb-2">
@@ -979,7 +979,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <FileText className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
+                    <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
                       02
                     </span>
                   </div>
@@ -1012,7 +1012,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <Download className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
+                    <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
                       03
                     </span>
                   </div>
@@ -1045,7 +1045,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <Globe className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
+                    <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
                       04
                     </span>
                   </div>
@@ -1078,7 +1078,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <CheckCircle2 className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
+                    <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
                       05
                     </span>
                   </div>
@@ -1111,7 +1111,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <Share2 className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
+                    <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
                       06
                     </span>
                   </div>
@@ -1144,7 +1144,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <Video className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
+                    <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
                       07
                     </span>
                   </div>
@@ -1177,7 +1177,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <HelpCircle className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
+                    <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
                       08
                     </span>
                   </div>
@@ -1210,7 +1210,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <Mail className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
+                    <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
                       09
                     </span>
                   </div>
@@ -1243,7 +1243,7 @@ export default function HomePage() {
                     <div className="w-11 h-11 rounded-2xl bg-[#092167] text-[#E8A808] flex items-center justify-center group-hover:scale-110 group-hover:bg-[#0c2d8c] transition-all duration-300 shadow-2xs">
                       <ExternalLink className="w-5 h-5" />
                     </div>
-                    <span className="font-heading font-medium text-xs text-[#E8A808] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
+                    <span className="font-heading font-semibold text-xs text-[#8C6605] px-2 py-0.5 rounded bg-[#FEF3C7] border border-[#FDE68A]">
                       10
                     </span>
                   </div>
@@ -1406,52 +1406,52 @@ export default function HomePage() {
             {/* Plan 1: Starter */}
             <div className="@container cq-card bg-white rounded-3xl p-7 sm:p-9 border border-slate-200 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between">
               <div>
-                <h3 className="font-heading font-medium text-xl sm:text-2xl text-slate-900 mb-1">
+                <h3 className="font-heading font-semibold text-xl sm:text-2xl text-slate-900 mb-1">
                   Starter
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500 mb-6">
+                <p className="text-xs sm:text-sm text-slate-600 mb-6">
                   For individual agents getting started.
                 </p>
 
                 <div className="mb-2">
-                  <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900">
-                    £XX
+                  <span className="font-heading font-bold text-3xl sm:text-4xl text-slate-900">
+                    £39
                   </span>
-                  <span className="text-xs sm:text-sm text-slate-500 font-medium ml-1.5">
+                  <span className="text-xs sm:text-sm text-slate-600 font-medium ml-1.5">
                     / month
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 mb-6">
-                  Pricing TBD · Billing frequency to be confirmed
+                <p className="text-xs text-slate-500 mb-6 font-medium">
+                  Billed monthly · 5 Property Packs included
                 </p>
 
                 <Link
                   href="/sign-up"
-                  className="w-full h-10 sm:h-12 rounded-xl border border-slate-300 hover:border-slate-400 hover:bg-slate-50 active:scale-[0.98] text-slate-800 font-medium text-xs sm:text-sm flex items-center justify-center transition-all mb-8 shadow-2xs"
+                  className="w-full h-10 sm:h-12 rounded-xl border border-slate-300 hover:border-slate-400 hover:bg-slate-50 active:scale-[0.98] text-slate-800 font-semibold text-xs sm:text-sm flex items-center justify-center transition-all mb-8 shadow-2xs"
                 >
                   Get Started
                 </Link>
 
-                <ul className="space-y-3.5 text-xs sm:text-sm text-slate-600">
+                <ul className="space-y-3.5 text-xs sm:text-sm text-slate-700">
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span>AI-generated property marketing content</span>
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>5 AI Property Marketing Packs / mo</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span>Review and edit generated content</span>
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>Valuation proposals & portal descriptions</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span>Professional PDF property pack</span>
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>Live inline review & content editor</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span>Shareable property pack link</span>
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>Print-ready A4 PDF brochure export</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span>Usage limits: to be confirmed</span>
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>Instant shareable client web link</span>
                   </li>
                 </ul>
               </div>
@@ -1460,59 +1460,59 @@ export default function HomePage() {
             {/* Plan 2: Professional (Featured / Popular) */}
             <div className="@container cq-card bg-[#091D4E] rounded-3xl p-7 sm:p-9 border-2 border-[#E8A808] shadow-2xl hover:shadow-[0_20px_50px_rgba(232,168,8,0.25)] text-white flex flex-col justify-between relative transform md:-translate-y-3 hover:-translate-y-4 transition-all duration-300">
               {/* Popular Badge */}
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-[#E8A808] text-[#06143E] text-xs font-medium uppercase tracking-wider shadow-md">
-                ★ Popular
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#E8A808] text-[#06143E] text-xs font-bold uppercase tracking-wider shadow-md">
+                ★ Most Popular
               </div>
 
               <div>
-                <h3 className="font-heading font-medium text-xl sm:text-2xl text-white mb-1">
+                <h3 className="font-heading font-semibold text-xl sm:text-2xl text-white mb-1">
                   Professional
                 </h3>
                 <p className="text-xs sm:text-sm text-slate-300 mb-6">
-                  For agents who create property packs regularly.
+                  For active estate & letting agents.
                 </p>
 
                 <div className="mb-2">
-                  <span className="font-heading font-medium text-3xl sm:text-4xl text-white">
-                    £XX
+                  <span className="font-heading font-bold text-3xl sm:text-4xl text-white">
+                    £79
                   </span>
                   <span className="text-xs sm:text-sm text-slate-300 font-medium ml-1.5">
                     / month
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 mb-6">
-                  Pricing TBD · Billing frequency to be confirmed
+                <p className="text-xs text-amber-300/90 mb-6 font-medium">
+                  Billed monthly · 25 Property Packs included
                 </p>
 
                 <Link
                   href="/sign-up"
-                  className="w-full h-10 sm:h-12 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:scale-[0.98] text-[#06143E] font-medium text-xs sm:text-sm flex items-center justify-center transition-all shadow-[0_4px_16px_rgba(232,168,8,0.4)] hover:shadow-[0_6px_22px_rgba(232,168,8,0.5)] mb-8 cursor-pointer"
+                  className="w-full h-10 sm:h-12 rounded-xl bg-[#E8A808] hover:bg-[#FFB800] active:scale-[0.98] text-[#06143E] font-bold text-xs sm:text-sm flex items-center justify-center transition-all shadow-[0_4px_16px_rgba(232,168,8,0.4)] hover:shadow-[0_6px_22px_rgba(232,168,8,0.5)] mb-8 cursor-pointer"
                 >
                   Create Your Property Pack
                 </Link>
 
                 <ul className="space-y-3.5 text-xs sm:text-sm text-slate-200">
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span className="font-medium text-white">
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span className="font-semibold text-white">
                       Everything in Starter
                     </span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span>Agent branding on property packs</span>
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>25 AI Property Marketing Packs / mo</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span>Multi-format content for different channels</span>
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>Full agency logo, colors & disclaimers</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span>Reusable workflow across properties</span>
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>All 10 deliverables (video reel scripts & socials)</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span>Usage limits: to be confirmed</span>
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>Priority rendering & email support</span>
                   </li>
                 </ul>
               </div>
@@ -1521,50 +1521,54 @@ export default function HomePage() {
             {/* Plan 3: Team */}
             <div className="@container cq-card bg-white rounded-3xl p-7 sm:p-9 border border-slate-200 shadow-xs hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between">
               <div>
-                <h3 className="font-heading font-medium text-xl sm:text-2xl text-slate-900 mb-1">
+                <h3 className="font-heading font-semibold text-xl sm:text-2xl text-slate-900 mb-1">
                   Team
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-500 mb-6">
-                  For real estate teams and agencies.
+                <p className="text-xs sm:text-sm text-slate-600 mb-6">
+                  For real estate branches & teams.
                 </p>
 
                 <div className="mb-2">
-                  <span className="font-heading font-medium text-3xl sm:text-4xl text-slate-900">
-                    £XX
+                  <span className="font-heading font-bold text-3xl sm:text-4xl text-slate-900">
+                    £149
                   </span>
-                  <span className="text-xs sm:text-sm text-slate-500 font-medium ml-1.5">
+                  <span className="text-xs sm:text-sm text-slate-600 font-medium ml-1.5">
                     / month
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400 mb-6">
-                  Pricing TBD · Billing frequency to be confirmed
+                <p className="text-xs text-slate-500 mb-6 font-medium">
+                  Billed monthly · 60 Packs · Up to 5 seats
                 </p>
 
                 <Link
                   href="/sign-up"
-                  className="w-full h-10 sm:h-12 rounded-xl border border-slate-300 hover:border-slate-400 hover:bg-slate-50 active:scale-[0.98] text-slate-800 font-medium text-xs sm:text-sm flex items-center justify-center transition-all mb-8 shadow-2xs"
+                  className="w-full h-10 sm:h-12 rounded-xl border border-slate-300 hover:border-slate-400 hover:bg-slate-50 active:scale-[0.98] text-slate-800 font-semibold text-xs sm:text-sm flex items-center justify-center transition-all mb-8 shadow-2xs"
                 >
-                  Get Started
+                  Start Team Trial
                 </Link>
 
-                <ul className="space-y-3.5 text-xs sm:text-sm text-slate-600">
+                <ul className="space-y-3.5 text-xs sm:text-sm text-slate-700">
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span className="font-medium text-slate-900">
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span className="font-semibold text-slate-900">
                       Everything in Professional
                     </span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span>Consistent packs across a team</span>
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>60 Property Packs / mo (pooled team quota)</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span>Team capabilities: to be confirmed</span>
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>Up to 5 negotiator team seats</span>
                   </li>
                   <li className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#E8A808] shrink-0" />
-                    <span>Usage limits: to be confirmed</span>
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>Multi-branch branding presets</span>
+                  </li>
+                  <li className="flex items-center gap-2.5">
+                    <Check className="w-4 h-4 text-[#E8A808] shrink-0 stroke-[2.5]" />
+                    <span>Dedicated account onboarding manager</span>
                   </li>
                 </ul>
               </div>

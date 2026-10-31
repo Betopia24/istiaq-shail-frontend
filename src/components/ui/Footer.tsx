@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer className="bg-[#081229] text-white pt-16 pb-10 border-t border-slate-800/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-slate-700/50">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-slate-800/80">
           {/* Brand Info & Socials */}
           <div className="md:col-span-5 space-y-5">
             <Link href="/" className="inline-block">
@@ -17,21 +17,21 @@ export default function Footer() {
                 alt="Property Pack AI"
                 width={175}
                 height={50}
-                className="w-[160px] h-auto object-contain "
+                className="w-[160px] h-auto object-contain"
               />
             </Link>
-            <p className="font-sans text-xs sm:text-sm text-slate-400 max-w-sm leading-relaxed">
-              AI-powered property marketing for real estate professionals.
+            <p className="font-sans text-xs sm:text-sm text-slate-300 max-w-sm leading-relaxed">
+              AI-powered property marketing platform built specifically for UK estate and letting agents. Generate vendor valuation presentations, portal copy, and brochures in seconds.
             </p>
 
-            {/* Social Icons */}
+            {/* Social Icons with Interactive Micro-Interactions */}
             <div className="flex items-center gap-3 pt-1">
               {/* Facebook */}
               <a
                 href="https://facebook.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full border border-slate-700/80 hover:border-[#E8A808] flex items-center justify-center text-slate-400 hover:text-[#E8A808] transition"
+                className="w-8 h-8 rounded-full border border-slate-700/80 hover:border-[#E8A808] flex items-center justify-center text-slate-300 hover:text-[#E8A808] hover:scale-110 active:scale-95 transition-all shadow-2xs"
                 aria-label="Facebook"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -43,7 +43,7 @@ export default function Footer() {
                 href="https://linkedin.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full border border-slate-700/80 hover:border-[#E8A808] flex items-center justify-center text-slate-400 hover:text-[#E8A808] transition"
+                className="w-8 h-8 rounded-full border border-slate-700/80 hover:border-[#E8A808] flex items-center justify-center text-slate-300 hover:text-[#E8A808] hover:scale-110 active:scale-95 transition-all shadow-2xs"
                 aria-label="LinkedIn"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -55,7 +55,7 @@ export default function Footer() {
                 href="https://instagram.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full border border-slate-700/80 hover:border-[#E8A808] flex items-center justify-center text-slate-400 hover:text-[#E8A808] transition"
+                className="w-8 h-8 rounded-full border border-slate-700/80 hover:border-[#E8A808] flex items-center justify-center text-slate-300 hover:text-[#E8A808] hover:scale-110 active:scale-95 transition-all shadow-2xs"
                 aria-label="Instagram"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -67,7 +67,7 @@ export default function Footer() {
                 href="https://tiktok.com"
                 target="_blank"
                 rel="noreferrer"
-                className="w-8 h-8 rounded-full border border-slate-700/80 hover:border-[#E8A808] flex items-center justify-center text-slate-400 hover:text-[#E8A808] transition"
+                className="w-8 h-8 rounded-full border border-slate-700/80 hover:border-[#E8A808] flex items-center justify-center text-slate-300 hover:text-[#E8A808] hover:scale-110 active:scale-95 transition-all shadow-2xs"
                 aria-label="TikTok"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -77,34 +77,34 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Links Columns */}
+          {/* Links Columns with Enhanced Contrast and Accessible Breakpoints */}
           <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-8">
             {/* PRODUCT */}
             <div>
-              <h4 className="font-heading text-xs font-medium uppercase tracking-wider text-slate-200 mb-4">
+              <h4 className="font-heading text-xs font-semibold uppercase tracking-wider text-slate-100 mb-4">
                 Product
               </h4>
-              <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
+              <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
                 <li>
                   <Link
-                    href="#features"
-                    className="hover:text-white transition-colors"
+                    href="/#marketing-outputs"
+                    className="hover:text-[#E8A808] transition-colors"
                   >
-                    Features
+                    10 Deliverables
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="#how-it-works"
-                    className="hover:text-white transition-colors"
+                    href="/#how-it-works"
+                    className="hover:text-[#E8A808] transition-colors"
                   >
                     How It Works
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="#pricing"
-                    className="hover:text-white transition-colors"
+                    href="/#pricing"
+                    className="hover:text-[#E8A808] transition-colors"
                   >
                     Pricing
                   </Link>
@@ -114,74 +114,74 @@ export default function Footer() {
 
             {/* COMPANY */}
             <div>
-              <h4 className="font-heading text-xs font-medium uppercase tracking-wider text-slate-200 mb-4">
+              <h4 className="font-heading text-xs font-semibold uppercase tracking-wider text-slate-100 mb-4">
                 Company
               </h4>
-              <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
+              <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
                 <li>
                   <Link
-                    href="#about"
-                    className="hover:text-white transition-colors"
+                    href="/#how-it-works"
+                    className="hover:text-[#E8A808] transition-colors"
                   >
-                    About
+                    About Us
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="#contact"
-                    className="hover:text-white transition-colors"
+                  <a
+                    href="mailto:support@propertypack.ai"
+                    className="hover:text-[#E8A808] transition-colors"
                   >
-                    Contact
-                  </Link>
+                    Contact Team
+                  </a>
                 </li>
               </ul>
             </div>
 
             {/* RESOURCES */}
             <div>
-              <h4 className="font-heading text-xs font-medium uppercase tracking-wider text-slate-200 mb-4">
+              <h4 className="font-heading text-xs font-semibold uppercase tracking-wider text-slate-100 mb-4">
                 Resources
               </h4>
-              <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
+              <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
                 <li>
                   <Link
-                    href="#faq"
-                    className="hover:text-white transition-colors"
+                    href="/#faq"
+                    className="hover:text-[#E8A808] transition-colors"
                   >
                     FAQ
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/login"
-                    className="hover:text-white transition-colors"
+                  <a
+                    href="mailto:support@propertypack.ai"
+                    className="hover:text-[#E8A808] transition-colors"
                   >
-                    Help / Support
-                  </Link>
+                    Support & Help
+                  </a>
                 </li>
               </ul>
             </div>
 
             {/* LEGAL */}
             <div>
-              <h4 className="font-heading text-xs font-medium uppercase tracking-wider text-slate-200 mb-4">
+              <h4 className="font-heading text-xs font-semibold uppercase tracking-wider text-slate-100 mb-4">
                 Legal
               </h4>
-              <ul className="space-y-2.5 text-xs sm:text-sm text-slate-400">
+              <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
                 <li>
                   <Link
-                    href="/privacy"
-                    className="hover:text-white transition-colors"
+                    href="/sign-up"
+                    className="hover:text-[#E8A808] transition-colors"
                   >
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/terms"
-                    className="hover:text-white transition-colors"
+                    href="/sign-up"
+                    className="hover:text-[#E8A808] transition-colors"
                   >
-                    Terms of Use
+                    Terms of Service
                   </Link>
                 </li>
               </ul>
@@ -190,12 +190,12 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-3">
           <p>
             © {new Date().getFullYear()} Property Pack AI. All rights reserved.
           </p>
-          <p className="text-slate-400 font-medium">
-            Turn property information into professional marketing.
+          <p className="text-slate-300 font-medium">
+            Turn property information into professional marketing in seconds.
           </p>
         </div>
       </div>
