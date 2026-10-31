@@ -130,8 +130,11 @@ export function UnifiedSidebar({
     }
   };
 
-  const displayName = user?.name || (isAdmin ? "Super Admin" : "Ishtiaq Sohail");
-  const displayAgency = isAdmin ? "Master Platform Access" : "Prestige Estates UK";
+  const displayName =
+    user?.name || (isAdmin ? "Super Admin" : "Ishtiaq Sohail");
+  const displayAgency = isAdmin
+    ? "Master Platform Access"
+    : "Prestige Estates UK";
   const initials =
     displayName && displayName.trim().length > 0
       ? displayName
@@ -141,15 +144,17 @@ export function UnifiedSidebar({
           .slice(0, 2)
           .toUpperCase()
       : isAdmin
-      ? "SA"
-      : "IS";
+        ? "SA"
+        : "IS";
 
   const rootHref = isAdmin ? "/admin-dashboard" : "/agent-dashboard";
 
   return (
     <aside
       className={`h-screen ${
-        isAdmin ? "bg-[#080F24] border-[#101D3D]" : "bg-[#06143E] border-[#0D1D45]"
+        isAdmin
+          ? "bg-[#080F24] border-[#101D3D]"
+          : "bg-[#06143E] border-[#0D1D45]"
       } text-white flex flex-col justify-between transition-all duration-300 relative border-r select-none shrink-0 ${
         isCollapsed ? "w-20" : "w-64"
       }`}
@@ -170,7 +175,11 @@ export function UnifiedSidebar({
                   ? "bg-[#14254D] border-[#E8A808]/40 text-[#E8A808]"
                   : "bg-[#0E204E] border-[#E8A808]/30 text-[#E8A808]"
               } border flex items-center justify-center font-heading font-bold text-base shadow-xs transition-transform duration-200 hover:scale-105 active:scale-95`}
-              title={isAdmin ? "Property Pack AI - Super Admin" : "Property Pack AI - Agent Workstation"}
+              title={
+                isAdmin
+                  ? "Property Pack AI - Super Admin"
+                  : "Property Pack AI - Agent Workstation"
+              }
             >
               {isAdmin ? "SA" : "P"}
             </Link>
@@ -195,19 +204,10 @@ export function UnifiedSidebar({
                 src="/logo-light.svg"
                 alt="Property Pack AI"
                 width={140}
-                height={32}
+                height={120}
                 priority
-                className="h-7 w-auto object-contain shrink-0"
+                className="h-14 w-auto object-contain shrink-0"
               />
-              <span
-                className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
-                  isAdmin
-                    ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
-                    : "bg-[#E8A808]/20 text-[#E8A808] border border-[#E8A808]/30"
-                }`}
-              >
-                {isAdmin ? "Admin" : "Agent"}
-              </span>
             </Link>
 
             {isMobile ? (
@@ -367,10 +367,12 @@ export function UnifiedSidebar({
 }
 
 // Aliases for seamless backward compatibility
-export const AgentSidebar = (props: { onClose?: () => void; isMobile?: boolean }) => (
-  <UnifiedSidebar role="agent" {...props} />
-);
+export const AgentSidebar = (props: {
+  onClose?: () => void;
+  isMobile?: boolean;
+}) => <UnifiedSidebar role="agent" {...props} />;
 
-export const AdminSidebar = (props: { onClose?: () => void; isMobile?: boolean }) => (
-  <UnifiedSidebar role="admin" {...props} />
-);
+export const AdminSidebar = (props: {
+  onClose?: () => void;
+  isMobile?: boolean;
+}) => <UnifiedSidebar role="admin" {...props} />;
