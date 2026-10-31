@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { AgentSidebar } from "./AgentSidebar";
+import { UnifiedSidebar } from "./UnifiedSidebar";
 import { DashboardHeader } from "./DashboardHeader";
 
 export function AgentLayoutShell({ children }: { children: React.ReactNode }) {
@@ -11,7 +11,7 @@ export function AgentLayoutShell({ children }: { children: React.ReactNode }) {
     <div className="flex h-screen overflow-hidden bg-[#F8FAFC]">
       {/* Desktop Sidebar */}
       <div className="hidden md:flex shrink-0">
-        <AgentSidebar />
+        <UnifiedSidebar role="agent" />
       </div>
 
       {/* Mobile Sidebar Overlay Drawer */}
@@ -22,7 +22,11 @@ export function AgentLayoutShell({ children }: { children: React.ReactNode }) {
             onClick={() => setMobileOpen(false)}
           />
           <div className="relative z-10 w-64 h-full bg-[#06143E] shadow-2xl">
-            <AgentSidebar onClose={() => setMobileOpen(false)} isMobile />
+            <UnifiedSidebar
+              role="agent"
+              onClose={() => setMobileOpen(false)}
+              isMobile
+            />
           </div>
         </div>
       )}

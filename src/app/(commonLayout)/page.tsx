@@ -40,6 +40,23 @@ export default function HomePage() {
   // FAQ accordion state
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
+  // Smooth scroll handler for ?section= query param or hash on initial load
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const target = params.get("section") || window.location.hash.replace("#", "");
+    if (target) {
+      const timer = setTimeout(() => {
+        const el = document.getElementById(target);
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+        }
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   const faqData = [
     {
       q: "What is Property Pack AI?",

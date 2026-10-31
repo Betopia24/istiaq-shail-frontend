@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { AdminSidebar } from "./AdminSidebar";
+import { UnifiedSidebar } from "./UnifiedSidebar";
 import { DashboardHeader } from "./DashboardHeader";
 
 export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
@@ -11,7 +11,7 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
     <div className="flex h-screen overflow-hidden bg-[#F8FAFC]">
       {/* Desktop Sidebar */}
       <div className="hidden md:flex shrink-0">
-        <AdminSidebar />
+        <UnifiedSidebar role="admin" />
       </div>
 
       {/* Mobile Sidebar Overlay Drawer */}
@@ -22,7 +22,11 @@ export function AdminLayoutShell({ children }: { children: React.ReactNode }) {
             onClick={() => setMobileOpen(false)}
           />
           <div className="relative z-10 w-64 h-full bg-[#080F24] shadow-2xl">
-            <AdminSidebar onClose={() => setMobileOpen(false)} isMobile />
+            <UnifiedSidebar
+              role="admin"
+              onClose={() => setMobileOpen(false)}
+              isMobile
+            />
           </div>
         </div>
       )}

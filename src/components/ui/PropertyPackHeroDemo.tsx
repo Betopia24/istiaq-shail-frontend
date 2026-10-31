@@ -344,7 +344,7 @@ function AnimatedAIButton({
         transition={{ duration: 1.8, repeat: Infinity }}
         className="mt-1 text-[8px] @[540px]:text-[9px] font-bold text-[#FFD700] text-center leading-tight whitespace-nowrap drop-shadow-sm"
       >
-        {stage === "result" ? "Play ⇄" : isGenerating ? "Building…" : "AI builds ✦"}
+        {stage === "result" ? "Pack ready ✦" : isGenerating ? "Building…" : "AI builds ✦"}
       </motion.p>
     </div>
   );
@@ -525,33 +525,9 @@ export default function PropertyPackHeroDemo() {
 
       {/* ── Mobile View (Shown when container < 520px) ── */}
       <div className="block @[520px]:hidden relative z-10 max-w-[380px] mx-auto min-w-0">
-        {/* Mobile Header with Animated AI Button in center */}
-        <div className="flex items-center justify-between gap-2 mb-3 bg-[#071330]/85 backdrop-blur-md p-1.5 rounded-xl">
-          <div className="flex items-center gap-1 flex-1">
-            <button
-              onClick={() => setMobileTab("input")}
-              className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-semibold transition-all ${
-                mobileTab === "input"
-                  ? "bg-[#E8A808] text-[#06143E] shadow-sm"
-                  : "text-slate-300 hover:text-white"
-              }`}
-            >
-              1. Details
-            </button>
-            <button
-              onClick={() => setMobileTab("output")}
-              className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-semibold transition-all ${
-                mobileTab === "output"
-                  ? "bg-[#E8A808] text-[#06143E] shadow-sm"
-                  : "text-slate-300 hover:text-white"
-              }`}
-            >
-              2. Pack {stage === "result" && "✓"}
-            </button>
-          </div>
-        </div>
+        {/* Mobile View: Dynamic Auto-Transition */}
 
-        {mobileTab === "input" ? (
+        {stage !== "result" ? (
           /* Left Input Card on mobile */
           <div className="bg-[#0B1536]/85 backdrop-blur-xl border border-white/15 rounded-2xl p-3.5 shadow-xl space-y-2">
             <div className="flex items-center justify-between pb-1 border-b border-white/10">
@@ -577,20 +553,10 @@ export default function PropertyPackHeroDemo() {
               ))}
             </div>
 
-            <button
-              onClick={() => {
-                setMobileTab("output");
-                if (stage === "idle") {
-                  setStage("typing");
-                  setTimeout(() => setStage("generating"), 3600);
-                  setTimeout(() => setStage("result"), 5000);
-                }
-              }}
-              className="w-full h-8.5 rounded-xl bg-[#E8A808] text-[#06143E] font-semibold text-[11px] flex items-center justify-center gap-1.5 cursor-pointer shadow-sm mt-2"
-            >
-              <span>View Generated Pack</span>
-              <ArrowRight className="w-3 h-3" />
-            </button>
+            <div className="w-full h-8.5 rounded-xl bg-[#E8A808]/15 border border-[#E8A808]/30 text-[#E8A808] font-semibold text-[11px] flex items-center justify-center gap-1.5 mt-2">
+            <span>AI Automated Generation</span>
+            <ArrowRight className="w-3 h-3 text-[#E8A808]" />
+          </div>
           </div>
         ) : (
           /* Right Output Card on mobile */

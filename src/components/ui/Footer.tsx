@@ -3,8 +3,17 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { scrollToSection } from "@/lib/scrollToSection";
 
 export default function Footer() {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const handleNavClick = (sectionId: string) => {
+    scrollToSection(sectionId, pathname, router);
+  };
+
   return (
     <footer className="bg-[#081229] text-white pt-16 pb-10 border-t border-slate-800/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -86,28 +95,28 @@ export default function Footer() {
               </h4>
               <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
                 <li>
-                  <Link
-                    href="/#marketing-outputs"
-                    className="hover:text-[#E8A808] transition-colors"
+                  <button
+                    onClick={() => handleNavClick("marketing-outputs")}
+                    className="hover:text-[#E8A808] transition-colors text-left cursor-pointer"
                   >
                     10 Deliverables
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link
-                    href="/#how-it-works"
-                    className="hover:text-[#E8A808] transition-colors"
+                  <button
+                    onClick={() => handleNavClick("how-it-works")}
+                    className="hover:text-[#E8A808] transition-colors text-left cursor-pointer"
                   >
                     How It Works
-                  </Link>
+                  </button>
                 </li>
                 <li>
-                  <Link
-                    href="/#pricing"
-                    className="hover:text-[#E8A808] transition-colors"
+                  <button
+                    onClick={() => handleNavClick("pricing")}
+                    className="hover:text-[#E8A808] transition-colors text-left cursor-pointer"
                   >
                     Pricing
-                  </Link>
+                  </button>
                 </li>
               </ul>
             </div>
@@ -119,12 +128,12 @@ export default function Footer() {
               </h4>
               <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
                 <li>
-                  <Link
-                    href="/#how-it-works"
-                    className="hover:text-[#E8A808] transition-colors"
+                  <button
+                    onClick={() => handleNavClick("how-it-works")}
+                    className="hover:text-[#E8A808] transition-colors text-left cursor-pointer"
                   >
                     About Us
-                  </Link>
+                  </button>
                 </li>
                 <li>
                   <a
@@ -144,12 +153,12 @@ export default function Footer() {
               </h4>
               <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
                 <li>
-                  <Link
-                    href="/#faq"
-                    className="hover:text-[#E8A808] transition-colors"
+                  <button
+                    onClick={() => handleNavClick("faq")}
+                    className="hover:text-[#E8A808] transition-colors text-left cursor-pointer"
                   >
                     FAQ
-                  </Link>
+                  </button>
                 </li>
                 <li>
                   <a
