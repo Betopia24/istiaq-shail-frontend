@@ -128,20 +128,20 @@ export default function Footer() {
               </h4>
               <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
                 <li>
-                  <button
-                    onClick={() => handleNavClick("how-it-works")}
-                    className="hover:text-[#E8A808] transition-colors text-left cursor-pointer"
+                  <Link
+                    href="/about"
+                    className="hover:text-[#E8A808] transition-colors"
                   >
                     About Us
-                  </button>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="mailto:support@propertypack.ai"
+                  <Link
+                    href="/contact"
                     className="hover:text-[#E8A808] transition-colors"
                   >
                     Contact Team
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -161,12 +161,12 @@ export default function Footer() {
                   </button>
                 </li>
                 <li>
-                  <a
-                    href="mailto:support@propertypack.ai"
+                  <Link
+                    href="/contact"
                     className="hover:text-[#E8A808] transition-colors"
                   >
-                    Support & Help
-                  </a>
+                    Support &amp; Help
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -179,7 +179,7 @@ export default function Footer() {
               <ul className="space-y-2.5 text-xs sm:text-sm text-slate-300">
                 <li>
                   <Link
-                    href="/sign-up"
+                    href="/privacy"
                     className="hover:text-[#E8A808] transition-colors"
                   >
                     Privacy Policy
@@ -187,7 +187,7 @@ export default function Footer() {
                 </li>
                 <li>
                   <Link
-                    href="/sign-up"
+                    href="/terms"
                     className="hover:text-[#E8A808] transition-colors"
                   >
                     Terms of Service

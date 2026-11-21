@@ -29,6 +29,7 @@ export default function SignUpForm() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const [signUp, { isLoading: isApiLoading }] = useSignUpMutation();
   const dispatch = useAppDispatch();
@@ -41,6 +42,11 @@ export default function SignUpForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!agreedToTerms) {
+      toast.error("Please accept the Terms of Service and Privacy Policy.");
+      return;
+    }
 
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
@@ -73,8 +79,8 @@ export default function SignUpForm() {
       toast.success(res?.message || "Account created successfully!");
       setIsSuccess(true);
       setTimeout(() => {
-        router.push("/agent-dashboard");
-      }, 1000);
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+      }, 800);
     } catch (err: any) {
       // In demo mode or if server is offline
       const errorMsg =
@@ -97,8 +103,8 @@ export default function SignUpForm() {
 
       setIsSuccess(true);
       setTimeout(() => {
-        router.push("/agent-dashboard");
-      }, 1000);
+        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+      }, 800);
     } finally {
       setIsLocalLoading(false);
     }
@@ -241,6 +247,39 @@ export default function SignUpForm() {
               )}
             </button>
           </div>
+        </div>
+
+        {/* Terms and Privacy Checkbox */}
+        <div className="pt-1">
+          <label className="flex items-start gap-2.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              id="terms-checkbox"
+              required
+              checked={agreedToTerms}
+              onChange={(e) => setAgreedToTerms(e.target.checked)}
+              className="mt-0.5 w-4 h-4 rounded text-[#0A2168] border-slate-300 focus:ring-2 focus:ring-[#0A2168]/20 focus:ring-offset-0 cursor-pointer"
+            />
+            <span className="font-sans text-xs text-slate-600 leading-normal">
+              I agree to the{" "}
+              <Link
+                href="/terms"
+                target="_blank"
+                className="font-medium text-[#0A2168] hover:underline"
+              >
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/privacy"
+                target="_blank"
+                className="font-medium text-[#0A2168] hover:underline"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </span>
+          </label>
         </div>
 
         {/* Submit Button */}
