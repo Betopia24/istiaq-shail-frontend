@@ -21,6 +21,7 @@ import {
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { DangerModal } from "@/components/ui/DangerModal";
+import { LeadDetailSlideOver } from "@/components/leads/LeadDetailSlideOver";
 
 type InquiryStatus = "Pending Action" | "Confirmed" | "Completed" | "Cancelled";
 
@@ -677,123 +678,40 @@ export default function LeadsInquiriesPage() {
         </div>
       </div>
 
-      {/* =========================================================================
-          MODAL: VIEW INQUIRY DETAILS
-      ========================================================================= */}
-      {selectedLeadForDetails && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl w-full max-w-lg p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5 animate-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-3">
-                <div
-                  className={`w-10 h-10 rounded-full ${selectedLeadForDetails.avatarColor} text-white flex items-center justify-center font-medium text-sm shrink-0 shadow-sm`}
-                >
-                  {selectedLeadForDetails.initials}
-                </div>
-                <div>
-                  <h3 className="font-heading font-medium text-lg text-slate-900">
-                    {selectedLeadForDetails.buyerName}
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    Lead Ref: {selectedLeadForDetails.ref}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setSelectedLeadForDetails(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
-                <div>
-                  <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider block">
-                    CONTACT EMAIL
-                  </span>
-                  <a
-                    href={`mailto:${selectedLeadForDetails.email}`}
-                    className="font-medium text-[#092167] hover:underline"
-                  >
-                    {selectedLeadForDetails.email}
-                  </a>
-                </div>
-                <div>
-                  <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider block">
-                    CONTACT PHONE
-                  </span>
-                  <a
-                    href={`tel:${selectedLeadForDetails.phone}`}
-                    className="font-medium text-slate-800 hover:underline"
-                  >
-                    {selectedLeadForDetails.phone}
-                  </a>
-                </div>
-              </div>
-
-              <div>
-                <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider block mb-1">
-                  REQUESTED PROPERTY
-                </span>
-                <p className="font-medium text-slate-900 text-sm">
-                  {selectedLeadForDetails.propertyTitle}
-                </p>
-                <p className="text-slate-500 text-xs">
-                  {selectedLeadForDetails.propertyPrice}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between p-3.5 bg-amber-50 rounded-2xl border border-amber-200/70">
-                <div>
-                  <span className="text-[10px] font-medium text-amber-800 uppercase tracking-wider block">
-                    APPOINTMENT TIME
-                  </span>
-                  <span className="font-medium text-amber-950 text-sm">
-                    {selectedLeadForDetails.requestedDate} •{" "}
-                    {selectedLeadForDetails.requestedTime}
-                  </span>
-                </div>
-                <Badge variant="warning">{selectedLeadForDetails.status}</Badge>
-              </div>
-
-              {selectedLeadForDetails.message && (
-                <div>
-                  <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider block mb-1">
-                    BUYER MESSAGE / NOTE
-                  </span>
-                  <p className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-slate-700 leading-relaxed font-normal">
-                    {selectedLeadForDetails.message}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedLeadForDetails(null)}
-              >
-                Close
-              </Button>
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => {
-                  const lead = selectedLeadForDetails;
-                  setSelectedLeadForDetails(null);
-                  setSelectedLeadForEmail(lead);
-                }}
-                icon={<Mail className="w-3.5 h-3.5" />}
-              >
-                Email Lead
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* S11 LEAD DETAIL SLIDE-OVER */}
+      <LeadDetailSlideOver
+        isOpen={!!selectedLeadForDetails}
+        onClose={() => setSelectedLeadForDetails(null)}
+        lead={selectedLeadForDetails}
+        onStatusChange={(leadId, newStatus) => {
+          handleUpdateStatus(leadId, newStatus);
+          if (selectedLeadForDetails?.id === leadId) {
+            setSelectedLeadForDetails((prev) =>
+              prev ? { ...prev, status: newStatus } : null,
+            );
+          }
+        }}
+        onEmailLead={(lead) => {
+          setSelectedLeadForDetails(null);
+          const matched = leads.find((l) => l.id === lead.id);
+          if (matched) {
+            setSelectedLeadForEmail(matched);
+          }
+          setEmailSubject(
+            `Regarding your viewing request for ${lead.propertyTitle}`,
+          );
+          setEmailBody(
+            `Hi ${lead.buyerName.split(" ")[0]},\n\nThank you for booking a viewing for ${lead.propertyTitle}. We are pleased to confirm your appointment for ${lead.requestedDate} at ${lead.requestedTime}.\n\nBest regards,\nPrestige Estates`,
+          );
+        }}
+        onDeleteLead={(lead) => {
+          setSelectedLeadForDetails(null);
+          const matched = leads.find((l) => l.id === lead.id);
+          if (matched) {
+            setLeadToDelete(matched);
+          }
+        }}
+      />
 
       {/* =========================================================================
           MODAL: SEND EMAIL TO LEAD

@@ -20,6 +20,7 @@ import {
   LogOut,
   X,
   ShieldAlert,
+  LifeBuoy,
 } from "lucide-react";
 import Cookies from "js-cookie";
 
@@ -64,6 +65,11 @@ export const agentNavItems: NavItemConfig[] = [
     title: "Settings & Billing",
     href: "/agent-dashboard/settings",
     icon: Settings,
+  },
+  {
+    title: "Help & Guides",
+    href: "/agent-dashboard/help",
+    icon: LifeBuoy,
   },
 ];
 

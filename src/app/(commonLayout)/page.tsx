@@ -1335,7 +1335,7 @@ export default function HomePage() {
                   </ul>
                 </div>
 
-                {/* Role Card 2: Realtors */}
+                {/* Role Card 2: Estate Agents */}
                 <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs space-y-3">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-lg bg-[#092167] text-[#E8A808] flex items-center justify-center">
@@ -1343,7 +1343,7 @@ export default function HomePage() {
                     </div>
                     <div>
                       <h3 className="font-heading font-medium text-base text-slate-900">
-                        Realtors
+                        Estate Agents
                       </h3>
                       <p className="text-xs text-slate-500">
                         Prepare professional materials for buyers and clients.

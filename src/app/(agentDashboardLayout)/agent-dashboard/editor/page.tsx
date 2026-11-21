@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -19,12 +19,20 @@ import {
   FileText,
   Video,
   ArrowDown,
+  AlertTriangle,
+  Plus,
 } from "lucide-react";
 import {
   getPropertyPackById,
   savePropertyPack,
   DEFAULT_PROPERTY_PACK,
 } from "@/types/property";
+import { PackStatusBadge } from "@/components/packs/PackStatusBadge";
+import { ShareDialog } from "@/components/packs/ShareDialog";
+import {
+  ManualComparableModal,
+  ManualComparable,
+} from "@/components/editor/ManualComparableModal";
 
 type ActiveTab = "brochure" | "social" | "valuation" | "portal";
 type SocialPlatform = "facebook" | "instagram" | "tiktok";
@@ -38,34 +46,60 @@ export default function PackEditorPage() {
   );
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [pricingStrategy, setPricingStrategy] = useState<
     "realistic" | "premium" | "accelerated"
   >("realistic");
+  const [isManualCompOpen, setIsManualCompOpen] = useState(false);
+  const [comparables, setComparables] = useState<ManualComparable[]>([
+    {
+      id: "c1",
+      address: "22 Gorse Drive, Chorlton",
+      type: "4 Beds • 2 Baths • 2,100 sq ft (Detached)",
+      distance: "0.05 mi",
+      saleDate: "Aug 2026",
+      price: "£755,000",
+      pricePerSqFt: "£359",
+    },
+    {
+      id: "c2",
+      address: "9 Beech Avenue, Chorlton",
+      type: "4 Beds • 2 Baths • 2,050 sq ft (Detached)",
+      distance: "0.32 mi",
+      saleDate: "Jul 2026",
+      price: "£735,000",
+      pricePerSqFt: "£358",
+    },
+    {
+      id: "c3",
+      address: "14 Brookburn Road, Chorlton",
+      type: "5 Beds • 3 Baths • 2,340 sq ft (Detached)",
+      distance: "0.58 mi",
+      saleDate: "Jun 2026",
+      price: "£785,000",
+      pricePerSqFt: "£335",
+    },
+  ]);
 
   // Editable brochure copy state
+  const initialPack = getPropertyPackById("16-gorse-drive");
   const [headline, setHeadline] = useState(
-    "An Exceptional Four-Bedroom Executive Detached Home in Prime Chorlton",
+    initialPack?.title ||
+      "An Exceptional Four-Bedroom Executive Detached Home in Prime Chorlton",
   );
   const [narrative, setNarrative] = useState(
-    "Nestled on the prestigious Gorse Drive, this beautifully extended four-bedroom detached family home offers an extraordinary balance of modern elegance and practical space across 2,150 sq ft.\n\nThe heart of this residence is a magnificent open-plan designer kitchen with underfloor heating, unfolding directly onto a private south-facing garden.",
+    initialPack?.overview ||
+      "Nestled on the prestigious Gorse Drive, this beautifully extended four-bedroom detached family home offers an extraordinary balance of modern elegance and practical space across 2,150 sq ft.\n\nThe heart of this residence is a magnificent open-plan designer kitchen with underfloor heating, unfolding directly onto a private south-facing garden.",
   );
-  const [keyFeatures, setKeyFeatures] = useState(
-    "• Four generous bedrooms with master en-suite\n• Bespoke German fitted kitchen with premium appliances\n• Private mature south-facing rear garden\n• Detached double garage & private paved driveway\n• Just 5 minutes walk from Chorlton Metrolink",
-  );
+  const [keyFeatures, setKeyFeatures] = useState(() => {
+    if (initialPack?.keyFeatures && initialPack.keyFeatures.length > 0) {
+      return initialPack.keyFeatures.map((f) => `• ${f}`).join("\n");
+    }
+    return "• Four generous bedrooms with master en-suite\n• Bespoke German fitted kitchen with premium appliances\n• Private mature south-facing rear garden\n• Detached double garage & private paved driveway\n• Just 5 minutes walk from Chorlton Metrolink";
+  });
   const [socialCaption, setSocialCaption] = useState(
     "🏡 NEW TO MARKET | 16 Gorse Drive, Manchester\nStunning 4-bed detached home with open-plan kitchen & sunny garden.\nGuide Price: £750,000 • DM to arrange a private viewing.",
   );
-
-  useEffect(() => {
-    const pack = getPropertyPackById("16-gorse-drive");
-    if (pack) {
-      if (pack.title) setHeadline(pack.title);
-      if (pack.overview) setNarrative(pack.overview);
-      if (pack.keyFeatures && pack.keyFeatures.length > 0) {
-        setKeyFeatures(pack.keyFeatures.map((f) => `• ${f}`).join("\n"));
-      }
-    }
-  }, []);
 
   const handleSaveChanges = () => {
     const currentPack = getPropertyPackById("16-gorse-drive");
@@ -125,9 +159,12 @@ export default function PackEditorPage() {
               16 Gorse Drive, Chorlton (M21 8XQ)
             </span>
           </div>
-          <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
-            Pack Results &amp; Live Editor
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
+              Pack Results &amp; Live Editor
+            </h1>
+            <PackStatusBadge status="ready" size="sm" />
+          </div>
         </div>
 
         <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
@@ -153,14 +190,10 @@ export default function PackEditorPage() {
 
           {/* Share Link Button */}
           <button
-            onClick={() =>
-              copyToClipboard(
-                window.location.origin + "/property/16-gorse-drive",
-                "share-link",
-              )
-            }
+            type="button"
+            onClick={() => setShowShareModal(true)}
             className="h-10 px-3.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 font-medium text-xs transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
-            title="Copy Public Link"
+            title="Share Public Link & QR Code"
           >
             <Share2 className="w-3.5 h-3.5 text-slate-400" />
             <span>Share</span>
@@ -315,7 +348,7 @@ export default function PackEditorPage() {
                 type="button"
                 onClick={() => {
                   showToast(
-                    "Regenerating all marketing copy with Claude 3.5...",
+                    "Regenerating all marketing copy with AI...",
                   );
                 }}
                 className="h-11 px-5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs sm:text-sm transition flex items-center gap-2 cursor-pointer"
@@ -738,18 +771,37 @@ export default function PackEditorPage() {
             </div>
           </div>
 
+          {/* E05: Visible RICS Compliance Disclaimer Banner */}
+          <div className="p-3.5 rounded-xl border border-amber-200 bg-amber-50/80 text-amber-900 text-xs flex items-center gap-3">
+            <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            <p className="leading-relaxed">
+              <strong>RICS Compliance Notice:</strong> Indicative automated estimate generated for marketing preparation, not a formal RICS Red Book valuation.
+            </p>
+          </div>
+
           {/* Two Columns: Comps Table & Vendor Pricing Strategies */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
             {/* Left: Recent Comparable Sales (Comps Analysis) */}
             <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 space-y-5 shadow-2xs">
-              <div>
-                <h3 className="font-heading font-medium text-base sm:text-lg text-slate-900">
-                  Recent Comparable Sales (Comps Analysis)
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Verified land registry and portal transactions within 0.75
-                  miles
-                </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-heading font-medium text-base sm:text-lg text-slate-900">
+                    Recent Comparable Sales (Comps Analysis)
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Verified land registry and portal transactions within 0.75
+                    miles
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setIsManualCompOpen(true)}
+                  className="h-9 px-3.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs transition cursor-pointer flex items-center gap-1.5 shadow-2xs self-start sm:self-auto shrink-0"
+                >
+                  <Plus className="w-3.5 h-3.5 text-[#E8A808]" />
+                  <span>Add Custom Comparable</span>
+                </button>
               </div>
 
               <div className="overflow-x-auto -mx-6 sm:mx-0">
@@ -766,89 +818,33 @@ export default function PackEditorPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 text-xs sm:text-sm">
-                    {/* Row 1 */}
-                    <tr className="hover:bg-slate-50/60 transition">
-                      <td className="py-3.5 px-4">
-                        <p className="font-medium text-slate-900 text-sm">
-                          22 Gorse Drive, Chorlton
-                        </p>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          4 Beds • 2 Baths • 2,100 sq ft (Detached)
-                        </p>
-                        <div className="flex items-center gap-1.5 mt-1 text-emerald-600 text-xs font-medium">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          <span>98% Match to subject property</span>
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-3 text-slate-600 font-medium">
-                        0.05 mi
-                      </td>
-                      <td className="py-3.5 px-3 text-slate-600 font-medium">
-                        Aug 2026
-                      </td>
-                      <td className="py-3.5 px-3 font-medium text-slate-900">
-                        £755,000
-                      </td>
-                      <td className="py-3.5 px-4 font-mono text-slate-700">
-                        £359
-                      </td>
-                    </tr>
-
-                    {/* Row 2 */}
-                    <tr className="hover:bg-slate-50/60 transition">
-                      <td className="py-3.5 px-4">
-                        <p className="font-medium text-slate-900 text-sm">
-                          9 Beech Avenue, Chorlton
-                        </p>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          4 Beds • 2 Baths • 2,050 sq ft (Detached)
-                        </p>
-                        <div className="flex items-center gap-1.5 mt-1 text-emerald-600 text-xs font-medium">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          <span>94% Match to subject property</span>
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-3 text-slate-600 font-medium">
-                        0.32 mi
-                      </td>
-                      <td className="py-3.5 px-3 text-slate-600 font-medium">
-                        Jul 2026
-                      </td>
-                      <td className="py-3.5 px-3 font-medium text-slate-900">
-                        £735,000
-                      </td>
-                      <td className="py-3.5 px-4 font-mono text-slate-700">
-                        £358
-                      </td>
-                    </tr>
-
-                    {/* Row 3 */}
-                    <tr className="hover:bg-slate-50/60 transition">
-                      <td className="py-3.5 px-4">
-                        <p className="font-medium text-slate-900 text-sm">
-                          14 Brookburn Road, Chorlton
-                        </p>
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          5 Beds • 3 Baths • 2,340 sq ft (Detached)
-                        </p>
-                        <div className="flex items-center gap-1.5 mt-1 text-amber-600 text-xs font-medium">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                          <span>88% Match (Larger footprint)</span>
-                        </div>
-                      </td>
-                      <td className="py-3.5 px-3 text-slate-600 font-medium">
-                        0.58 mi
-                      </td>
-                      <td className="py-3.5 px-3 text-slate-600 font-medium">
-                        Jun 2026
-                      </td>
-                      <td className="py-3.5 px-3 font-medium text-slate-900">
-                        £785,000
-                      </td>
-                      <td className="py-3.5 px-4 font-mono text-slate-700">
-                        £335
-                      </td>
-                    </tr>
+                    {comparables.map((comp) => (
+                      <tr
+                        key={comp.id}
+                        className="hover:bg-slate-50/60 transition"
+                      >
+                        <td className="py-3.5 px-4">
+                          <p className="font-medium text-slate-900 text-sm">
+                            {comp.address}
+                          </p>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            {comp.type}
+                          </p>
+                        </td>
+                        <td className="py-3.5 px-3 text-slate-600 font-medium">
+                          {comp.distance}
+                        </td>
+                        <td className="py-3.5 px-3 text-slate-600 font-medium">
+                          {comp.saleDate}
+                        </td>
+                        <td className="py-3.5 px-3 font-medium text-slate-900">
+                          {comp.price}
+                        </td>
+                        <td className="py-3.5 px-4 font-mono text-slate-700">
+                          {comp.pricePerSqFt}
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -1187,7 +1183,7 @@ export default function PackEditorPage() {
             </div>
 
             {/* Bottom Buttons */}
-            <div className="pt-2 flex items-center gap-3">
+            <div className="pt-2 flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={() =>
@@ -1203,10 +1199,18 @@ export default function PackEditorPage() {
 
               <button
                 type="button"
-                onClick={() => showToast("Exporting BLM / XML portal feed...")}
+                onClick={() => showToast("Exporting Rightmove BLM / XML feed file...")}
                 className="h-11 px-5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs sm:text-sm transition cursor-pointer"
               >
-                Export XML / CSV
+                Export BLM / XML
+              </button>
+
+              <button
+                type="button"
+                onClick={() => showToast("Exporting property particulars CSV...")}
+                className="h-11 px-5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs sm:text-sm transition cursor-pointer"
+              >
+                Export CSV
               </button>
             </div>
           </div>
@@ -1298,20 +1302,38 @@ export default function PackEditorPage() {
                 </div>
               </div>
 
-              {/* Direct Sync Button */}
-              <button
-                type="button"
-                onClick={() =>
-                  showToast("Direct sync to Rightmove feed scheduled!")
-                }
-                className="w-full h-11 rounded-lg bg-[#06143E] hover:bg-[#0A2168] text-white font-medium text-xs sm:text-sm transition cursor-pointer shadow-sm"
-              >
-                Direct Sync to Rightmove & Zoopla
-              </button>
+              {/* Direct Sync Button (E06: Direct sync coming soon) */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  disabled
+                  className="w-full h-11 rounded-lg bg-slate-100 text-slate-400 font-medium text-xs sm:text-sm border border-slate-200 cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <span>Direct Sync to Rightmove &amp; Zoopla</span>
+                  <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-600">
+                    Coming Soon
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* S19 Manual Comparable Sale Dialog */}
+      <ManualComparableModal
+        isOpen={isManualCompOpen}
+        onClose={() => setIsManualCompOpen(false)}
+        onAdd={(newComp) => setComparables((prev) => [newComp, ...prev])}
+      />
+
+      {/* S05 Share Dialog */}
+      <ShareDialog
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        packId="16-gorse-drive"
+        packTitle="16 Gorse Drive, Chorlton"
+      />
     </div>
   );
 }

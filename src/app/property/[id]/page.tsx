@@ -28,37 +28,21 @@ import {
   DEFAULT_PROPERTY_PACK,
   getPropertyPackById,
 } from "@/types/property";
+import { BookingViewingModal } from "@/components/property/BookingViewingModal";
 
 export default function PublicBuyerPropertyPage() {
   const params = useParams();
   const propertyId = (params?.id as string) || "16-gorse-drive";
 
-  // Dynamic Property Data (populated from backend / localStorage / default fallback)
-  const [property, setProperty] = useState<PropertyPackData>(
-    DEFAULT_PROPERTY_PACK,
+  // Dynamic Property Data
+  const [property] = useState<PropertyPackData>(() =>
+    getPropertyPackById(propertyId),
   );
-
-  useEffect(() => {
-    if (propertyId) {
-      const data = getPropertyPackById(propertyId);
-      setProperty(data);
-    }
-  }, [propertyId]);
 
   // Modal States
   const [isViewingModalOpen, setIsViewingModalOpen] = useState(false);
   const [isGalleryModalOpen, setIsGalleryModalOpen] = useState(false);
   const [activeGalleryIndex, setActiveGalleryIndex] = useState(0);
-
-  // Form State
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [viewingTime, setViewingTime] = useState(
-    "Saturday Morning (10:00 - 12:00)",
-  );
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
 
   // Toast
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -86,56 +70,6 @@ export default function PublicBuyerPropertyPage() {
       label: "Principal En-Suite Wet Room",
     },
   ];
-
-  const handleBookingSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!fullName || !email) {
-      showToast("Please provide your name and email address");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setTimeout(() => {
-      // Save lead to localStorage for Agent Dashboard sync
-      const newLead = {
-        id: `lead-${Date.now()}`,
-        ref: "#PP-8492",
-        buyerName: fullName,
-        email: email,
-        phone: phone || "+44 7911 234567",
-        initials:
-          fullName
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2) || "DH",
-        avatarColor: "bg-[#06143E]",
-        propertyTitle: "16 Gorse Drive, Chorlton",
-        propertyPrice: "£750,000 Guide",
-        requestedDate: "This Weekend",
-        requestedTime: viewingTime.split(" ")[0],
-        statusNote: "Just submitted via Public Pack",
-        statusNoteType: "warning",
-        status: "Pending Action",
-        message: `Requested viewing time: ${viewingTime}`,
-        preApproved: true,
-      };
-
-      try {
-        const stored = localStorage.getItem("pp_captured_leads");
-        const list = stored ? JSON.parse(stored) : [];
-        list.unshift(newLead);
-        localStorage.setItem("pp_captured_leads", JSON.stringify(list));
-      } catch (err) {
-        console.error("Local storage error:", err);
-      }
-
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-      showToast("Viewing appointment requested successfully!");
-    }, 800);
-  };
 
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans pb-24 selection:bg-[#E8A808]/20">
@@ -191,10 +125,7 @@ export default function PublicBuyerPropertyPage() {
 
             {/* Book a Viewing Button */}
             <button
-              onClick={() => {
-                setIsSubmitted(false);
-                setIsViewingModalOpen(true);
-              }}
+              onClick={() => setIsViewingModalOpen(true)}
               className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#d89b05] text-[#06143E] font-medium text-xs sm:text-sm shadow-sm transition flex items-center gap-2 cursor-pointer"
             >
               <Calendar className="w-4 h-4" />
@@ -471,10 +402,7 @@ export default function PublicBuyerPropertyPage() {
             <div className="space-y-2.5">
               <button
                 type="button"
-                onClick={() => {
-                  setIsSubmitted(false);
-                  setIsViewingModalOpen(true);
-                }}
+                onClick={() => setIsViewingModalOpen(true)}
                 className="w-full h-11 rounded-lg bg-[#E8A808] hover:bg-[#d89b05] text-[#06143E] font-medium text-sm shadow-sm transition flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Calendar className="w-4 h-4" />
@@ -499,158 +427,15 @@ export default function PublicBuyerPropertyPage() {
       </main>
 
       {/* =========================================================================
-          MODAL: BOOK A VIEWING / INQUIRY (Image 2 - Right Frame)
+          MODAL: BOOK A VIEWING / INQUIRY (E03 + S10)
       ========================================================================= */}
-      {isViewingModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-slate-200 relative animate-scale-in">
-            {/* Close Button */}
-            <button
-              onClick={() => setIsViewingModalOpen(false)}
-              className="absolute top-5 right-5 p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition"
-              aria-label="Close modal"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {isSubmitted ? (
-              <div className="py-8 text-center space-y-4">
-                <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
-                  <Check className="w-7 h-7 stroke-[2.5]" />
-                </div>
-                <h3 className="font-heading font-semibold text-2xl text-slate-900">
-                  Viewing Request Received!
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-600 max-w-sm mx-auto leading-relaxed">
-                  Thank you, <strong>{fullName}</strong>. Your viewing
-                  appointment for <strong>{viewingTime}</strong> has been logged
-                  and sent directly to {property.agent.name} at{" "}
-                  {property.agency.name}.
-                </p>
-                <div className="pt-4">
-                  <button
-                    onClick={() => setIsViewingModalOpen(false)}
-                    className="h-10 px-6 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white font-medium text-sm transition"
-                  >
-                    Done
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div>
-                {/* Header */}
-                <div className="mb-5">
-                  <h3 className="font-heading font-medium text-xl text-slate-900">
-                    Book a Viewing / Inquiry
-                  </h3>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Direct access to the appointed listing agent
-                  </p>
-                </div>
-
-                {/* Agent Card Banner */}
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200/80 mb-5">
-                  <div className="w-10 h-10 rounded-full bg-[#E8A808] text-[#06143E] font-heading font-medium text-sm flex items-center justify-center shrink-0 shadow-sm">
-                    {property.agent.initials}
-                  </div>
-                  <div>
-                    <div className="font-medium text-sm text-slate-900 leading-tight">
-                      {property.agent.name}
-                    </div>
-                    <div className="text-xs text-slate-500 font-medium leading-tight">
-                      {property.agent.role}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Form */}
-                <form onSubmit={handleBookingSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1.5">
-                      Your Full Name
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. David Harrison"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="w-full h-10 px-3.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    <div>
-                      <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1.5">
-                        Email Address
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="david@gmail.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full h-10 px-3.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1.5">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        placeholder="+44 7911 234567"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="w-full h-10 px-3.5 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-1.5">
-                      Preferred Viewing Time
-                    </label>
-                    <select
-                      value={viewingTime}
-                      onChange={(e) => setViewingTime(e.target.value)}
-                      className="w-full h-10 px-3 text-sm bg-slate-50 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:border-[#092167] focus:bg-white transition cursor-pointer"
-                    >
-                      <option value="Saturday Morning (10:00 - 12:00)">
-                        Saturday Morning (10:00 - 12:00)
-                      </option>
-                      <option value="Saturday Afternoon (14:00 - 16:00)">
-                        Saturday Afternoon (14:00 - 16:00)
-                      </option>
-                      <option value="Sunday Morning (11:00 - 13:00)">
-                        Sunday Morning (11:00 - 13:00)
-                      </option>
-                      <option value="Weekday Evening (17:30 - 19:00)">
-                        Weekday Evening (17:30 - 19:00)
-                      </option>
-                    </select>
-                  </div>
-
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full h-11 rounded-lg bg-[#E8A808] hover:bg-[#d89b05] text-[#06143E] font-medium text-sm shadow-sm transition flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-                    >
-                      {isSubmitting ? (
-                        <span>Submitting Request...</span>
-                      ) : (
-                        <span>Request Private Viewing Appointment</span>
-                      )}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      <BookingViewingModal
+        isOpen={isViewingModalOpen}
+        onClose={() => setIsViewingModalOpen(false)}
+        propertyTitle={property.title}
+        agentName={property.agent.name}
+        agencyName={property.agency.name}
+      />
 
       {/* =========================================================================
           LIGHTBOX GALLERY MODAL

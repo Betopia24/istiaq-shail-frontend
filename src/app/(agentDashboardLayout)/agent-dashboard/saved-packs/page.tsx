@@ -8,15 +8,18 @@ import {
   Search,
   ChevronDown,
   Plus,
-  Link2,
   ExternalLink,
   FileText,
   Trash2,
-  Check,
   ChevronLeft,
   ChevronRight,
   Sparkles,
+  CreditCard,
+  Share2,
 } from "lucide-react";
+import { PackStatusBadge } from "@/components/packs/PackStatusBadge";
+import { ShareDialog } from "@/components/packs/ShareDialog";
+import { BuyPacksModal } from "@/components/packs/BuyPacksModal";
 
 type FilterStatus = "all" | "ready" | "draft";
 type SortOption = "newest" | "oldest" | "price-high" | "price-low";
@@ -138,7 +141,12 @@ export default function SavedPacksPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [packToDelete, setPackToDelete] = useState<SavedPack | null>(null);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [showBuyModal, setShowBuyModal] = useState(false);
+  const [sharePackTarget, setSharePackTarget] = useState<{ id: string; title: string }>({
+    id: "pack-1",
+    title: "14 Willow Crescent, London",
+  });
 
   const ITEMS_PER_PAGE = 3;
 
@@ -147,12 +155,9 @@ export default function SavedPacksPage() {
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  const copyLink = (packId: string) => {
-    const url = `${window.location.origin}/agent-dashboard/editor?pack=${packId}`;
-    navigator.clipboard.writeText(url);
-    setCopiedId(packId);
-    showToast("Shareable link copied to clipboard!");
-    setTimeout(() => setCopiedId(null), 2500);
+  const copyLink = (pack: SavedPack) => {
+    setSharePackTarget({ id: pack.id, title: pack.title });
+    setShowShareModal(true);
   };
 
   const confirmDeletePack = () => {
@@ -247,6 +252,16 @@ export default function SavedPacksPage() {
             <span className="w-2 h-2 rounded-full bg-[#E8A808] animate-pulse" />
             <span>78 Packs Available</span>
           </div>
+
+          {/* Buy Packs Top-Up Button */}
+          <button
+            type="button"
+            onClick={() => setShowBuyModal(true)}
+            className="h-9 px-3 rounded-lg border border-[#06143E] bg-[#06143E] hover:bg-[#0B1E48] text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+          >
+            <CreditCard className="w-3.5 h-3.5 text-[#E8A808]" />
+            <span>Buy Packs</span>
+          </button>
 
           {/* New Property Pack Button */}
           <Link
@@ -385,15 +400,7 @@ export default function SavedPacksPage() {
 
                 {/* Top Left Badge: Status */}
                 <div className="absolute top-3 left-3 z-20">
-                  {pack.status === "ready" ? (
-                    <span className="px-3 py-1 rounded-full text-[11px] font-medium bg-[#10B981] text-white shadow-xs">
-                      Ready
-                    </span>
-                  ) : (
-                    <span className="px-3 py-1 rounded-full text-[11px] font-medium bg-[#FF9800] text-white shadow-xs">
-                      Draft
-                    </span>
-                  )}
+                  <PackStatusBadge status={pack.status} size="sm" />
                 </div>
 
                 {/* Top Right Badge: Country / Region */}
@@ -453,18 +460,14 @@ export default function SavedPacksPage() {
                     Edit
                   </Link>
 
-                  {/* Copy Link Button */}
+                  {/* Copy Link / Share Button */}
                   <button
                     type="button"
-                    onClick={() => copyLink(pack.id)}
+                    onClick={() => copyLink(pack)}
                     className="h-9 w-9 rounded-lg border border-[#FFB800] bg-amber-50/20 hover:bg-amber-50 text-[#D49800] flex items-center justify-center transition cursor-pointer"
-                    title="Copy share link"
+                    title="Share property pack"
                   >
-                    {copiedId === pack.id ? (
-                      <Check className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
-                    ) : (
-                      <Link2 className="w-4 h-4" />
-                    )}
+                    <Share2 className="w-4 h-4" />
                   </button>
 
                   {/* External View Button (Public Buyer Page) */}
@@ -565,6 +568,31 @@ export default function SavedPacksPage() {
           </button>
         </div>
       </div>
+
+      {/* S05 Share Dialog */}
+      <ShareDialog
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        packId={sharePackTarget.id}
+        packTitle={sharePackTarget.title}
+      />
+
+      {/* S07 Buy Packs Modal */}
+      <BuyPacksModal
+        isOpen={showBuyModal}
+        onClose={() => setShowBuyModal(false)}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DangerModal
+        isOpen={!!packToDelete}
+        onClose={() => setPackToDelete(null)}
+        onConfirm={confirmDeletePack}
+        title="Delete Property Pack"
+        description="Are you sure you want to permanently delete this property pack? All generated marketing copy, public brochure links, and analytics will be removed."
+        itemName={packToDelete?.title}
+        confirmText="Delete Pack"
+      />
     </div>
   );
 }

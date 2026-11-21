@@ -16,6 +16,8 @@ import {
   Sparkles,
   Shield,
   ExternalLink,
+  Bell,
+  CheckCheck,
 } from "lucide-react";
 import Cookies from "js-cookie";
 
@@ -23,6 +25,58 @@ interface DashboardHeaderProps {
   role?: "admin" | "agent";
   onToggleMobileMenu?: () => void;
 }
+
+interface NotificationItem {
+  id: string;
+  title: string;
+  description: string;
+  time: string;
+  read: boolean;
+  type: "pack" | "credit" | "lead" | "billing" | "team";
+}
+
+const defaultNotifications: NotificationItem[] = [
+  {
+    id: "notif-1",
+    title: "Property Pack Ready",
+    description: "Brochure for 16 Gorse Drive, Chorlton is ready for export.",
+    time: "10m ago",
+    read: false,
+    type: "pack",
+  },
+  {
+    id: "notif-2",
+    title: "New Buyer Viewing Lead",
+    description: "James Davies requested a viewing for 16 Gorse Drive.",
+    time: "45m ago",
+    read: false,
+    type: "lead",
+  },
+  {
+    id: "notif-3",
+    title: "Low Pack Credits Warning",
+    description: "14 packs remaining on your Professional Tier monthly quota.",
+    time: "3h ago",
+    read: false,
+    type: "credit",
+  },
+  {
+    id: "notif-4",
+    title: "Team Invite Accepted",
+    description: "Sarah Jenkins joined Prestige Estates UK as a Valuer.",
+    time: "1d ago",
+    read: true,
+    type: "team",
+  },
+  {
+    id: "notif-5",
+    title: "VAT Invoice Ready",
+    description: "Invoice #INV-2026-11 (£79.00) is available for download.",
+    time: "3d ago",
+    read: true,
+    type: "billing",
+  },
+];
 
 const breadcrumbTitles: Record<string, { portal: string; page: string }> = {
   "/agent-dashboard": { portal: "Agent Portal", page: "Overview" },
@@ -32,6 +86,7 @@ const breadcrumbTitles: Record<string, { portal: string; page: string }> = {
   "/agent-dashboard/branding": { portal: "Agent Portal", page: "Agency Branding" },
   "/agent-dashboard/editor": { portal: "Agent Portal", page: "Live Pack Editor" },
   "/agent-dashboard/settings": { portal: "Agent Portal", page: "Settings & Team" },
+  "/agent-dashboard/help": { portal: "Agent Portal", page: "Help Centre & Support" },
   "/admin-dashboard": { portal: "Super Admin", page: "Platform Overview" },
   "/admin-dashboard/agencies": { portal: "Super Admin", page: "Agency Teams" },
   "/admin-dashboard/subscriptions": { portal: "Super Admin", page: "Subscriptions & Logs" },
@@ -50,6 +105,10 @@ export function DashboardHeader({
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>(defaultNotifications);
+  const notifRef = useRef<HTMLDivElement>(null);
+
   // Close dropdown on outside click or escape key
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -59,14 +118,21 @@ export function DashboardHeader({
       ) {
         setProfileOpen(false);
       }
+      if (
+        notifRef.current &&
+        !notifRef.current.contains(event.target as Node)
+      ) {
+        setNotificationsOpen(false);
+      }
     }
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setProfileOpen(false);
+        setNotificationsOpen(false);
       }
     }
 
-    if (profileOpen) {
+    if (profileOpen || notificationsOpen) {
       document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("keydown", handleKeyDown);
     }
@@ -74,7 +140,13 @@ export function DashboardHeader({
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [profileOpen]);
+  }, [profileOpen, notificationsOpen]);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const markAllRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
 
   const handleLogout = () => {
     setProfileOpen(false);
@@ -146,8 +218,86 @@ export function DashboardHeader({
           </div>
         </div>
 
-        {/* Right: Interactive Profile Dropdown */}
-        <div className="relative shrink-0" ref={dropdownRef}>
+        {/* Right: Notifications & Interactive Profile Dropdown */}
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Notification Bell Dropdown (S20) */}
+          <div className="relative shrink-0" ref={notifRef}>
+            <button
+              onClick={() => setNotificationsOpen(!notificationsOpen)}
+              className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition relative cursor-pointer"
+              aria-label="Notifications"
+            >
+              <Bell className="w-5 h-5" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#E8A808] ring-2 ring-white" />
+              )}
+            </button>
+
+            {notificationsOpen && (
+              <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="px-4 pb-2.5 border-b border-slate-100 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-heading font-semibold text-sm text-slate-900">
+                      Notifications
+                    </h3>
+                    {unreadCount > 0 && (
+                      <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-[#FEF3C7] text-[#8C6605]">
+                        {unreadCount} new
+                      </span>
+                    )}
+                  </div>
+                  {unreadCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={markAllRead}
+                      className="text-[11px] text-[#092167] hover:underline font-medium flex items-center gap-1 cursor-pointer"
+                    >
+                      <CheckCheck className="w-3.5 h-3.5 text-[#E8A808]" />
+                      <span>Mark all as read</span>
+                    </button>
+                  )}
+                </div>
+
+                <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
+                  {notifications.map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() =>
+                        setNotifications((prev) =>
+                          prev.map((n) =>
+                            n.id === item.id ? { ...n, read: true } : n,
+                          ),
+                        )
+                      }
+                      className={`p-3.5 hover:bg-slate-50 transition cursor-pointer flex items-start gap-3 ${
+                        !item.read ? "bg-amber-50/20" : ""
+                      }`}
+                    >
+                      <span
+                        className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
+                          !item.read ? "bg-[#E8A808]" : "bg-transparent"
+                        }`}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-xs text-slate-900">
+                          {item.title}
+                        </p>
+                        <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                          {item.description}
+                        </p>
+                        <p className="text-[10px] text-slate-400 mt-1">
+                          {item.time}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Interactive Profile Dropdown */}
+          <div className="relative shrink-0" ref={dropdownRef}>
           <button
             onClick={() => setProfileOpen(!profileOpen)}
             className="flex items-center gap-2.5 p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl border border-transparent hover:border-slate-200 hover:bg-slate-50/80 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#E8A808]/40"
@@ -276,6 +426,7 @@ export function DashboardHeader({
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
     </header>

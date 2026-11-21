@@ -5,17 +5,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  FileText,
   ArrowRight,
   Plus,
   Pencil,
   Download,
   Check,
   X,
-  CreditCard,
-  Building2,
   Sparkles,
+  Share2,
 } from "lucide-react";
+import { PackStatusBadge } from "@/components/packs/PackStatusBadge";
+import { BuyPacksModal } from "@/components/packs/BuyPacksModal";
+import { ShareDialog } from "@/components/packs/ShareDialog";
 
 interface PropertyPack {
   id: string;
@@ -91,6 +92,11 @@ export default function AgentDashboardPage() {
   const [currentPage, setCurrentPage] = useState<1 | 2>(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showBuyModal, setShowBuyModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [selectedPackForShare, setSelectedPackForShare] = useState({
+    id: "pack-1",
+    address: "16 Gorse Drive, Manchester",
+  });
   const [showCreditDetails, setShowCreditDetails] = useState(false);
   const [downloadToast, setDownloadToast] = useState<string | null>(null);
 
@@ -490,9 +496,7 @@ export default function AgentDashboardPage() {
 
                   {/* Status Badge */}
                   <td className="py-4 px-3">
-                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-[#DCFCE7] text-[#15803D]">
-                      {pack.status}
-                    </span>
+                    <PackStatusBadge status={pack.status} size="sm" />
                   </td>
 
                   {/* Actions */}
@@ -504,6 +508,20 @@ export default function AgentDashboardPage() {
                       >
                         <Download className="w-3.5 h-3.5 text-slate-500" />
                         <span>PDF Report</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedPackForShare({
+                            id: pack.id,
+                            address: pack.address,
+                          });
+                          setShowShareModal(true);
+                        }}
+                        title="Share digital brochure"
+                        className="p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg hover:scale-110 active:scale-95 transition-all cursor-pointer inline-flex items-center justify-center"
+                      >
+                        <Share2 className="w-3.5 h-3.5 text-[#092167]" />
                       </button>
                       <Link
                         href="/agent-dashboard/editor"
@@ -648,99 +666,23 @@ export default function AgentDashboardPage() {
         </div>
       )}
 
-      {/* =========================================================================
-          MODAL: BUY PACKS
-      ========================================================================= */}
-      {showBuyModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl border border-slate-200 space-y-5 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#071330] text-white flex items-center justify-center">
-                  <CreditCard className="w-4 h-4 text-[#E8A808]" />
-                </div>
-                <h3 className="font-heading font-medium text-lg text-slate-900">
-                  Buy Property Packs
-                </h3>
-              </div>
-              <button
-                onClick={() => setShowBuyModal(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+      {/* S07 BUY PACKS MODAL */}
+      <BuyPacksModal
+        isOpen={showBuyModal}
+        onClose={() => setShowBuyModal(false)}
+        onSuccess={() => {
+          setDownloadToast("Pack bundle added to your balance!");
+          setTimeout(() => setDownloadToast(null), 3000);
+        }}
+      />
 
-            <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1">
-              <div className="flex justify-between font-medium">
-                <span>Current Monthly Remaining:</span>
-                <span className="font-medium text-slate-800">
-                  64 packs (36/100 used)
-                </span>
-              </div>
-              <div className="flex justify-between font-medium">
-                <span>Current Purchased Add-ons:</span>
-                <span className="font-medium text-[#8C6605]">
-                  14 packs remaining
-                </span>
-              </div>
-              <p className="text-[10px] text-slate-400 pt-1 border-t border-slate-200">
-                Purchased add-on credits never expire and roll over each billing
-                cycle.
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <div className="p-4 rounded-xl border-2 border-[#092167] bg-blue-50/30 flex items-center justify-between cursor-pointer">
-                <div>
-                  <p className="font-medium text-sm text-slate-900">
-                    10 Packs Bundle
-                  </p>
-                  <p className="text-xs text-slate-500">£15 per pack</p>
-                </div>
-                <span className="font-heading font-medium text-base text-[#092167]">
-                  £150
-                </span>
-              </div>
-
-              <div className="p-4 rounded-xl border border-slate-200 hover:border-slate-300 flex items-center justify-between cursor-pointer">
-                <div>
-                  <p className="font-medium text-sm text-slate-900">
-                    25 Packs Bundle
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    £12 per pack (Save 20%)
-                  </p>
-                </div>
-                <span className="font-heading font-medium text-base text-slate-900">
-                  £300
-                </span>
-              </div>
-            </div>
-
-            <div className="pt-2 flex items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setShowBuyModal(false)}
-                className="h-10 px-4 rounded-lg border border-slate-200 text-slate-600 text-xs font-medium hover:bg-slate-50 cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowBuyModal(false);
-                  setDownloadToast("10 Packs added to your allocation!");
-                  setTimeout(() => setDownloadToast(null), 3000);
-                }}
-                className="h-10 px-5 rounded-lg bg-[#071330] hover:bg-[#0B1E48] text-white text-xs font-medium cursor-pointer transition shadow-sm"
-              >
-                Confirm Purchase
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* S05 SHARE DIGITAL BROCHURE DIALOG */}
+      <ShareDialog
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        packId={selectedPackForShare.id}
+        packTitle={selectedPackForShare.address}
+      />
     </div>
   );
 }
