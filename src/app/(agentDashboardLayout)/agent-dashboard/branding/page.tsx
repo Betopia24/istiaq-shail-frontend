@@ -1,102 +1,128 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import Image from "next/image";
+import React, { useRef, useState } from "react";
+import { Check } from "lucide-react";
+import toast from "react-hot-toast";
+import { ApiImage } from "@/components/ui/ApiImage";
+import { ErrorState, apiErrorInfo } from "@/components/ui/ErrorState";
+import { errorText } from "@/lib/auth/client";
+import { useAppSelector } from "@/redux/hook";
 import {
-  Upload,
-  Check,
-  Building2,
-  AlertTriangle,
-  Sparkles,
-  ShieldCheck,
-  CheckCircle2,
-} from "lucide-react";
+  useGetBrandingQuery,
+  useUpdateBrandingMutation,
+  useUploadLogoMutation,
+} from "@/redux/api/agency/agencyApi";
+
+const UK_DISCLAIMER =
+  "These particulars do not constitute any part of an offer or contract. All measurements, fixtures, and room layouts are approximate and verified independently.";
+const US_DISCLAIMER =
+  "Information is deemed reliable but not guaranteed. All properties are subject to prior sale, change, or withdrawal. Neither listing broker nor Property Pack AI shall be responsible for any typographical errors or misinformation.";
+
+const MAX_LOGO_BYTES = 15 * 1024 * 1024;
+
+interface BrandingForm {
+  agencyName: string;
+  tradingRegion: string;
+  licenceNumber: string;
+  phone: string;
+  publicEmail: string;
+  registeredAddress: string;
+  primaryColour: string;
+  accentColour: string;
+  market: "UK" | "US";
+  disclaimerText: string;
+}
+
+function BrandingSkeleton() {
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 space-y-6 animate-pulse">
+      <div className="h-5 w-64 bg-slate-200 rounded" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="h-11 bg-slate-100 rounded-lg" />
+        ))}
+      </div>
+      <div className="h-24 bg-slate-100 rounded-lg" />
+    </div>
+  );
+}
 
 export default function AgencyBrandingPage() {
-  // Form State initialized to exact Figma values
-  const [agencyName, setAgencyName] = useState("Prestige Estates UK");
-  const [tradingRegion, setTradingRegion] = useState("Manchester & Cheshire");
-  const [licenseNumber, setLicenseNumber] = useState(
-    "CRN-08492011 / TPO-MB920",
-  );
-  const [officePhone, setOfficePhone] = useState("+44 161 496 0200");
-  const [inquiryEmail, setInquiryEmail] = useState(
-    "contact@prestigeestates.co.uk",
-  );
-  const [officeAddress, setOfficeAddress] = useState(
-    "14 Wilmslow Road, Didsbury, Manchester, M20 2RN",
-  );
+  const role = useAppSelector((st) => st.user.user?.role);
+  const canEdit = role === "owner" || role === "administrator";
 
-  // Logo state
-  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const branding = useGetBrandingQuery();
+  const [updateBranding, { isLoading: isSaving }] = useUpdateBrandingMutation();
+  const [uploadLogo, { isLoading: isUploading }] = useUploadLogoMutation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Palette State
-  const [primaryColor, setPrimaryColor] = useState("#0B1736");
-  const [accentColor, setAccentColor] = useState("#FFB800");
+  const [form, setForm] = useState<BrandingForm | null>(null);
+  const [seededFrom, setSeededFrom] = useState<unknown>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // Operating Market State
-  const [selectedMarket, setSelectedMarket] = useState<"UK" | "US">("UK");
+  if (branding.data && seededFrom !== branding.data) {
+    setSeededFrom(branding.data);
+    const b = branding.data;
+    setForm({
+      agencyName: b.agencyName ?? "",
+      tradingRegion: b.tradingRegion ?? "",
+      licenceNumber: b.licenceNumber ?? "",
+      phone: b.phone ?? "",
+      publicEmail: b.publicEmail ?? "",
+      registeredAddress: b.registeredAddress ?? "",
+      primaryColour: b.primaryColour || "#0B1736",
+      accentColour: b.accentColour || "#FFB800",
+      market: b.market ?? "UK",
+      disclaimerText: b.disclaimerText ?? "",
+    });
+  }
 
-  // Disclaimer text (dynamically adapts based on market or editable)
-  const [disclaimerNotice, setDisclaimerNotice] = useState(
-    "These particulars do not constitute any part of an offer or contract. All measurements, fixtures, and room layouts are approximate and verified independently.",
-  );
-
-  // Save feedback state
-  const [isSaving, setIsSaving] = useState(false);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setLogoPreview(url);
-      showToast("Vector logo uploaded successfully!");
+    e.target.value = "";
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      toast.error("Logo must be a JPG, PNG or WebP image.");
+      return;
+    }
+    if (file.size > MAX_LOGO_BYTES) {
+      toast.error("Logo must be 15 MB or smaller.");
+      return;
+    }
+    try {
+      await uploadLogo(file).unwrap();
+      toast.success("Logo uploaded successfully!");
+    } catch (err) {
+      toast.error(errorText(err));
     }
   };
 
   const handleMarketChange = (market: "UK" | "US") => {
-    setSelectedMarket(market);
-    if (market === "UK") {
-      setDisclaimerNotice(
-        "These particulars do not constitute any part of an offer or contract. All measurements, fixtures, and room layouts are approximate and verified independently.",
-      );
-    } else {
-      setDisclaimerNotice(
-        "Information is deemed reliable but not guaranteed. All properties are subject to prior sale, change, or withdrawal. Neither listing broker nor Property Pack AI shall be responsible for any typographical errors or misinformation.",
-      );
-    }
+    setForm((prev) => {
+      if (!prev) return prev;
+      const text = prev.disclaimerText.trim();
+      // Offer the other market's standard wording only if the user hasn't written their own.
+      const isPreset = text === "" || text === UK_DISCLAIMER || text === US_DISCLAIMER;
+      return { ...prev, market, disclaimerText: isPreset ? (market === "UK" ? UK_DISCLAIMER : US_DISCLAIMER) : prev.disclaimerText };
+    });
   };
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 3500);
-  };
-
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      showToast("Agency branding & localization settings saved successfully!");
-    }, 700);
+    if (!form) return;
+    setFieldErrors({});
+    try {
+      await updateBranding(form).unwrap();
+      toast.success("Agency branding & localization settings saved successfully!");
+    } catch (err) {
+      const info = apiErrorInfo(err);
+      if (info.status === 422) setFieldErrors(info.fields);
+      toast.error(errorText(err));
+    }
   };
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3.5 rounded-lg shadow-2xl border border-slate-700 flex items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-200">
-          <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-            <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-          </div>
-          <p className="text-xs sm:text-sm font-medium">{toastMessage}</p>
-        </div>
-      )}
-
       {/* =========================================================================
           PAGE HEADER
       ========================================================================= */}
@@ -114,10 +140,19 @@ export default function AgencyBrandingPage() {
       {/* =========================================================================
           MAIN FORM CONTAINER CARD
       ========================================================================= */}
+      {branding.isLoading && <BrandingSkeleton />}
+      {branding.error && <ErrorState error={branding.error} onRetry={() => branding.refetch()} />}
+      {form && (
       <form
         onSubmit={handleSave}
         className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 shadow-xs space-y-8"
       >
+        {!canEdit && (
+          <p className="text-xs text-slate-500 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+            Only owners and administrators can change agency branding.
+          </p>
+        )}
+        <fieldset disabled={!canEdit} className="contents">
         {/* =======================================================================
             SECTION 1: AGENCY PROFILE & REGULATORY CREDENTIALS
         ======================================================================= */}
@@ -135,37 +170,36 @@ export default function AgencyBrandingPage() {
           {/* Logo Uploader */}
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-xl bg-[#071330] border border-slate-800 flex items-center justify-center shrink-0 overflow-hidden shadow-xs relative">
-              {logoPreview ? (
-                <Image
-                  src={logoPreview}
-                  alt="Agency Logo"
-                  fill
-                  className="object-contain p-1"
-                />
-              ) : (
-                <div className="w-8 h-8 rounded-lg bg-[#FFB800] flex items-center justify-center shadow-xs">
-                  <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[11px] border-b-[#071330] mb-0.5" />
-                </div>
-              )}
+              <ApiImage
+                src={branding.data?.logoUrl}
+                alt="Agency Logo"
+                className="absolute inset-0 w-full h-full object-contain p-1"
+                fallback={
+                  <div className="w-8 h-8 rounded-lg bg-[#FFB800] flex items-center justify-center shadow-xs">
+                    <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[11px] border-b-[#071330] mb-0.5" />
+                  </div>
+                }
+              />
             </div>
 
             <div className="space-y-1">
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".svg,.png,.jpg,.jpeg"
+                accept="image/jpeg,image/png,image/webp"
                 onChange={handleLogoUpload}
                 className="hidden"
               />
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
                 className="h-9 px-4 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-medium text-xs flex items-center gap-2 cursor-pointer transition shadow-2xs"
               >
-                Upload Vector Logo
+                {isUploading ? "Uploading..." : "Upload Logo"}
               </button>
               <p className="text-[11px] text-slate-400">
-                SVG or transparent high-res PNG (min. 400×400px)
+                JPG, PNG or WebP, up to 15 MB
               </p>
             </div>
           </div>
@@ -179,11 +213,12 @@ export default function AgencyBrandingPage() {
               </label>
               <input
                 type="text"
-                value={agencyName}
-                onChange={(e) => setAgencyName(e.target.value)}
-                placeholder="Prestige Estates UK"
+                value={form.agencyName}
+                onChange={(e) => setForm({ ...form, agencyName: e.target.value })}
+                placeholder="Your agency name"
                 className="w-full h-11 px-3.5 rounded-lg border border-slate-200 bg-white font-sans text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#092167] focus:ring-2 focus:ring-[#092167]/10 transition"
               />
+              {fieldErrors.agencyName && <p className="text-[11px] text-rose-600 mt-1">{fieldErrors.agencyName}</p>}
             </div>
 
             {/* Field 2: Trading Region */}
@@ -193,11 +228,12 @@ export default function AgencyBrandingPage() {
               </label>
               <input
                 type="text"
-                value={tradingRegion}
-                onChange={(e) => setTradingRegion(e.target.value)}
-                placeholder="Manchester & Cheshire"
+                value={form.tradingRegion}
+                onChange={(e) => setForm({ ...form, tradingRegion: e.target.value })}
+                placeholder="e.g. Greater Manchester"
                 className="w-full h-11 px-3.5 rounded-lg border border-slate-200 bg-white font-sans text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#092167] focus:ring-2 focus:ring-[#092167]/10 transition"
               />
+              {fieldErrors.tradingRegion && <p className="text-[11px] text-rose-600 mt-1">{fieldErrors.tradingRegion}</p>}
             </div>
 
             {/* Field 3: Regulatory License */}
@@ -207,11 +243,12 @@ export default function AgencyBrandingPage() {
               </label>
               <input
                 type="text"
-                value={licenseNumber}
-                onChange={(e) => setLicenseNumber(e.target.value)}
-                placeholder="CRN-08492011 / TPO-MB920"
+                value={form.licenceNumber}
+                onChange={(e) => setForm({ ...form, licenceNumber: e.target.value })}
+                placeholder="Company registration or licence number"
                 className="w-full h-11 px-3.5 rounded-lg border border-slate-200 bg-white font-sans text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#092167] focus:ring-2 focus:ring-[#092167]/10 transition"
               />
+              {fieldErrors.licenceNumber && <p className="text-[11px] text-rose-600 mt-1">{fieldErrors.licenceNumber}</p>}
             </div>
 
             {/* Field 4: Office Telephone */}
@@ -221,11 +258,12 @@ export default function AgencyBrandingPage() {
               </label>
               <input
                 type="text"
-                value={officePhone}
-                onChange={(e) => setOfficePhone(e.target.value)}
-                placeholder="+44 161 496 0200"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                placeholder="Office telephone"
                 className="w-full h-11 px-3.5 rounded-lg border border-slate-200 bg-white font-sans text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#092167] focus:ring-2 focus:ring-[#092167]/10 transition"
               />
+              {fieldErrors.phone && <p className="text-[11px] text-rose-600 mt-1">{fieldErrors.phone}</p>}
             </div>
 
             {/* Field 5: Public Inquiry Email */}
@@ -235,11 +273,12 @@ export default function AgencyBrandingPage() {
               </label>
               <input
                 type="email"
-                value={inquiryEmail}
-                onChange={(e) => setInquiryEmail(e.target.value)}
-                placeholder="contact@prestigeestates.co.uk"
+                value={form.publicEmail}
+                onChange={(e) => setForm({ ...form, publicEmail: e.target.value })}
+                placeholder="contact@youragency.co.uk"
                 className="w-full h-11 px-3.5 rounded-lg border border-slate-200 bg-white font-sans text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#092167] focus:ring-2 focus:ring-[#092167]/10 transition"
               />
+              {fieldErrors.publicEmail && <p className="text-[11px] text-rose-600 mt-1">{fieldErrors.publicEmail}</p>}
             </div>
 
             {/* Field 6: Registered Office Address */}
@@ -249,11 +288,12 @@ export default function AgencyBrandingPage() {
               </label>
               <input
                 type="text"
-                value={officeAddress}
-                onChange={(e) => setOfficeAddress(e.target.value)}
-                placeholder="14 Wilmslow Road, Didsbury, Manchester, M20 2RN"
+                value={form.registeredAddress}
+                onChange={(e) => setForm({ ...form, registeredAddress: e.target.value })}
+                placeholder="Registered office address"
                 className="w-full h-11 px-3.5 rounded-lg border border-slate-200 bg-white font-sans text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#092167] focus:ring-2 focus:ring-[#092167]/10 transition"
               />
+              {fieldErrors.registeredAddress && <p className="text-[11px] text-rose-600 mt-1">{fieldErrors.registeredAddress}</p>}
             </div>
           </div>
         </div>
@@ -281,24 +321,27 @@ export default function AgencyBrandingPage() {
               <div className="flex items-center gap-3.5 min-w-0">
                 <div
                   className="w-9 h-9 rounded-lg shrink-0 border border-black/10 shadow-2xs"
-                  style={{ backgroundColor: primaryColor }}
+                  style={{ backgroundColor: form.primaryColour }}
                 />
                 <div className="min-w-0">
                   <p className="font-medium text-xs sm:text-sm text-slate-900">
                     Primary Navy Color
                   </p>
                   <p className="text-[11px] text-slate-400 truncate mt-0.5">
-                    {primaryColor} (Used for headers, text, and structure)
+                    {form.primaryColour} (Used for headers, text, and structure)
                   </p>
                 </div>
               </div>
               <input
                 type="color"
-                value={primaryColor}
-                onChange={(e) => setPrimaryColor(e.target.value)}
+                value={form.primaryColour}
+                onChange={(e) => setForm({ ...form, primaryColour: e.target.value.toUpperCase() })}
                 className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent p-0"
                 title="Select Primary Color"
               />
+              {fieldErrors.primaryColour && (
+                <p className="text-[11px] text-rose-600">{fieldErrors.primaryColour}</p>
+              )}
             </div>
 
             {/* Accent Gold Color */}
@@ -306,24 +349,27 @@ export default function AgencyBrandingPage() {
               <div className="flex items-center gap-3.5 min-w-0">
                 <div
                   className="w-9 h-9 rounded-lg shrink-0 border border-amber-600/20 shadow-2xs"
-                  style={{ backgroundColor: accentColor }}
+                  style={{ backgroundColor: form.accentColour }}
                 />
                 <div className="min-w-0">
                   <p className="font-medium text-xs sm:text-sm text-slate-900">
                     Accent Gold Color
                   </p>
                   <p className="text-[11px] text-slate-400 truncate mt-0.5">
-                    {accentColor} (Used for CTAs, highlights, and badges)
+                    {form.accentColour} (Used for CTAs, highlights, and badges)
                   </p>
                 </div>
               </div>
               <input
                 type="color"
-                value={accentColor}
-                onChange={(e) => setAccentColor(e.target.value)}
+                value={form.accentColour}
+                onChange={(e) => setForm({ ...form, accentColour: e.target.value.toUpperCase() })}
                 className="w-8 h-8 rounded-lg cursor-pointer border-0 bg-transparent p-0"
                 title="Select Accent Color"
               />
+              {fieldErrors.accentColour && (
+                <p className="text-[11px] text-rose-600">{fieldErrors.accentColour}</p>
+              )}
             </div>
           </div>
         </div>
@@ -351,7 +397,7 @@ export default function AgencyBrandingPage() {
             <div
               onClick={() => handleMarketChange("UK")}
               className={`rounded-xl p-4 flex items-center justify-between cursor-pointer transition select-none ${
-                selectedMarket === "UK"
+                form.market === "UK"
                   ? "border-2 border-[#FFB800] bg-amber-50/10 shadow-2xs"
                   : "border border-slate-200 bg-white hover:border-slate-300 shadow-2xs"
               }`}
@@ -372,7 +418,7 @@ export default function AgencyBrandingPage() {
 
               {/* Radio Indicator */}
               <div className="shrink-0 ml-3">
-                {selectedMarket === "UK" ? (
+                {form.market === "UK" ? (
                   <div className="w-5 h-5 rounded-full bg-[#FFB800] text-[#06143E] flex items-center justify-center shadow-2xs">
                     <Check className="w-3.5 h-3.5 stroke-[3]" />
                   </div>
@@ -386,7 +432,7 @@ export default function AgencyBrandingPage() {
             <div
               onClick={() => handleMarketChange("US")}
               className={`rounded-xl p-4 flex items-center justify-between cursor-pointer transition select-none ${
-                selectedMarket === "US"
+                form.market === "US"
                   ? "border-2 border-[#FFB800] bg-amber-50/10 shadow-2xs"
                   : "border border-slate-200 bg-white hover:border-slate-300 shadow-2xs"
               }`}
@@ -407,7 +453,7 @@ export default function AgencyBrandingPage() {
 
               {/* Radio Indicator */}
               <div className="shrink-0 ml-3">
-                {selectedMarket === "US" ? (
+                {form.market === "US" ? (
                   <div className="w-5 h-5 rounded-full bg-[#FFB800] text-[#06143E] flex items-center justify-center shadow-2xs">
                     <Check className="w-3.5 h-3.5 stroke-[3]" />
                   </div>
@@ -426,24 +472,27 @@ export default function AgencyBrandingPage() {
             <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-4 space-y-1">
               <p className="font-mono font-medium text-xs text-slate-900 uppercase">
                 Compliance Notice (
-                {selectedMarket === "UK"
+                {form.market === "UK"
                   ? "UK CPR 2008"
                   : "US Standard Disclosures"}
                 ):
               </p>
               <textarea
                 rows={2}
-                value={disclaimerNotice}
-                onChange={(e) => setDisclaimerNotice(e.target.value)}
+                value={form.disclaimerText}
+                onChange={(e) => setForm({ ...form, disclaimerText: e.target.value })}
                 className="w-full bg-transparent text-xs text-slate-600 leading-relaxed resize-none focus:outline-none border-0 p-0"
               />
+              {fieldErrors.disclaimerText && <p className="text-[11px] text-rose-600">{fieldErrors.disclaimerText}</p>}
             </div>
           </div>
         </div>
 
+        </fieldset>
         {/* =======================================================================
             FOOTER ACTIONS
         ======================================================================= */}
+        {canEdit && (
         <div className="pt-4 flex flex-col sm:flex-row sm:items-center gap-4 border-t border-slate-100">
           <button
             type="submit"
@@ -464,7 +513,9 @@ export default function AgencyBrandingPage() {
             links.
           </p>
         </div>
+        )}
       </form>
+      )}
     </div>
   );
 }

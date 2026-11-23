@@ -1,83 +1,262 @@
 "use client";
 
 import React, { useState } from "react";
-
+import toast from "react-hot-toast";
 import { useLogout } from "@/components/auth/SessionBootstrap";
-import {
-  ShieldCheck,
-  CheckCircle2,
-  LogOut,
-  Camera,
-  KeyRound,
-  Lock,
-  User,
-  Mail,
-  Phone,
-} from "lucide-react";
+import { LogOut, ScrollText } from "lucide-react";
+import { useChangePasswordMutation, useGetProfileQuery, useUpdateProfileMutation } from "@/redux/api/agency/agencyApi";
+import { useGetAuditLogQuery } from "@/redux/api/admin/adminApi";
+import { ErrorState, apiErrorInfo } from "@/components/ui/ErrorState";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { TableSkeleton } from "@/components/ui/skeletons/TableSkeleton";
+import { errorText } from "@/lib/auth/client";
+import { formatDateTime, initials } from "@/lib/format";
+
+const AUDIT_PAGE_SIZE = 10;
+
+function auditOutcome(data: Record<string, unknown> | null | undefined) {
+  const outcome = data?.outcome;
+  return typeof outcome === "string" ? outcome : "–";
+}
+
+function ProfileCard() {
+  const profile = useGetProfileQuery();
+  const [updateProfile, { isLoading: saving }] = useUpdateProfileMutation();
+  const [form, setForm] = useState<{ fullName: string; phone: string } | null>(null);
+  const [seededFrom, setSeededFrom] = useState<unknown>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  if (profile.data && seededFrom !== profile.data) {
+    setSeededFrom(profile.data);
+    setForm({ fullName: profile.data.fullName ?? "", phone: profile.data.phone ?? "" });
+  }
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form) return;
+    setFieldErrors({});
+    try {
+      await updateProfile({ fullName: form.fullName, phone: form.phone }).unwrap();
+      toast.success("Super Admin profile updated");
+    } catch (err) {
+      setFieldErrors(apiErrorInfo(err).fields);
+      toast.error(errorText(err));
+    }
+  };
+
+  return (
+    <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-7">
+      <div>
+        <h2 className="font-heading font-medium text-lg text-slate-900">Super Admin Profile</h2>
+        <p className="text-xs text-slate-500 mt-0.5">Master platform administrator profile and system contact details</p>
+      </div>
+
+      {profile.isLoading ? (
+        <div className="mt-6 space-y-4 animate-pulse">
+          <div className="h-16 w-16 rounded-full bg-slate-200" />
+          <div className="h-11 bg-slate-100 rounded-lg" />
+          <div className="h-11 bg-slate-100 rounded-lg" />
+        </div>
+      ) : profile.isError || !form ? (
+        <div className="mt-6">
+          <ErrorState error={profile.error} onRetry={profile.refetch} />
+        </div>
+      ) : (
+        <>
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-4 pb-6 border-b border-slate-100">
+            <div className="w-16 h-16 rounded-full bg-[#06143E] text-[#E8A808] font-heading font-medium text-xl flex items-center justify-center shrink-0 shadow-inner">
+              {initials(form.fullName)}
+            </div>
+            <p className="text-[11px] text-slate-400">Owner profile has unrestricted access to all agency databases</p>
+          </div>
+
+          <form onSubmit={handleSaveProfile} className="mt-6 space-y-5">
+            <div>
+              <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-2">
+                Platform Owner Name
+              </label>
+              <input
+                type="text"
+                value={form.fullName}
+                onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+                className="w-full h-11 px-4 text-sm font-medium bg-slate-50/70 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition"
+              />
+              {fieldErrors.fullName && <p className="text-[11px] text-rose-600 mt-1">{fieldErrors.fullName}</p>}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-2">
+                  Super Admin Login Email
+                </label>
+                <input
+                  type="email"
+                  value={profile.data?.email ?? ""}
+                  readOnly
+                  className="w-full h-11 px-4 text-sm font-medium bg-slate-100 border border-slate-200 rounded-lg text-slate-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-2">
+                  Platform Escalation Phone
+                </label>
+                <input
+                  type="text"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  className="w-full h-11 px-4 text-sm font-medium bg-slate-50/70 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition"
+                />
+                {fieldErrors.phone && <p className="text-[11px] text-rose-600 mt-1">{fieldErrors.phone}</p>}
+              </div>
+            </div>
+
+            <div className="pt-3 flex justify-end">
+              <button
+                type="submit"
+                disabled={saving}
+                className="h-11 px-6 rounded-lg bg-[#E8A808] hover:bg-[#d89b05] text-[#06143E] font-medium text-sm shadow-sm transition disabled:opacity-60 cursor-pointer"
+              >
+                {saving ? "Saving..." : "Save Admin Profile"}
+              </button>
+            </div>
+          </form>
+        </>
+      )}
+    </div>
+  );
+}
+
+function AuditLogCard() {
+  const [page, setPage] = useState(1);
+  const { data, isLoading, isError, error, refetch, isFetching } = useGetAuditLogQuery({ page, limit: AUDIT_PAGE_SIZE });
+  const items = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const pageCount = Math.max(1, Math.ceil(total / AUDIT_PAGE_SIZE));
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+      <div className="p-6 sm:p-7 border-b border-slate-100">
+        <h2 className="font-heading font-medium text-lg text-slate-900">Audit Log</h2>
+        <p className="text-xs text-slate-500 mt-0.5">Every administrator action on the platform</p>
+      </div>
+      {isLoading ? (
+        <TableSkeleton rows={5} columns={5} className="border-0 rounded-none" />
+      ) : isError ? (
+        <div className="p-6">
+          <ErrorState error={error} onRetry={refetch} />
+        </div>
+      ) : items.length === 0 ? (
+        <div className="p-6">
+          <EmptyState icon={ScrollText} title="No audit entries yet" description="Administrator actions will be recorded here." />
+        </div>
+      ) : (
+        <>
+          <div className={`overflow-x-auto ${isFetching ? "opacity-70" : ""}`}>
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-600">
+                  <th className="px-6 py-3">Action</th>
+                  <th className="px-6 py-3">Actor</th>
+                  <th className="px-6 py-3">Target</th>
+                  <th className="px-6 py-3">Outcome</th>
+                  <th className="px-6 py-3">Time</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-sm">
+                {items.map((entry) => (
+                  <tr key={entry.id}>
+                    <td className="px-6 py-3 font-mono text-xs text-slate-900">{entry.action}</td>
+                    <td className="px-6 py-3 text-slate-700">{entry.actor?.fullName ?? entry.actor?.email ?? "System"}</td>
+                    <td className="px-6 py-3 text-xs text-slate-500 font-mono">
+                      {entry.targetType ? `${entry.targetType}${entry.targetId ? `:${entry.targetId}` : ""}` : "–"}
+                    </td>
+                    <td className="px-6 py-3 text-slate-700 capitalize">{auditOutcome(entry.data)}</td>
+                    <td className="px-6 py-3 text-xs text-slate-500 whitespace-nowrap">{formatDateTime(entry.createdAt)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>
+              <strong>{total}</strong> entries
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+                className="h-8 px-3 rounded-lg border border-slate-200 text-slate-700 disabled:opacity-40 hover:bg-slate-50 cursor-pointer"
+              >
+                Previous
+              </button>
+              <span>
+                Page {page} of {pageCount}
+              </span>
+              <button
+                type="button"
+                disabled={page >= pageCount}
+                onClick={() => setPage((p) => p + 1)}
+                className="h-8 px-3 rounded-lg border border-slate-200 text-slate-700 disabled:opacity-40 hover:bg-slate-50 cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 export default function SuperAdminSettingsPage() {
   const signOut = useLogout();
+  const [changePassword, { isLoading: changingPassword }] = useChangePasswordMutation();
 
-  // Profile Form State
-  const [ownerName, setOwnerName] = useState("Ishtiaq Sohail");
-  const [loginEmail, setLoginEmail] = useState("ishtiaq@propertypack.ai");
-  const [escalationPhone, setEscalationPhone] = useState("+44 7911 202528");
-
-  // Password Form State
-  const [currentPassword, setCurrentPassword] = useState("••••••••••••••••");
+  const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({});
 
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3500);
-  };
-
-  const handleSaveProfile = (e: React.FormEvent) => {
+  const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    showToast("Super Admin profile updated successfully!");
-  };
-
-  const handleUpdatePassword = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newPassword && newPassword !== confirmPassword) {
-      showToast("Passwords do not match. Please verify.");
+    setPasswordErrors({});
+    if (newPassword !== confirmPassword) {
+      setPasswordErrors({ confirmPassword: "Passwords do not match." });
       return;
     }
-    showToast("Master administrator password updated successfully!");
-    setNewPassword("");
-    setConfirmPassword("");
+    try {
+      await changePassword({ currentPassword, newPassword }).unwrap();
+      toast.success("Password updated. Other sessions have been signed out.");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      const fields = apiErrorInfo(err).fields;
+      setPasswordErrors(fields);
+      toast.error(errorText(err));
+    }
   };
 
   const handleLogout = () => {
     void signOut();
   };
 
-  // Password entropy calculation
   const getEntropyLevel = (pass: string) => {
-    if (!pass) return 4; // default preview from figma
+    if (!pass) return 0;
     let score = 0;
-    if (pass.length >= 8) score++;
-    if (pass.length >= 12) score++;
+    if (pass.length >= 10) score++;
+    if (pass.length >= 14) score++;
     if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) score++;
     if (/[0-9]/.test(pass) && /[^A-Za-z0-9]/.test(pass)) score++;
-    return Math.max(1, score);
+    return score;
   };
 
   const entropyBars = getEntropyLevel(newPassword);
 
   return (
     <div className="space-y-6">
-      {/* Toast Alert */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-[#E8A808]/40 animate-fade-in">
-          <CheckCircle2 className="w-5 h-5 text-[#E8A808]" />
-          <span className="text-sm font-medium">{toastMessage}</span>
-        </div>
-      )}
-
       {/* Header */}
       <div>
         <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
@@ -90,86 +269,7 @@ export default function SuperAdminSettingsPage() {
 
       {/* Two Column Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column: Super Admin Profile */}
-        <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 sm:p-7">
-          <div>
-            <h2 className="font-heading font-medium text-lg text-slate-900">
-              Super Admin Profile
-            </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Master platform administrator profile and system contact details
-            </p>
-          </div>
-
-          {/* Avatar Section */}
-          <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-4 pb-6 border-b border-slate-100">
-            <div className="w-16 h-16 rounded-full bg-[#06143E] text-[#E8A808] font-heading font-medium text-xl flex items-center justify-center shrink-0 shadow-inner">
-              IS
-            </div>
-            <div>
-              <button
-                type="button"
-                onClick={() => showToast("Avatar upload feature ready")}
-                className="px-3.5 py-1.5 rounded-lg border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 transition cursor-pointer"
-              >
-                Change Avatar
-              </button>
-              <p className="text-[11px] text-slate-400 mt-1.5">
-                Owner profile has unrestricted access to all agency databases
-              </p>
-            </div>
-          </div>
-
-          {/* Form Fields */}
-          <form onSubmit={handleSaveProfile} className="mt-6 space-y-5">
-            <div>
-              <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-2">
-                Platform Owner Name
-              </label>
-              <input
-                type="text"
-                value={ownerName}
-                onChange={(e) => setOwnerName(e.target.value)}
-                className="w-full h-11 px-4 text-sm font-medium bg-slate-50/70 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-2">
-                  Super Admin Login Email
-                </label>
-                <input
-                  type="email"
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                  className="w-full h-11 px-4 text-sm font-medium bg-slate-50/70 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-medium uppercase tracking-wider text-slate-500 mb-2">
-                  Platform Escalation Phone
-                </label>
-                <input
-                  type="text"
-                  value={escalationPhone}
-                  onChange={(e) => setEscalationPhone(e.target.value)}
-                  className="w-full h-11 px-4 text-sm font-medium bg-slate-50/70 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition"
-                />
-              </div>
-            </div>
-
-            <div className="pt-3 flex justify-end">
-              <button
-                type="submit"
-                className="h-11 px-6 rounded-lg bg-[#E8A808] hover:bg-[#d89b05] text-[#06143E] font-medium text-sm shadow-sm transition cursor-pointer"
-              >
-                Save Admin Profile
-              </button>
-            </div>
-          </form>
-        </div>
+        <ProfileCard />
 
         {/* Right Column: Change Password & Admin Session */}
         <div className="lg:col-span-5 space-y-6">
@@ -192,10 +292,13 @@ export default function SuperAdminSettingsPage() {
                 <input
                   type="password"
                   placeholder="••••••••••••••••"
+                  required
+                  autoComplete="current-password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   className="w-full h-10 px-3.5 text-sm bg-slate-50/70 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition font-mono"
                 />
+                {passwordErrors.currentPassword && <p className="text-[11px] text-rose-600 mt-1">{passwordErrors.currentPassword}</p>}
               </div>
 
               <div>
@@ -205,11 +308,15 @@ export default function SuperAdminSettingsPage() {
                 <input
                   type="password"
                   placeholder="••••••••••••••••"
+                  required
+                  minLength={10}
+                  autoComplete="new-password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="w-full h-10 px-3.5 text-sm bg-slate-50/70 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition font-mono"
                 />
 
+                {passwordErrors.newPassword && <p className="text-[11px] text-rose-600 mt-1">{passwordErrors.newPassword}</p>}
                 {/* Password Entropy Meter */}
                 <div className="mt-2.5">
                   <div className="flex gap-1.5 h-1.5">
@@ -223,7 +330,7 @@ export default function SuperAdminSettingsPage() {
                     ))}
                   </div>
                   <p className="text-[10px] text-slate-400 mt-1 font-medium">
-                    Maximum entropy (16+ chars, symbols &amp; digits)
+                    Use at least 10 characters; longer with symbols &amp; digits is stronger
                   </p>
                 </div>
               </div>
@@ -235,18 +342,22 @@ export default function SuperAdminSettingsPage() {
                 <input
                   type="password"
                   placeholder="••••••••••••••••"
+                  required
+                  autoComplete="new-password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="w-full h-10 px-3.5 text-sm bg-slate-50/70 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition font-mono"
                 />
+                {passwordErrors.confirmPassword && <p className="text-[11px] text-rose-600 mt-1">{passwordErrors.confirmPassword}</p>}
               </div>
 
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="w-full h-10 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white text-xs sm:text-sm font-medium shadow-sm transition cursor-pointer"
+                  disabled={changingPassword}
+                  className="w-full h-10 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white text-xs sm:text-sm font-medium shadow-sm transition disabled:opacity-60 cursor-pointer"
                 >
-                  Update Password
+                  {changingPassword ? "Updating..." : "Update Password"}
                 </button>
               </div>
             </form>
@@ -276,6 +387,8 @@ export default function SuperAdminSettingsPage() {
           </div>
         </div>
       </div>
+
+      <AuditLogCard />
     </div>
   );
 }

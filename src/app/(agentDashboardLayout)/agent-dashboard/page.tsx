@@ -1,134 +1,52 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
-import {
-  ArrowRight,
-  Plus,
-  Pencil,
-  Download,
-  Check,
-  X,
-  Sparkles,
-  Share2,
-} from "lucide-react";
+import { ArrowRight, Plus, Pencil, Download, Loader2, X, Sparkles, Share2 } from "lucide-react";
 import { PackStatusBadge } from "@/components/packs/PackStatusBadge";
 import { BuyPacksModal } from "@/components/packs/BuyPacksModal";
 import { ShareDialog } from "@/components/packs/ShareDialog";
+import { usePdfDownload } from "@/components/packs/usePdfDownload";
+import { ApiImage } from "@/components/ui/ApiImage";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorState, apiErrorInfo } from "@/components/ui/ErrorState";
+import { StatsSkeleton } from "@/components/ui/skeletons/StatsSkeleton";
+import { TableSkeleton } from "@/components/ui/skeletons/TableSkeleton";
+import { useGetDashboardSummaryQuery } from "@/redux/api/packs/packsApi";
+import { useGetSubscriptionQuery } from "@/redux/api/billing/billingApi";
+import { useAppSelector } from "@/redux/hook";
+import { formatDate, formatMoney, formatNumber } from "@/lib/format";
+import type { PackSummary } from "@/types/models";
 
-interface PropertyPack {
-  id: string;
-  address: string;
-  specs: string;
-  image: string;
-  price: string;
-  dateCreated: string;
-  status: "Ready" | "Draft" | "Processing";
+const pct = (part: number, whole: number) => (whole > 0 ? Math.round((part / whole) * 100) : 0);
+
+function packSpecs(pack: PackSummary) {
+  return [
+    pack.bedrooms != null ? `${pack.bedrooms} Bed` : null,
+    pack.propertyType ?? null,
+  ]
+    .filter(Boolean)
+    .join(" ");
 }
 
-const initialPacksPage1: PropertyPack[] = [
-  {
-    id: "pack-1",
-    address: "16 Gorse Drive, Manchester",
-    specs: "4 Bed Detached Home • M21 8XQ",
-    image: "/landing/villa-dusk.jpg",
-    price: "£750,000",
-    dateCreated: "05 Oct 2026",
-    status: "Ready",
-  },
-  {
-    id: "pack-2",
-    address: "Flat 4, 82 Kensington High Street",
-    specs: "2 Bed Luxury Apartment • W8 4SG",
-    image: "/landing/townhouse-dusk.jpg",
-    price: "£1,250,000",
-    dateCreated: "03 Oct 2026",
-    status: "Ready",
-  },
-  {
-    id: "pack-3",
-    address: "12 Meadow Croft, Wilmslow",
-    specs: "5 Bed Semi-Detached • SK9 1AA",
-    image: "/landing/semi-detached-wilmslow.jpg",
-    price: "£895,000",
-    dateCreated: "28 Sep 2026",
-    status: "Ready",
-  },
-];
-
-const initialPacksPage2: PropertyPack[] = [
-  {
-    id: "pack-4",
-    address: "24 Parkside Avenue, Didsbury",
-    specs: "3 Bed Edwardian Semi • M20 2TG",
-    image: "/landing/townhouse-dusk.jpg",
-    price: "£640,000",
-    dateCreated: "24 Sep 2026",
-    status: "Ready",
-  },
-  {
-    id: "pack-5",
-    address: "The Glasshouse, 9 Deansgate, Manchester",
-    specs: "Penthouse Suite • M3 2EQ",
-    image: "/landing/villa-dusk.jpg",
-    price: "£1,450,000",
-    dateCreated: "19 Sep 2026",
-    status: "Ready",
-  },
-  {
-    id: "pack-6",
-    address: "Oaklands Cottage, Hale Barns",
-    specs: "4 Bed Country Residence • WA15 0ST",
-    image: "/landing/semi-detached-wilmslow.jpg",
-    price: "£1,150,000",
-    dateCreated: "14 Sep 2026",
-    status: "Ready",
-  },
-];
-
 export default function AgentDashboardPage() {
-  const [currentPage, setCurrentPage] = useState<1 | 2>(1);
-  const [showCreateModal, setShowCreateModal] = useState(false);
+  const role = useAppSelector((state) => state.user.user?.role);
+  const summary = useGetDashboardSummaryQuery();
+  const subscription = useGetSubscriptionQuery();
+  const { download, busyId } = usePdfDownload();
+
   const [showBuyModal, setShowBuyModal] = useState(false);
-  const [showShareModal, setShowShareModal] = useState(false);
-  const [selectedPackForShare, setSelectedPackForShare] = useState({
-    id: "pack-1",
-    address: "16 Gorse Drive, Manchester",
-  });
+  const [sharePackId, setSharePackId] = useState<string | null>(null);
   const [showCreditDetails, setShowCreditDetails] = useState(false);
-  const [downloadToast, setDownloadToast] = useState<string | null>(null);
 
-  const packs = currentPage === 1 ? initialPacksPage1 : initialPacksPage2;
-
-  const handleDownloadPdf = (address: string) => {
-    setDownloadToast(`Generating PDF Report for ${address}...`);
-    setTimeout(() => {
-      setDownloadToast(null);
-    }, 3500);
-  };
+  const data = summary.data;
+  const periodEnd = subscription.data?.periodEnd;
+  const noSubscription = apiErrorInfo(subscription.error).code === "no_subscription";
+  const canBuy = role === "owner";
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {downloadToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 backdrop-blur-md"
-          >
-            <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-              <Check className="w-3.5 h-3.5" />
-            </div>
-            <p className="text-xs sm:text-sm font-medium">{downloadToast}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* =========================================================================
           SECTION 1: AGENT OVERVIEW HEADER
       ========================================================================= */}
@@ -143,78 +61,72 @@ export default function AgentDashboardPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
-          {/* Clarified Available Credits Pill with Animated Popover Breakdown */}
-          <div className="relative">
-            <button
-              onClick={() => setShowCreditDetails(!showCreditDetails)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-[#8C6605] text-xs font-semibold shadow-2xs hover:bg-[#FDE68A]/60 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
-              title="Click to view credits relationship breakdown"
-            >
-              <span className="w-2 h-2 rounded-full bg-[#E8A808] shrink-0 animate-pulse" />
-              <span>78 Packs Available</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#E8A808]/25 text-[#715003] font-semibold">
-                64 Monthly + 14 Add-on
-              </span>
-            </button>
+          {/* Available Credits Pill with Popover Breakdown */}
+          {data && (
+            <div className="relative">
+              <button
+                onClick={() => setShowCreditDetails(!showCreditDetails)}
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FEF3C7] border border-[#FDE68A] text-[#8C6605] text-xs font-semibold shadow-2xs hover:bg-[#FDE68A]/60 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+                title="Click to view credits breakdown"
+              >
+                <span className="w-2 h-2 rounded-full bg-[#E8A808] shrink-0 animate-pulse" />
+                <span>{formatNumber(data.creditsRemaining)} Packs Available</span>
+                {data.planAllocation > 0 && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#E8A808]/25 text-[#715003] font-semibold">
+                    {data.packsUsedThisPeriod} / {data.planAllocation} used
+                  </span>
+                )}
+              </button>
 
-            {/* Credit Relationship Dropdown Tooltip with Motion */}
-            <AnimatePresence>
-              {showCreditDetails && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: -6 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: -6 }}
-                  transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute right-0 top-full mt-2 w-72 z-30 p-4 bg-white rounded-2xl shadow-xl border border-slate-200 text-xs text-slate-700"
-                >
-                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-                    <span className="font-heading font-medium text-slate-900">
-                      Available Credits Explained
-                    </span>
-                    <button
-                      onClick={() => setShowCreditDetails(false)}
-                      className="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-100 transition"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                  <div className="space-y-2 py-2.5 text-[11px]">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-500">
-                        Monthly Plan (36/100 used):
-                      </span>
-                      <strong className="text-slate-900 font-medium">
-                        64 remaining
-                      </strong>
+              <AnimatePresence>
+                {showCreditDetails && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: -6 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -6 }}
+                    transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute right-0 top-full mt-2 w-72 z-30 p-4 bg-white rounded-2xl shadow-xl border border-slate-200 text-xs text-slate-700"
+                  >
+                    <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                      <span className="font-heading font-medium text-slate-900">Available Credits Explained</span>
+                      <button
+                        onClick={() => setShowCreditDetails(false)}
+                        className="text-slate-400 hover:text-slate-600 p-1 rounded-md hover:bg-slate-100 transition"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
                     </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-500">
-                        Purchased Add-On Packs:
-                      </span>
-                      <strong className="text-[#8C6605] font-medium">
-                        +14 packs
-                      </strong>
+                    <div className="space-y-2 py-2.5 text-[11px]">
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-500">Plan packs used this period:</span>
+                        <strong className="text-slate-900 font-medium">
+                          {data.packsUsedThisPeriod} / {data.planAllocation}
+                        </strong>
+                      </div>
+                      <div className="pt-1.5 border-t border-slate-100 flex justify-between items-center font-medium text-slate-900 text-xs">
+                        <span>Total Ready to Generate:</span>
+                        <span className="text-[#092167] font-medium text-sm">{data.creditsRemaining} packs</span>
+                      </div>
                     </div>
-                    <div className="pt-1.5 border-t border-slate-100 flex justify-between items-center font-medium text-slate-900 text-xs">
-                      <span>Total Ready to Generate:</span>
-                      <span className="text-[#092167] font-medium text-sm">
-                        78 packs
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-slate-400 leading-tight">
-                    Monthly plan resets on 1 Nov 2026. The 14 purchased add-on
-                    packs never expire.
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+                    <p className="text-[10px] text-slate-400 leading-tight">
+                      {periodEnd
+                        ? `Your plan allowance renews on ${formatDate(periodEnd, "long")}. Extra packs you buy are added to this balance.`
+                        : noSubscription
+                          ? "You have no active plan yet. Choose a plan in Settings & Billing."
+                          : "Extra packs you buy are added to this balance."}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
 
           {/* Buy Packs Button with Concise Sizing */}
           <button
             onClick={() => setShowBuyModal(true)}
-            className="h-9 px-3.5 rounded-lg bg-[#06143E] hover:bg-[#0B1E48] active:bg-[#040C1E] active:scale-[0.98] text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer"
+            disabled={!canBuy}
+            title={canBuy ? undefined : "Only the agency owner can buy packs"}
+            className="h-9 px-3.5 rounded-lg bg-[#06143E] hover:bg-[#0B1E48] active:bg-[#040C1E] active:scale-[0.98] text-white text-xs font-semibold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Buy Packs</span>
@@ -248,108 +160,116 @@ export default function AgentDashboardPage() {
         </Link>
       </div>
 
+      {summary.isLoading ? (
+        <>
+          <StatsSkeleton count={3} />
+          <TableSkeleton rows={4} columns={5} />
+        </>
+      ) : summary.isError || !data ? (
+        <ErrorState error={summary.error} onRetry={() => summary.refetch()} />
+      ) : (
+        <>
       {/* =========================================================================
-          SECTION 3: STATS CARDS (3 BALANCED RICH COLUMNS WITH CONTAINER QUERIES)
+          SECTION 3: STATS CARDS
       ========================================================================= */}
       <div className="@container">
         <div className="grid grid-cols-1 @sm:grid-cols-2 @xl:grid-cols-3 gap-4 sm:gap-5">
           {/* Card 1: Total Packs Created */}
           <div className="@container cq-card bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-4 sm:p-6 shadow-xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-600">
-                Total Packs Created
-              </span>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-[#DCFCE7] text-[#15803D]">
-                +6 this month
-              </span>
+              <span className="text-xs font-semibold text-slate-600">Total Packs Created</span>
             </div>
 
             <div className="mt-3.5 space-y-2.5">
               <div className="flex items-baseline justify-between">
                 <div>
                   <span className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
-                    42
+                    {data.totalPacks}
                   </span>
-                  <span className="text-xs text-slate-500 ml-1.5">
-                    completed packs
-                  </span>
+                  <span className="text-xs text-slate-500 ml-1.5">packs</span>
                 </div>
                 <span className="text-[11px] font-medium text-slate-500">
-                  86% published
+                  {pct(data.livePacks, data.totalPacks)}% published
                 </span>
               </div>
 
               {/* Multi-segment status bar */}
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
                 <div
-                  className="h-full bg-emerald-500 rounded-l-full transition-all duration-500"
-                  style={{ width: "86%" }}
-                  title="36 Published"
+                  className="h-full bg-emerald-500 transition-all duration-500"
+                  style={{ width: `${pct(data.livePacks, data.totalPacks)}%` }}
+                  title={`${data.livePacks} Published`}
                 />
                 <div
-                  className="h-full bg-amber-400 rounded-r-full transition-all duration-500"
-                  style={{ width: "14%" }}
-                  title="6 Drafts"
+                  className="h-full bg-blue-400 transition-all duration-500"
+                  style={{ width: `${pct(data.readyPacks, data.totalPacks)}%` }}
+                  title={`${data.readyPacks} Ready`}
+                />
+                <div
+                  className="h-full bg-amber-400 transition-all duration-500"
+                  style={{ width: `${pct(data.draftPacks, data.totalPacks)}%` }}
+                  title={`${data.draftPacks} Drafts`}
                 />
               </div>
 
-              {/* Status Breakdown matching Card 2 */}
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-[11px] text-slate-600">
                 <span className="flex items-center gap-1.5 truncate">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
-                  <span><strong>36</strong> published live</span>
+                  <span><strong>{data.livePacks}</strong> published live</span>
+                </span>
+                <span className="flex items-center gap-1.5 truncate">
+                  <span className="w-2 h-2 rounded-full bg-blue-400 shrink-0" />
+                  <span><strong>{data.readyPacks}</strong> ready</span>
                 </span>
                 <span className="flex items-center gap-1.5 truncate">
                   <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
-                  <span><strong>6</strong> in draft</span>
+                  <span><strong>{data.draftPacks}</strong> in draft</span>
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Card 2: Plan Pack Allocation & Available Credits Breakdown */}
+          {/* Card 2: Plan Pack Allocation & Available Credits */}
           <div className="@container cq-card bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-4 sm:p-6 shadow-xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-600">
-                Plan &amp; Credits Allocation
-              </span>
-              <span className="text-[10px] sm:text-[11px] text-[#8C6605] bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 rounded-full font-semibold">
-                36% Quota Used
-              </span>
+              <span className="text-xs font-semibold text-slate-600">Plan &amp; Credits Allocation</span>
+              {data.planAllocation > 0 && (
+                <span className="text-[10px] sm:text-[11px] text-[#8C6605] bg-[#FEF3C7] border border-[#FDE68A] px-2 py-0.5 rounded-full font-semibold">
+                  {pct(data.packsUsedThisPeriod, data.planAllocation)}% Quota Used
+                </span>
+              )}
             </div>
 
             <div className="mt-3.5 space-y-2.5">
               <div className="flex items-baseline justify-between">
                 <div>
                   <span className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
-                    78
+                    {data.creditsRemaining}
                   </span>
-                  <span className="text-xs text-slate-500 ml-1.5">
-                    packs available
-                  </span>
+                  <span className="text-xs text-slate-500 ml-1.5">packs available</span>
                 </div>
-                <span className="text-[11px] font-mono font-medium text-slate-500">
-                  36 / 100 used
-                </span>
+                {data.planAllocation > 0 && (
+                  <span className="text-[11px] font-mono font-medium text-slate-500">
+                    {data.packsUsedThisPeriod} / {data.planAllocation} used
+                  </span>
+                )}
               </div>
 
-              {/* Progress Bar showing 36 / 100 used */}
               <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-[#06143E] rounded-full transition-all duration-500"
-                  style={{ width: "36%" }}
+                  style={{ width: `${Math.min(100, pct(data.packsUsedThisPeriod, data.planAllocation))}%` }}
                 />
               </div>
 
-              {/* Breakdown with Container Query Adaptive Layout */}
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-[11px] text-slate-600">
                 <span className="flex items-center gap-1.5 truncate">
                   <span className="w-2 h-2 rounded-full bg-[#06143E] shrink-0" />
-                  <span><strong>64</strong> monthly left</span>
+                  <span><strong>{data.packsUsedThisPeriod}</strong> used this period</span>
                 </span>
                 <span className="flex items-center gap-1.5 truncate">
                   <span className="w-2 h-2 rounded-full bg-[#E8A808] shrink-0" />
-                  <span><strong>14</strong> add-on packs</span>
+                  <span><strong>{data.planAllocation}</strong> plan allowance</span>
                 </span>
               </div>
             </div>
@@ -358,55 +278,22 @@ export default function AgentDashboardPage() {
           {/* Card 3: Active Market Listings */}
           <div className="@container cq-card bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 p-4 sm:p-6 shadow-xs hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-600">
-                Active Market Listings
-              </span>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
-                100% Synced
-              </span>
+              <span className="text-xs font-semibold text-slate-600">Active Market Listings</span>
             </div>
 
             <div className="mt-3.5 space-y-2.5">
               <div className="flex items-baseline justify-between">
                 <div>
                   <span className="font-heading font-bold text-2xl sm:text-3xl text-slate-900 tracking-tight">
-                    12
+                    {data.livePacks}
                   </span>
-                  <span className="text-xs text-slate-500 ml-1.5">
-                    live campaigns
-                  </span>
+                  <span className="text-xs text-slate-500 ml-1.5">live campaigns</span>
                 </div>
                 <div className="flex items-center text-[11px] font-medium text-slate-600">
-                  <span className="text-emerald-600">● 12 Live</span>
+                  <span className="text-emerald-600">● {data.livePacks} Live</span>
                   <span className="mx-1 text-slate-300">/</span>
-                  <span className="text-slate-500">6 Drafts</span>
+                  <span className="text-slate-500">{data.draftPacks} Drafts</span>
                 </div>
-              </div>
-
-              {/* Portal syndication progress bar */}
-              <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
-                <div
-                  className="h-full bg-[#06143E] rounded-l-full transition-all duration-500"
-                  style={{ width: "67%" }}
-                  title="8 Rightmove"
-                />
-                <div
-                  className="h-full bg-[#E8A808] rounded-r-full transition-all duration-500"
-                  style={{ width: "33%" }}
-                  title="4 Zoopla"
-                />
-              </div>
-
-              {/* Syndication breakdown */}
-              <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2 text-[11px] text-slate-600">
-                <span className="flex items-center gap-1.5 truncate">
-                  <span className="w-2 h-2 rounded-full bg-[#06143E] shrink-0" />
-                  <span><strong>8</strong> Rightmove</span>
-                </span>
-                <span className="flex items-center gap-1.5 truncate">
-                  <span className="w-2 h-2 rounded-full bg-[#E8A808] shrink-0" />
-                  <span><strong>4</strong> Zoopla</span>
-                </span>
               </div>
             </div>
           </div>
@@ -414,10 +301,9 @@ export default function AgentDashboardPage() {
       </div>
 
       {/* =========================================================================
-          SECTION 4: RECENT PROPERTY MARKETING PACKS TABLE (CONTAINER QUERY & MICRO-INTERACTIONS)
+          SECTION 4: RECENT PROPERTY MARKETING PACKS TABLE
       ========================================================================= */}
       <div className="@container cq-panel bg-white rounded-3xl border border-slate-200/90 shadow-xs p-6 sm:p-7 space-y-6">
-        {/* Card Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h3 className="font-heading font-medium text-base sm:text-lg text-slate-900">
@@ -431,258 +317,126 @@ export default function AgentDashboardPage() {
             href="/agent-dashboard/saved-packs"
             className="text-xs font-semibold text-slate-900 hover:text-[#092167] flex items-center gap-1.5 transition-all hover:translate-x-0.5 self-start sm:self-auto group"
           >
-            <span>View All (18)</span>
+            <span>View All ({data.totalPacks})</span>
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 text-[#E8A808]" />
           </Link>
         </div>
 
-        {/* Responsive Table */}
-        <div className="overflow-x-auto -mx-6 sm:mx-0">
-          <table className="w-full text-left min-w-[680px]">
-            <thead>
-              <tr className="border-b border-slate-100 text-xs font-semibold text-slate-600 uppercase tracking-wider bg-slate-50/80 border-b border-slate-200">
-                <th className="py-3.5 px-6 sm:px-3 w-[42%]">
-                  Property Address
-                </th>
-                <th className="py-3.5 px-3 w-[18%]">Listing Price</th>
-                <th className="py-3.5 px-3 w-[16%]">Date Created</th>
-                <th className="py-3.5 px-3 w-[12%]">Status</th>
-                <th className="py-3.5 px-6 sm:px-3 w-[12%] text-right sm:text-left">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {packs.map((pack) => (
-                <tr
-                  key={pack.id}
-                  className="hover:bg-slate-50/80 transition-all duration-200 group"
-                >
-                  {/* Property Address + Thumbnail */}
-                  <td className="py-4 px-6 sm:px-3">
-                    <div className="flex items-center gap-3.5">
-                      <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-slate-100 shadow-2xs group-hover:shadow-sm transition-shadow">
-                        <Image
-                          src={pack.image}
-                          alt={pack.address}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-medium text-sm text-slate-900 truncate group-hover:text-[#092167] transition-colors">
-                          {pack.address}
-                        </p>
-                        <p className="text-xs text-slate-500 truncate mt-0.5">
-                          {pack.specs}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
+        {data.recent.length === 0 ? (
+          <EmptyState
+            title="No property packs yet"
+            description="Create your first property pack to see it here."
+            primaryAction={{ label: "Create Property Pack", href: "/agent-dashboard/create", icon: Sparkles }}
+            className="border-0 shadow-none"
+          />
+        ) : (
+          <>
+            <div className="overflow-x-auto -mx-6 sm:mx-0">
+              <table className="w-full text-left min-w-[680px]">
+                <thead>
+                  <tr className="border-b border-slate-100 text-xs font-semibold text-slate-600 uppercase tracking-wider bg-slate-50/80 border-b border-slate-200">
+                    <th className="py-3.5 px-6 sm:px-3 w-[42%]">Property Address</th>
+                    <th className="py-3.5 px-3 w-[18%]">Listing Price</th>
+                    <th className="py-3.5 px-3 w-[16%]">Date Created</th>
+                    <th className="py-3.5 px-3 w-[12%]">Status</th>
+                    <th className="py-3.5 px-6 sm:px-3 w-[12%] text-right sm:text-left">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {data.recent.map((pack) => {
+                    const id = pack.id ?? "";
+                    const address = pack.address || pack.title || "Untitled property";
+                    return (
+                      <tr key={id} className="hover:bg-slate-50/80 transition-all duration-200 group">
+                        <td className="py-4 px-6 sm:px-3">
+                          <div className="flex items-center gap-3.5">
+                            <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-slate-100 shadow-2xs group-hover:shadow-sm transition-shadow bg-slate-100">
+                              <ApiImage
+                                src={pack.coverUrl}
+                                alt={address}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            </div>
+                            <div className="min-w-0">
+                              <Link
+                                href={`/agent-dashboard/editor?pack=${id}`}
+                                className="block font-medium text-sm text-slate-900 truncate group-hover:text-[#092167] transition-colors"
+                              >
+                                {address}
+                              </Link>
+                              <p className="text-xs text-slate-500 truncate mt-0.5">{packSpecs(pack)}</p>
+                            </div>
+                          </div>
+                        </td>
 
-                  {/* Listing Price */}
-                  <td className="py-4 px-3">
-                    <span className="font-medium text-sm text-slate-900">
-                      {pack.price}
-                    </span>
-                  </td>
+                        <td className="py-4 px-3">
+                          <span className="font-medium text-sm text-slate-900">
+                            {formatMoney(pack.pricePence, pack.market === "US" ? "USD" : "GBP")}
+                          </span>
+                        </td>
 
-                  {/* Date Created */}
-                  <td className="py-4 px-3">
-                    <span className="text-xs text-slate-600">
-                      {pack.dateCreated}
-                    </span>
-                  </td>
+                        <td className="py-4 px-3">
+                          <span className="text-xs text-slate-600">{formatDate(pack.createdAt)}</span>
+                        </td>
 
-                  {/* Status Badge */}
-                  <td className="py-4 px-3">
-                    <PackStatusBadge status={pack.status} size="sm" />
-                  </td>
+                        <td className="py-4 px-3">
+                          <PackStatusBadge status={pack.status ?? "draft"} size="sm" />
+                        </td>
 
-                  {/* Actions */}
-                  <td className="py-4 px-6 sm:px-3 text-right sm:text-left">
-                    <div className="inline-flex items-center gap-2">
-                      <button
-                        onClick={() => handleDownloadPdf(pack.address)}
-                        className="h-8 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 text-xs font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
-                      >
-                        <Download className="w-3.5 h-3.5 text-slate-500" />
-                        <span>PDF Report</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectedPackForShare({
-                            id: pack.id,
-                            address: pack.address,
-                          });
-                          setShowShareModal(true);
-                        }}
-                        title="Share digital brochure"
-                        className="p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg hover:scale-110 active:scale-95 transition-all cursor-pointer inline-flex items-center justify-center"
-                      >
-                        <Share2 className="w-3.5 h-3.5 text-[#092167]" />
-                      </button>
-                      <Link
-                        href="/agent-dashboard/editor"
-                        title="Edit property details in Live Editor"
-                        className="p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg hover:scale-110 active:scale-95 transition-all cursor-pointer inline-flex items-center justify-center"
-                      >
-                        <Pencil className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination Footer */}
-        <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-          <p>Showing 3 of 18 property listings</p>
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setCurrentPage(1)}
-              className={`w-7 h-7 rounded-lg font-medium text-xs flex items-center justify-center transition cursor-pointer ${
-                currentPage === 1
-                  ? "bg-[#071330] text-white shadow-2xs"
-                  : "border border-slate-200 text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              1
-            </button>
-            <button
-              onClick={() => setCurrentPage(2)}
-              className={`w-7 h-7 rounded-lg font-medium text-xs flex items-center justify-center transition cursor-pointer ${
-                currentPage === 2
-                  ? "bg-[#071330] text-white shadow-2xs"
-                  : "border border-slate-200 text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              2
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* =========================================================================
-          MODAL: CREATE PROPERTY PACK
-      ========================================================================= */}
-      {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl border border-slate-200 space-y-5 animate-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-[#E8A808]/15 text-[#E8A808] flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-[#8C6605]" />
-                </div>
-                <h3 className="font-heading font-medium text-lg text-slate-900">
-                  Create Property Marketing Pack
-                </h3>
-              </div>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
+                        <td className="py-4 px-6 sm:px-3 text-right sm:text-left">
+                          <div className="inline-flex items-center gap-2">
+                            <button
+                              onClick={() => download(id)}
+                              disabled={busyId !== null}
+                              className="h-8 px-3 rounded-lg bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 text-xs font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs disabled:opacity-60"
+                            >
+                              {busyId === id ? (
+                                <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-500" />
+                              ) : (
+                                <Download className="w-3.5 h-3.5 text-slate-500" />
+                              )}
+                              <span>PDF Report</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setSharePackId(id)}
+                              title="Share digital brochure"
+                              className="p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg hover:scale-110 active:scale-95 transition-all cursor-pointer inline-flex items-center justify-center"
+                            >
+                              <Share2 className="w-3.5 h-3.5 text-[#092167]" />
+                            </button>
+                            <Link
+                              href={`/agent-dashboard/editor?pack=${id}`}
+                              title="Edit property details in Live Editor"
+                              className="p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-lg hover:scale-110 active:scale-95 transition-all cursor-pointer inline-flex items-center justify-center"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </Link>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setShowCreateModal(false);
-                setDownloadToast("Property Pack generation started!");
-                setTimeout(() => setDownloadToast(null), 3000);
-              }}
-              className="space-y-4 text-xs"
-            >
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">
-                  Property Address or Postcode
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. 16 Gorse Drive, Manchester, M21 8XQ"
-                  className="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[#092167] text-sm"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">
-                    Listing Price (£)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="£750,000"
-                    className="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[#092167] text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">
-                    Property Type
-                  </label>
-                  <select className="w-full h-10 px-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[#092167] text-sm bg-white">
-                    <option>Detached Home</option>
-                    <option>Semi-Detached</option>
-                    <option>Terraced</option>
-                    <option>Luxury Apartment</option>
-                    <option>Penthouse</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-medium text-slate-700 mb-1">
-                  Key Specs & Features
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="e.g. 4 bedrooms, 3 bathrooms, large south-facing garden, double garage..."
-                  className="w-full p-3 rounded-lg border border-slate-200 focus:outline-none focus:border-[#092167] text-sm"
-                />
-              </div>
-
-              <div className="pt-2 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="h-10 px-4 rounded-lg border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] text-[#06143E] font-medium cursor-pointer transition shadow-sm"
-                >
-                  Generate Pack
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+            <div className="pt-4 border-t border-slate-100 text-xs text-slate-500">
+              <p>
+                Showing {data.recent.length} of {data.totalPacks} property listings
+              </p>
+            </div>
+          </>
+        )}
+      </div>
+        </>
       )}
 
-      {/* S07 BUY PACKS MODAL */}
-      <BuyPacksModal
-        isOpen={showBuyModal}
-        onClose={() => setShowBuyModal(false)}
-        onSuccess={() => {
-          setDownloadToast("Pack bundle added to your balance!");
-          setTimeout(() => setDownloadToast(null), 3000);
-        }}
-      />
+      {/* BUY PACKS MODAL */}
+      <BuyPacksModal isOpen={showBuyModal} onClose={() => setShowBuyModal(false)} />
 
-      {/* S05 SHARE DIGITAL BROCHURE DIALOG */}
-      <ShareDialog
-        isOpen={showShareModal}
-        onClose={() => setShowShareModal(false)}
-        packId={selectedPackForShare.id}
-        packTitle={selectedPackForShare.address}
-      />
+      {/* SHARE DIGITAL BROCHURE DIALOG */}
+      {sharePackId && <ShareDialog isOpen onClose={() => setSharePackId(null)} packId={sharePackId} />}
     </div>
   );
 }

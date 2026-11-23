@@ -1,52 +1,96 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  TrendingUp,
-  Activity,
-  Server,
-  Zap,
-  CheckCircle2,
-  Clock,
-  Layers,
-  ArrowUpRight,
-} from "lucide-react";
+import { useGetAdminOverviewQuery } from "@/redux/api/admin/adminApi";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { StatsSkeleton } from "@/components/ui/skeletons/StatsSkeleton";
+import { formatMoney, formatDateTime } from "@/lib/format";
+
+const money = (pence: number | null | undefined, currency?: string) =>
+  formatMoney(pence, currency?.toUpperCase() || "GBP");
+
+function compactMoney(pence: number, currency?: string) {
+  const pounds = pence / 100;
+  const symbol = (currency ?? "GBP").toUpperCase() === "USD" ? "$" : "£";
+  if (pounds >= 1000) return `${symbol}${(pounds / 1000).toFixed(1).replace(/\.0$/, "")}k`;
+  return `${symbol}${Math.round(pounds)}`;
+}
+
+function weekLabel(week?: string) {
+  if (!week) return "";
+  const d = new Date(`${week}T00:00:00`);
+  return Number.isNaN(d.getTime()) ? week : d.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
+}
+
+function monthLabel(month?: string) {
+  if (!month) return "";
+  const d = new Date(/^\d{4}-\d{2}$/.test(month) ? `${month}-01T00:00:00` : month);
+  return Number.isNaN(d.getTime()) ? month : d.toLocaleDateString("en-GB", { month: "short" });
+}
 
 export default function PlatformOverviewPage() {
   const [hoveredMonth, setHoveredMonth] = useState<number | null>(null);
   const [hoveredWeek, setHoveredWeek] = useState<number | null>(null);
+  const { data, isLoading, isError, error, refetch, isFetching } = useGetAdminOverviewQuery();
 
-  // 6 months MRR data
-  const mrrData = [
-    { month: "May", value: 12200, label: "£12.2k", x: 40, y: 155 },
-    { month: "Jun", value: 14800, label: "£14.8k", x: 130, y: 140 },
-    { month: "Jul", value: 16500, label: "£16.5k", x: 220, y: 125 },
-    { month: "Aug", value: 19400, label: "£19.4k", x: 310, y: 95 },
-    { month: "Sep", value: 22100, label: "£22.1k", x: 400, y: 65 },
-    { month: "Oct '26", value: 24650, label: "£24,650", x: 490, y: 35 },
-  ];
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <StatsSkeleton count={4} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-pulse">
+          <div className="h-80 bg-white rounded-3xl border border-slate-200" />
+          <div className="h-80 bg-white rounded-3xl border border-slate-200" />
+        </div>
+      </div>
+    );
+  }
+  if (isError || !data) return <ErrorState error={error} onRetry={refetch} />;
 
-  // Weekly packs data
-  const weeklyPacks = [
-    { week: "W1", count: 420, height: 48, color: "bg-slate-200" },
-    { week: "W2", count: 540, height: 62, color: "bg-slate-200" },
-    { week: "W3", count: 670, height: 76, color: "bg-blue-300" },
-    { week: "W4", count: 760, height: 86, color: "bg-blue-600" },
-    { week: "Current", count: 820, height: 98, color: "bg-[#06143E]" },
-  ];
+  const currency = data.currency;
+  const health = data.health ?? {};
+  const series = data.mrrSeries ?? [];
+  const maxMrr = Math.max(1, ...series.map((m) => m.mrrPence ?? 0));
+  const mrrData = series.map((m, i) => ({
+    month: monthLabel(m.month),
+    value: m.mrrPence ?? 0,
+    x: series.length > 1 ? 40 + (i * 450) / (series.length - 1) : 265,
+    y: 170 - ((m.mrrPence ?? 0) / maxMrr) * 160,
+  }));
+  const linePath = mrrData.map((d, i) => `${i === 0 ? "M" : "L"} ${d.x} ${d.y}`).join(" ");
+  const areaPath = mrrData.length
+    ? `${linePath} L ${mrrData[mrrData.length - 1].x} 170 L ${mrrData[0].x} 170 Z`
+    : "";
+  const yTicks = [1, 0.75, 0.5, 0.25].map((f) => Math.round(maxMrr * f));
+
+  const weekly = data.weeklyPacks ?? [];
+  const maxWeek = Math.max(1, ...weekly.map((w) => w.packs ?? 0));
+  const weeklyPacks = weekly.map((w, i) => ({
+    week: weekLabel(w.week),
+    count: w.packs ?? 0,
+    height: Math.max(2, ((w.packs ?? 0) / maxWeek) * 100),
+    color: i === weekly.length - 1 ? "bg-[#06143E]" : i === weekly.length - 2 ? "bg-blue-600" : i === weekly.length - 3 ? "bg-blue-300" : "bg-slate-200",
+  }));
+
+  const activeAgencies = data.activeAgencies ?? 0;
+  const totalAgencies = data.totalAgencies ?? 0;
+  const activePct = totalAgencies > 0 ? Math.round((activeAgencies / totalAgencies) * 100) : 0;
+  const packs = data.packsGenerated ?? 0;
+  const lastMonthPacks = data.packsGeneratedLastMonth ?? 0;
+  const momPct = lastMonthPacks > 0 ? Math.round(((packs - lastMonthPacks) / lastMonthPacks) * 100) : null;
+  const aiCostPerPack = packs > 0 && data.aiCostThisMonthPence != null ? Math.round(data.aiCostThisMonthPence / packs) : null;
+  const margin = data.grossMarginPct;
 
   return (
     <div className="space-y-6">
-      {/* Super Admin Top Header with Demo / Live Telemetry Indicator */}
+      {/* Super Admin Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-slate-200/70">
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-1.5">
-            <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 uppercase tracking-wider">
-              DEMO DATA MODE ACTIVE
+            <span className="text-[10px] font-medium px-2 py-0.5 rounded bg-emerald-100 text-emerald-900 border border-emerald-300 uppercase tracking-wider">
+              Live data
             </span>
             <span className="text-xs text-slate-500">
-              · All metrics use sample agency data until live webhooks are
-              connected
+              · Updated {formatDateTime(data.generatedAt)}
             </span>
           </div>
           <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
@@ -56,14 +100,18 @@ export default function PlatformOverviewPage() {
 
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <div className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs text-slate-600 flex items-center gap-2 shadow-2xs">
-            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            <span className="font-medium text-slate-700">
-              Telemetry Status:
-            </span>
-            <span className="font-mono text-slate-500 text-[11px]">
-              Demo Sandbox
-            </span>
+            <span className={`w-2 h-2 rounded-full ${health.workerOnline ? "bg-emerald-500 animate-pulse" : "bg-rose-500"}`} />
+            <span className="font-medium text-slate-700">Worker:</span>
+            <span className="font-mono text-slate-500 text-[11px]">{health.workerOnline ? "Online" : "Offline"}</span>
           </div>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="h-8 px-3 rounded-lg bg-white border border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60 cursor-pointer"
+          >
+            {isFetching ? "Refreshing..." : "Refresh"}
+          </button>
         </div>
       </div>
 
@@ -76,22 +124,16 @@ export default function PlatformOverviewPage() {
               <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                 Monthly Recurring Revenue
               </span>
-              <span className="text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
-                Demo
-              </span>
             </div>
             <div className="flex items-baseline justify-between gap-2">
               <span className="font-heading font-bold text-xl sm:text-2xl text-slate-900 tracking-tight">
-                £24,650
-              </span>
-              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                ▲ +12.4%
+                {money(data.mrrPence, currency)}
               </span>
             </div>
           </div>
           <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-medium">
             <span>ARR Run-rate</span>
-            <span className="font-semibold text-slate-800">£295.8k</span>
+            <span className="font-semibold text-slate-800">{money(data.arrPence, currency)}</span>
           </div>
         </div>
 
@@ -102,26 +144,23 @@ export default function PlatformOverviewPage() {
               <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                 Total Active Agencies
               </span>
-              <span className="text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
-                Demo
-              </span>
             </div>
             <div className="flex items-baseline gap-1.5">
               <span className="font-heading font-bold text-xl sm:text-2xl text-slate-900 tracking-tight">
-                142
+                {activeAgencies}
               </span>
               <span className="text-slate-400 font-medium text-xs sm:text-sm">
-                / 200 Target
+                / {totalAgencies} Agencies
               </span>
             </div>
           </div>
           <div className="mt-3 pt-2.5 border-t border-slate-100 space-y-1.5">
             <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-[#06143E] rounded-full" style={{ width: '71%' }} />
+              <div className="h-full bg-[#06143E] rounded-full" style={{ width: `${activePct}%` }} />
             </div>
             <div className="flex items-center justify-between text-[10px] text-slate-500">
-              <span>71% capacity</span>
-              <span>58 slots open</span>
+              <span>{activePct}% active</span>
+              <span>{data.activeSeats ?? 0} active seats</span>
             </div>
           </div>
         </div>
@@ -131,25 +170,23 @@ export default function PlatformOverviewPage() {
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                Packs Generated (Oct)
-              </span>
-              <span className="text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
-                Demo
+                Packs Generated (This Month)
               </span>
             </div>
             <div className="flex items-baseline justify-between gap-2">
               <span className="font-heading font-bold text-xl sm:text-2xl text-slate-900 tracking-tight">
-                820
+                {packs}
               </span>
-              <span className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                ▲ +18% MoM
-              </span>
+              {momPct !== null && (
+                <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold border ${momPct >= 0 ? "bg-emerald-50 text-emerald-700 border-emerald-200/60" : "bg-rose-50 text-rose-700 border-rose-200/60"}`}>
+                  {momPct >= 0 ? "▲ +" : "▼ "}{momPct}% MoM
+                </span>
+              )}
             </div>
           </div>
           <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-medium">
-            <span>640 Standard</span>
-            <span className="text-slate-300">·</span>
-            <span>180 Custom API</span>
+            <span>Last month</span>
+            <span className="font-semibold text-slate-800">{lastMonthPacks}</span>
           </div>
         </div>
 
@@ -160,22 +197,21 @@ export default function PlatformOverviewPage() {
               <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">
                 Gross SaaS Margin
               </span>
-              <span className="text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/60 px-2 py-0.5 rounded-full">
-                Demo
-              </span>
             </div>
             <div className="flex items-baseline justify-between gap-2">
               <span className="font-heading font-bold text-xl sm:text-2xl text-emerald-600 tracking-tight">
-                88.2%
+                {margin == null ? "–" : `${margin}%`}
               </span>
-              <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
-                £0.42 API/PACK
-              </span>
+              {aiCostPerPack !== null && (
+                <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full">
+                  {money(aiCostPerPack, currency)} AI COST/PACK
+                </span>
+              )}
             </div>
           </div>
           <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-medium">
-            <span>Target: &gt;85%</span>
-            <span className="text-emerald-600 font-semibold">+3.2% buffer</span>
+            <span>Revenue this month</span>
+            <span className="font-semibold text-slate-800">{money(data.revenueThisMonthPence, currency)}</span>
           </div>
         </div>
       </div>
@@ -187,21 +223,18 @@ export default function PlatformOverviewPage() {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2.5 sm:gap-4">
             <div>
               <h2 className="font-heading font-medium text-lg sm:text-xl text-slate-900">
-                MRR Revenue Growth (Last 6 Months)
+                Billed revenue (last 6 months)
               </h2>
               <p className="text-sm text-slate-500 mt-1">
-                Stripe verified recurring subscription trajectory
+                Paid invoices per month
               </p>
             </div>
-            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 rounded-full self-start sm:self-auto">
-              Demo data
-            </span>
           </div>
 
           {/* SVG Line Chart */}
           <div className="relative mt-6 pt-4">
             {/* Tooltip */}
-            {hoveredMonth !== null && (
+            {hoveredMonth !== null && mrrData[hoveredMonth] && (
               <div
                 className="absolute z-10 px-2.5 py-1 rounded-lg bg-[#06143E] text-white text-xs font-medium shadow-lg pointer-events-none transform -translate-x-1/2 -translate-y-9 transition-all"
                 style={{
@@ -209,19 +242,20 @@ export default function PlatformOverviewPage() {
                   top: `${(mrrData[hoveredMonth].y / 180) * 100}%`,
                 }}
               >
-                {mrrData[hoveredMonth].month}: £
-                {mrrData[hoveredMonth].value.toLocaleString()}
+                {mrrData[hoveredMonth].month}: {money(mrrData[hoveredMonth].value, currency)}
               </div>
             )}
 
-            <div className="w-full h-56 relative flex">
+            {mrrData.length === 0 && (
+              <p className="text-sm text-slate-500 text-center py-16">No billed revenue yet.</p>
+            )}
+            <div className={`w-full h-56 relative flex ${mrrData.length === 0 ? "hidden" : ""}`}>
               {/* Y-axis labels */}
               <div className="flex flex-col justify-between text-[11px] font-medium text-slate-400 pr-3 pb-6 shrink-0 text-right select-none">
-                <span>£25k</span>
-                <span>£20k</span>
-                <span>£15k</span>
-                <span>£10k</span>
-                <span>£5k</span>
+                {yTicks.map((t) => (
+                  <span key={t}>{compactMoney(t, currency)}</span>
+                ))}
+                <span>£0</span>
               </div>
 
               {/* Chart SVG */}
@@ -302,13 +336,13 @@ export default function PlatformOverviewPage() {
 
                   {/* Area fill under curve */}
                   <path
-                    d="M 40 155 Q 110 145 130 140 T 220 125 T 310 95 T 400 65 T 490 35 L 490 170 L 40 170 Z"
+                    d={areaPath}
                     fill="url(#mrrGradient)"
                   />
 
                   {/* Stroke curve */}
                   <path
-                    d="M 40 155 Q 110 145 130 140 T 220 125 T 310 95 T 400 65 T 490 35"
+                    d={linePath}
                     fill="none"
                     stroke="#E8A808"
                     strokeWidth="3.5"
@@ -321,8 +355,8 @@ export default function PlatformOverviewPage() {
                       <circle
                         cx={d.x}
                         cy={d.y}
-                        r={index === 5 ? 5 : 4}
-                        fill={index === 5 ? "#06143E" : "#E8A808"}
+                        r={index === mrrData.length - 1 ? 5 : 4}
+                        fill={index === mrrData.length - 1 ? "#06143E" : "#E8A808"}
                         stroke="#FFFFFF"
                         strokeWidth="2.5"
                         className="cursor-pointer hover:r-6 transition-all"
@@ -357,17 +391,14 @@ export default function PlatformOverviewPage() {
             </div>
             {/* Badges container: wraps on mobile so the percentage badge never clips */}
             <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-              <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 rounded-full">
-                Demo data
-              </span>
-              <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60 whitespace-nowrap shadow-2xs">
-                ▲ +24% highest week
-              </span>
             </div>
           </div>
 
+          {weeklyPacks.length === 0 && (
+            <p className="text-sm text-slate-500 text-center py-16">No packs generated yet.</p>
+          )}
           {/* Bar Chart Container */}
-          <div className="mt-8 pt-4">
+          <div className={`mt-8 pt-4 ${weeklyPacks.length === 0 ? "hidden" : ""}`}>
             <div className="flex items-end justify-between gap-3 sm:gap-6 h-52 px-2 sm:px-8 border-b border-slate-200 pb-2">
               {weeklyPacks.map((item, index) => (
                 <div
@@ -409,46 +440,76 @@ export default function PlatformOverviewPage() {
         </div>
       </div>
 
-      {/* Row 3: Infrastructure / System Status Strip with Explicit Demo Telemetry Label */}
+      {/* Row 3: Infrastructure / System Status Strip */}
       <div className="bg-[#EDF4FB] rounded-2xl border border-slate-200/80 px-4 sm:px-6 py-4 sm:py-5 shadow-sm space-y-2">
         <div className="flex items-center justify-between pb-2 border-b border-slate-200/70 text-[11px] text-slate-500">
           <span className="font-medium text-slate-700">
             Production Infrastructure &amp; Latency
           </span>
-          <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
-            Demo data telemetry
-          </span>
+          {health.lastWorkerHeartbeatAt && (
+            <span className="text-[10px] font-medium text-slate-500">
+              Last worker heartbeat {formatDateTime(health.lastWorkerHeartbeatAt)}
+            </span>
+          )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs sm:text-sm pt-1">
-          {/* Item 1 */}
           <div className="flex items-center gap-2 text-slate-700 font-medium">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
             <span>
               AI Engine Latency:{" "}
               <strong className="text-emerald-700 font-medium font-mono">
-                420ms (Optimal)
+                {health.aiLatencyMs == null ? "–" : `${health.aiLatencyMs}ms`}
               </strong>
             </span>
           </div>
 
-          {/* Item 2 */}
+          <div className="flex items-center gap-2 text-slate-700 font-medium sm:justify-center">
+            <span className={`w-2 h-2 rounded-full shrink-0 ${health.workerOnline ? "bg-emerald-500 animate-pulse" : "bg-rose-500"}`} />
+            <span>
+              PDF Rendering Worker:{" "}
+              <strong className={`font-medium font-mono ${health.workerOnline ? "text-emerald-700" : "text-rose-700"}`}>
+                {health.workerOnline ? "Online" : "Offline"}
+              </strong>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 text-slate-700 font-medium sm:justify-end">
+            <span className={`w-2 h-2 rounded-full shrink-0 ${(health.failedWebhooks ?? 0) > 0 ? "bg-rose-500" : "bg-emerald-500"}`} />
+            <span>
+              Failed Webhooks:{" "}
+              <strong className={`font-medium font-mono ${(health.failedWebhooks ?? 0) > 0 ? "text-rose-700" : "text-emerald-700"}`}>
+                {health.failedWebhooks ?? 0}
+              </strong>
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 text-slate-700 font-medium">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+            <span>
+              PDF Success (24h):{" "}
+              <strong className="text-emerald-700 font-medium font-mono">
+                {health.pdfSuccessPct24h == null ? "–" : `${health.pdfSuccessPct24h}%`}
+              </strong>
+            </span>
+          </div>
+
           <div className="flex items-center gap-2 text-slate-700 font-medium sm:justify-center">
             <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
             <span>
-              PDF Rendering Worker:{" "}
+              Queue Depth:{" "}
               <strong className="text-emerald-700 font-medium font-mono">
-                99.98% Uptime
+                {health.queueDepth ?? 0}
+                {(health.queueDepth ?? 0) > 0 ? ` (oldest ${health.oldestQueuedSeconds ?? 0}s)` : ""}
               </strong>
             </span>
           </div>
 
-          {/* Item 3 */}
           <div className="flex items-center gap-2 text-slate-700 font-medium sm:justify-end">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+            <span className={`w-2 h-2 rounded-full shrink-0 ${(health.failedJobs24h ?? 0) > 0 ? "bg-rose-500" : "bg-emerald-500"}`} />
             <span>
-              Failed Webhooks (24h):{" "}
-              <strong className="text-emerald-700 font-medium font-mono">
-                0
+              Failed Jobs (24h):{" "}
+              <strong className={`font-medium font-mono ${(health.failedJobs24h ?? 0) > 0 ? "text-rose-700" : "text-emerald-700"}`}>
+                {health.failedJobs24h ?? 0}
               </strong>
             </span>
           </div>

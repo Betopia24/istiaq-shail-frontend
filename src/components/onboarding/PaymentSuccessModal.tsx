@@ -2,26 +2,24 @@
 
 import React, { useEffect, useRef } from "react";
 import { CheckCircle2, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
-import { PlanTier, BillingCycle } from "@/types/onboarding";
+import type { Plan } from "@/types/models";
+import { formatMoney } from "@/lib/format";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 
 interface PaymentSuccessModalProps {
   isOpen: boolean;
   onClose?: () => void;
-  plan: PlanTier;
-  billingCycle: BillingCycle;
-  totalPaid: number;
-  email: string;
+  plan: Plan;
+  /** Packs available on the account now (subscription.creditsRemaining). */
+  packsGranted: number;
 }
 
 export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
   isOpen,
   onClose,
   plan,
-  billingCycle,
-  totalPaid,
-  email,
+  packsGranted,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -72,8 +70,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
             Welcome to Property Pack AI!
           </h2>
           <p className="font-sans text-xs sm:text-sm text-slate-500 mt-1.5">
-            Your agency workstation has been activated. A VAT invoice has been dispatched to{" "}
-            <span className="font-semibold text-slate-700">{email}</span>.
+            Your agency workstation has been activated and your pack balance is ready.
           </p>
         </div>
 
@@ -94,28 +91,28 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
           <div className="flex items-center justify-between text-xs sm:text-sm">
             <span className="text-slate-500">Credited Balance</span>
             <span className="font-semibold text-[#092167]">
-              {plan.packsPerMonth} AI Property Packs
+              {packsGranted} AI Property Packs
             </span>
           </div>
 
           <div className="flex items-center justify-between text-xs sm:text-sm">
             <span className="text-slate-500">Team Seats</span>
             <span className="font-semibold text-slate-800">
-              {plan.seats} {plan.seats === 1 ? "Seat" : "Seats"} Included
+              {plan.seatLimit} {plan.seatLimit === 1 ? "Seat" : "Seats"} Included
             </span>
           </div>
 
           <div className="flex items-center justify-between text-xs sm:text-sm">
             <span className="text-slate-500">Billing Cycle</span>
             <span className="font-semibold capitalize text-slate-800">
-              {billingCycle}
+              {plan.interval === "year" ? "annual" : "monthly"}
             </span>
           </div>
 
           <div className="flex items-center justify-between pt-2 border-t border-slate-200 text-xs sm:text-sm font-semibold">
-            <span className="text-slate-700">Total Paid (inc. 20% VAT)</span>
+            <span className="text-slate-700">Total Paid</span>
             <span className="font-heading font-bold text-base text-[#06143E]">
-              £{totalPaid.toFixed(2)}
+              {formatMoney(plan.pricePence, plan.currency?.toUpperCase(), { decimals: true })}
             </span>
           </div>
         </div>

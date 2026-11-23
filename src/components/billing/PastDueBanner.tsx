@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
-import { AlertCircle, CreditCard, ChevronRight, X } from "lucide-react";
-import { UpdateCardDialog } from "./UpdateCardDialog";
+import React from "react";
+import { AlertCircle, CreditCard, X } from "lucide-react";
+import { useBillingPortal } from "./useBillingPortal";
 
 interface PastDueBannerProps {
   onDismiss?: () => void;
@@ -13,18 +13,10 @@ export const PastDueBanner: React.FC<PastDueBannerProps> = ({
   onDismiss,
   className = "",
 }) => {
-  const [showUpdateDialog, setShowUpdateDialog] = useState(false);
-  const [isResolved, setIsResolved] = useState(false);
-
-  if (isResolved) return null;
+  const { open, isLoading } = useBillingPortal();
 
   return (
     <>
-      <UpdateCardDialog
-        isOpen={showUpdateDialog}
-        onClose={() => setShowUpdateDialog(false)}
-        onSuccess={() => setIsResolved(true)}
-      />
 
       <div
         role="alert"
@@ -47,7 +39,8 @@ export const PastDueBanner: React.FC<PastDueBannerProps> = ({
         <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
           <button
             type="button"
-            onClick={() => setShowUpdateDialog(true)}
+            onClick={open}
+            disabled={isLoading}
             className="h-8 px-3 rounded-lg bg-white text-rose-700 hover:bg-rose-50 text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-xs transition"
           >
             <CreditCard className="w-3.5 h-3.5" />

@@ -12,149 +12,155 @@ import {
   Info,
 } from "lucide-react";
 import { DangerModal } from "@/components/ui/DangerModal";
+import { ErrorState, apiErrorInfo } from "@/components/ui/ErrorState";
+import { TableSkeleton } from "@/components/ui/skeletons/TableSkeleton";
 import toast from "react-hot-toast";
+import type { Member } from "@/types/models";
+import { errorText } from "@/lib/auth/client";
+import { formatDate, initials } from "@/lib/format";
+import { useAppSelector } from "@/redux/hook";
+import {
+  useCancelInvitationMutation,
+  useGetTeamQuery,
+  useInviteMemberMutation,
+  useRemoveMemberMutation,
+  useResendInvitationMutation,
+  useUpdateMemberMutation,
+} from "@/redux/api/team/teamApi";
 
-export type TeamRole = "Owner" | "Valuer" | "Negotiator" | "Administrator";
+type TeamRole = "owner" | "administrator" | "valuer" | "negotiator";
 
-export interface TeamMember {
-  id: string;
-  name: string;
-  email: string;
-  role: TeamRole;
-  status: "Active" | "Inactive";
-  initials: string;
-  avatarColor: string;
-  isOwner?: boolean;
+const ROLE_LABEL: Record<TeamRole, string> = {
+  owner: "Owner",
+  administrator: "Administrator",
+  valuer: "Valuer",
+  negotiator: "Negotiator",
+};
+
+const AVATAR_COLORS = ["bg-[#092167]", "bg-pink-600", "bg-blue-600", "bg-emerald-600", "bg-violet-600"];
+
+function sentLabel(iso?: string | null) {
+  return iso ? `Sent ${formatDate(iso)}` : "";
 }
 
-export interface PendingInvite {
-  id: string;
-  email: string;
-  role: TeamRole;
-  sentAt: string;
-}
+export const TeamMembersTab: React.FC<{ onOpenBilling?: () => void }> = ({ onOpenBilling }) => {
+  const me = useAppSelector((s) => s.user.user);
+  const canManage = me?.role === "owner" || me?.role === "administrator";
+  const isOwner = me?.role === "owner";
 
-export const TeamMembersTab: React.FC = () => {
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
-    {
-      id: "m-1",
-      name: "Ishtiaq Sohail",
-      email: "ishtiaq@prestigeestates.co.uk",
-      role: "Owner",
-      status: "Active",
-      initials: "IS",
-      avatarColor: "bg-[#092167]",
-      isOwner: true,
-    },
-    {
-      id: "m-2",
-      name: "Sarah Jenkins",
-      email: "sarah@prestigeestates.co.uk",
-      role: "Valuer",
-      status: "Active",
-      initials: "SJ",
-      avatarColor: "bg-pink-600",
-    },
-    {
-      id: "m-3",
-      name: "David Brooks",
-      email: "david@prestigeestates.co.uk",
-      role: "Negotiator",
-      status: "Active",
-      initials: "DB",
-      avatarColor: "bg-blue-600",
-    },
-    {
-      id: "m-4",
-      name: "Emily Carter",
-      email: "emily@prestigeestates.co.uk",
-      role: "Administrator",
-      status: "Active",
-      initials: "EC",
-      avatarColor: "bg-emerald-600",
-    },
-  ]);
+  const team = useGetTeamQuery(undefined, { skip: !canManage });
+  const [inviteMember, { isLoading: isInviting }] = useInviteMemberMutation();
+  const [resendInvitation] = useResendInvitationMutation();
+  const [cancelInvitation] = useCancelInvitationMutation();
+  const [updateMember, { isLoading: isUpdating }] = useUpdateMemberMutation();
+  const [removeMember, { isLoading: isRemoving }] = useRemoveMemberMutation();
 
-  const [pendingInvites, setPendingInvites] = useState<PendingInvite[]>([
-    {
-      id: "inv-1",
-      email: "james@prestigeestates.co.uk",
-      role: "Negotiator",
-      sentAt: "Sent 2 days ago",
-    },
-    {
-      id: "inv-2",
-      email: "claire@prestigeestates.co.uk",
-      role: "Valuer",
-      sentAt: "Sent 5 hours ago",
-    },
-  ]);
-
-  const [activeMenuMemberId, setActiveMenuMemberId] = useState<string | null>(
-    null,
-  );
+  const [activeMenuMemberId, setActiveMenuMemberId] = useState<string | null>(null);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteRole, setInviteRole] = useState<TeamRole>("Negotiator");
+  const [inviteRole, setInviteRole] = useState<Exclude<TeamRole, "owner">>("negotiator");
+  const [inviteFieldErrors, setInviteFieldErrors] = useState<Record<string, string>>({});
+  const [inviteError, setInviteError] = useState<string | null>(null);
 
   // DangerModal state
   const [dangerTarget, setDangerTarget] = useState<{
-    member: TeamMember;
+    member: Member;
     action: "remove" | "deactivate";
   } | null>(null);
 
   const roleHints: Record<TeamRole, string> = {
-    Owner:
+    owner:
       "Full administrative authority over workspace billing, subscriptions, API keys, compliance, and user deletion.",
-    Valuer:
+    valuer:
       "Can generate property packs, modify AI valuation comparables, adjust rental yields, and export valuation PDFs.",
-    Negotiator:
+    negotiator:
       "Can create and edit property brochures, generate marketing descriptions, and manage buyer inquiries and viewings.",
-    Administrator:
+    administrator:
       "Can invite colleagues, configure agency branding, manage regional compliance, and download VAT invoices.",
   };
 
-  const handleSendInvite = (e: React.FormEvent) => {
+  const handleSendInvite = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inviteEmail.trim()) {
-      toast.error("Please enter a valid email address");
-      return;
+    setInviteFieldErrors({});
+    setInviteError(null);
+    try {
+      await inviteMember({ email: inviteEmail.trim(), role: inviteRole }).unwrap();
+      toast.success(`Invitation email sent to ${inviteEmail.trim()}`);
+      setIsInviteModalOpen(false);
+      setInviteEmail("");
+    } catch (err) {
+      const info = apiErrorInfo(err);
+      if (info.status === 422) setInviteFieldErrors(info.fields);
+      else if (info.code === "seat_limit") {
+        setInviteError("You have used every seat on your plan. Upgrade your plan to invite more colleagues.");
+      } else setInviteError(errorText(err));
     }
-    const newInvite: PendingInvite = {
-      id: `inv-${Date.now()}`,
-      email: inviteEmail.trim(),
-      role: inviteRole,
-      sentAt: "Sent just now",
-    };
-    setPendingInvites((prev) => [newInvite, ...prev]);
-    setIsInviteModalOpen(false);
-    setInviteEmail("");
-    toast.success(`Invitation email sent to ${newInvite.email}`);
   };
 
-  const handleConfirmDangerAction = () => {
+  const handleConfirmDangerAction = async () => {
     if (!dangerTarget) return;
     const { member, action } = dangerTarget;
-
-    if (action === "remove") {
-      setTeamMembers((prev) => prev.filter((m) => m.id !== member.id));
-      toast.success(`Removed "${member.name}" from workspace`);
-    } else {
-      setTeamMembers((prev) =>
-        prev.map((m) =>
-          m.id === member.id
-            ? { ...m, status: m.status === "Active" ? "Inactive" : "Active" }
-            : m,
-        ),
-      );
-      toast.success(
-        `User "${member.name}" marked as ${
-          member.status === "Active" ? "Inactive" : "Active"
-        }`,
-      );
+    try {
+      if (action === "remove") {
+        await removeMember(member.id ?? "").unwrap();
+        toast.success(`Removed "${member.fullName}" from workspace`);
+      } else {
+        const next = member.status === "active" ? "deactivated" : "active";
+        await updateMember({ id: member.id ?? "", status: next }).unwrap();
+        toast.success(`User "${member.fullName}" ${next === "active" ? "reactivated" : "deactivated"}`);
+      }
+      setDangerTarget(null);
+    } catch (err) {
+      toast.error(errorText(err));
+      setDangerTarget(null);
     }
-    setDangerTarget(null);
   };
+
+  const handleChangeRole = async (member: Member, role: TeamRole) => {
+    setActiveMenuMemberId(null);
+    try {
+      await updateMember({ id: member.id ?? "", role }).unwrap();
+      toast.success(`${member.fullName} is now ${ROLE_LABEL[role]}`);
+    } catch (err) {
+      toast.error(errorText(err));
+    }
+  };
+
+  const handleResend = async (id: string, email?: string) => {
+    try {
+      await resendInvitation(id).unwrap();
+      toast.success(`Invitation re-sent to ${email}`);
+    } catch (err) {
+      toast.error(errorText(err));
+    }
+  };
+
+  const handleCancelInvite = async (id: string) => {
+    try {
+      await cancelInvitation(id).unwrap();
+      toast.success("Invitation cancelled");
+    } catch (err) {
+      toast.error(errorText(err));
+    }
+  };
+
+  if (!canManage) {
+    return (
+      <div className="bg-white rounded-2xl border border-slate-200/90 p-8 text-center shadow-2xs">
+        <p className="text-sm font-medium text-slate-800">Team management is for owners and administrators</p>
+        <p className="text-xs text-slate-500 mt-1">Ask your agency owner or an administrator to manage seats.</p>
+      </div>
+    );
+  }
+
+  if (team.isLoading) return <TableSkeleton rows={4} columns={3} />;
+  if (team.error) return <ErrorState error={team.error} onRetry={() => team.refetch()} />;
+
+  const members = team.data?.members ?? [];
+  const pendingInvites = (team.data?.invitations ?? []).filter((i) => !i.status || i.status === "pending");
+  const seatLimit = team.data?.seatLimit ?? 0;
+  const seatsUsed = team.data?.seatsUsed ?? 0;
+  const dangerName = dangerTarget?.member.fullName;
 
   return (
     <div className="space-y-6">
@@ -166,24 +172,25 @@ export const TeamMembersTab: React.FC = () => {
         title={
           dangerTarget?.action === "remove"
             ? "Remove Team Member"
-            : dangerTarget?.member.status === "Active"
+            : dangerTarget?.member.status === "active"
             ? "Deactivate Team Member"
             : "Reactivate Team Member"
         }
         description={
           dangerTarget?.action === "remove"
-            ? `Are you sure you want to revoke workspace access for ${dangerTarget?.member.name}? They will immediately lose access to all generated property brochures.`
-            : `Are you sure you want to change the active status for ${dangerTarget?.member.name}?`
+            ? `Are you sure you want to revoke workspace access for ${dangerName}? They will immediately lose access to all generated property brochures.`
+            : `Are you sure you want to change the active status for ${dangerName}?`
         }
-        itemName={dangerTarget?.member.name}
+        itemName={dangerName}
         confirmText={
           dangerTarget?.action === "remove"
             ? "Remove Member"
-            : dangerTarget?.member.status === "Active"
+            : dangerTarget?.member.status === "active"
             ? "Deactivate"
             : "Reactivate"
         }
         icon={dangerTarget?.action === "remove" ? "trash" : "warning"}
+        isLoading={isRemoving || isUpdating}
       />
 
       {/* Main Grid */}
@@ -204,7 +211,11 @@ export const TeamMembersTab: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => setIsInviteModalOpen(true)}
+                onClick={() => {
+                  setInviteError(null);
+                  setInviteFieldErrors({});
+                  setIsInviteModalOpen(true);
+                }}
                 className="h-10 px-5 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer shrink-0"
               >
                 <UserPlus className="w-3.5 h-3.5" />
@@ -224,7 +235,14 @@ export const TeamMembersTab: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {teamMembers.map((member) => (
+                  {members.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="py-8 text-center text-slate-500">
+                        No team members yet
+                      </td>
+                    </tr>
+                  )}
+                  {members.map((member, idx) => (
                     <tr
                       key={member.id}
                       className="hover:bg-slate-50/70 transition"
@@ -233,13 +251,14 @@ export const TeamMembersTab: React.FC = () => {
                       <td className="py-3.5 pl-1">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-9 h-9 rounded-full ${member.avatarColor} text-white flex items-center justify-center font-medium text-xs shrink-0 shadow-2xs`}
+                            className={`w-9 h-9 rounded-full ${AVATAR_COLORS[idx % AVATAR_COLORS.length]} text-white flex items-center justify-center font-medium text-xs shrink-0 shadow-2xs`}
                           >
-                            {member.initials}
+                            {initials(member.fullName)}
                           </div>
                           <div className="min-w-0">
                             <p className="font-medium text-slate-900 text-sm">
-                              {member.name}
+                              {member.fullName}
+                              {member.isYou && <span className="ml-1.5 text-[10px] text-slate-400 font-medium">(You)</span>}
                             </p>
                             <p className="text-slate-500 text-[11px] truncate">
                               {member.email}
@@ -252,11 +271,11 @@ export const TeamMembersTab: React.FC = () => {
                       <td className="py-3.5">
                         <div className="group relative inline-flex items-center gap-1.5">
                           <span className="font-semibold text-slate-800">
-                            {member.role}
+                            {ROLE_LABEL[(member.role ?? "valuer") as TeamRole]}
                           </span>
                           <Info className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 cursor-help" />
                           <div className="absolute left-0 bottom-full mb-1.5 hidden group-hover:block z-30 w-56 p-2 rounded-lg bg-slate-900 text-white text-[10px] leading-tight shadow-xl pointer-events-none">
-                            {roleHints[member.role]}
+                            {roleHints[(member.role ?? "valuer") as TeamRole]}
                           </div>
                         </div>
                       </td>
@@ -265,20 +284,20 @@ export const TeamMembersTab: React.FC = () => {
                       <td className="py-3.5">
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                            member.status === "Active"
+                            member.status === "active"
                               ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                               : "bg-slate-100 text-slate-600 border border-slate-200"
                           }`}
                         >
-                          {member.status}
+                          {member.status === "active" ? "Active" : "Inactive"}
                         </span>
                       </td>
 
                       {/* Action Menu */}
                       <td className="py-3.5 pr-2 text-right relative">
-                        {member.isOwner ? (
+                        {member.isYou || (member.role === "owner" && !isOwner) ? (
                           <span className="text-[11px] text-slate-400 font-medium">
-                            Protected
+                            {member.isYou ? "You" : "Protected"}
                           </span>
                         ) : (
                           <div className="relative inline-block text-left">
@@ -288,7 +307,7 @@ export const TeamMembersTab: React.FC = () => {
                                 setActiveMenuMemberId(
                                   activeMenuMemberId === member.id
                                     ? null
-                                    : member.id,
+                                    : (member.id ?? null),
                                 )
                               }
                               className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition cursor-pointer"
@@ -299,6 +318,19 @@ export const TeamMembersTab: React.FC = () => {
 
                             {activeMenuMemberId === member.id && (
                               <div className="absolute right-0 top-8 z-30 w-48 rounded-xl bg-white border border-slate-200 shadow-xl p-1.5 space-y-0.5 text-left animate-in fade-in zoom-in-95 duration-100">
+                                {(["administrator", "valuer", "negotiator", ...(isOwner ? ["owner"] : [])] as TeamRole[])
+                                  .filter((r) => r !== member.role)
+                                  .map((r) => (
+                                    <button
+                                      key={r}
+                                      type="button"
+                                      onClick={() => handleChangeRole(member, r)}
+                                      className="w-full px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2 cursor-pointer transition font-medium"
+                                    >
+                                      <ShieldCheck className="w-3.5 h-3.5 text-slate-500" />
+                                      <span>Make {ROLE_LABEL[r]}</span>
+                                    </button>
+                                  ))}
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -312,7 +344,7 @@ export const TeamMembersTab: React.FC = () => {
                                 >
                                   <UserCheck className="w-3.5 h-3.5 text-amber-600" />
                                   <span>
-                                    {member.status === "Active"
+                                    {member.status === "active"
                                       ? "Deactivate Member"
                                       : "Activate Member"}
                                   </span>
@@ -356,7 +388,7 @@ export const TeamMembersTab: React.FC = () => {
                 >
                   <span className="font-semibold text-slate-900 flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-[#E8A808]" />
-                    {role}
+                    {ROLE_LABEL[role]}
                   </span>
                   <p className="text-[11px] text-slate-500 leading-relaxed">
                     {roleHints[role]}
@@ -381,29 +413,38 @@ export const TeamMembersTab: React.FC = () => {
             </div>
 
             <div className="space-y-3 pt-1">
+              {pendingInvites.length === 0 && (
+                <p className="text-xs text-slate-500 text-center py-3">No pending invitations</p>
+              )}
               {pendingInvites.map((inv) => (
                 <div
                   key={inv.id}
                   className="p-3.5 rounded-xl border border-slate-200 bg-slate-50/60 flex items-center justify-between gap-3 text-xs"
                 >
                   <div className="min-w-0">
-                    <p className="font-medium text-slate-900 truncate">
-                      {inv.email}
-                    </p>
+                    <p className="font-medium text-slate-900 truncate">{inv.email}</p>
                     <p className="text-[11px] text-slate-500">
-                      {inv.role} · {inv.sentAt}
+                      {ROLE_LABEL[(inv.role ?? "valuer") as TeamRole]} · {sentLabel(inv.resentAt ?? inv.createdAt)}
                     </p>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      toast.success(`Invitation re-sent to ${inv.email}`)
-                    }
-                    className="h-7 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-[11px] transition cursor-pointer shadow-2xs shrink-0"
-                  >
-                    Resend
-                  </button>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleResend(inv.id ?? "", inv.email)}
+                      className="h-7 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium text-[11px] transition cursor-pointer shadow-2xs"
+                    >
+                      Resend
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleCancelInvite(inv.id ?? "")}
+                      aria-label="Cancel invitation"
+                      className="h-7 w-7 rounded-lg border border-slate-200 bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 flex items-center justify-center cursor-pointer shadow-2xs"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -416,19 +457,22 @@ export const TeamMembersTab: React.FC = () => {
               <span>Team Seat Allowance</span>
             </div>
             <p className="text-xs text-slate-500 leading-relaxed">
-              Your Professional Tier includes up to <strong>5 seats</strong> (4
-              of 5 currently assigned). To invite additional valuers and
-              negotiators, upgrade to the Team Plan (15 seats).
+              {team.data?.planName ? `Your ${team.data.planName} plan` : "Your plan"} includes up to{" "}
+              <strong>{seatLimit} seats</strong>. Seats: {seatsUsed} / {seatLimit} (active members plus open
+              invitations).
             </p>
-            <div className="pt-1">
-              <a
-                href="/agent-dashboard/settings"
-                className="text-xs font-semibold text-[#092167] hover:text-[#E8A808] transition inline-flex items-center gap-1 cursor-pointer"
-              >
-                <span>Upgrade to Team Tier (£199/mo)</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </a>
-            </div>
+            {isOwner && onOpenBilling && (
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={onOpenBilling}
+                  className="text-xs font-semibold text-[#092167] hover:text-[#E8A808] transition inline-flex items-center gap-1 cursor-pointer"
+                >
+                  <span>Upgrade your plan</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -463,11 +507,12 @@ export const TeamMembersTab: React.FC = () => {
                 <input
                   type="email"
                   required
-                  placeholder="james@prestigeestates.co.uk"
+                  placeholder="colleague@youragency.co.uk"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
                 />
+                {inviteFieldErrors.email && <p className="text-[11px] text-rose-600">{inviteFieldErrors.email}</p>}
               </div>
 
               <div className="space-y-1.5">
@@ -476,17 +521,24 @@ export const TeamMembersTab: React.FC = () => {
                 </label>
                 <select
                   value={inviteRole}
-                  onChange={(e) => setInviteRole(e.target.value as TeamRole)}
+                  onChange={(e) => setInviteRole(e.target.value as Exclude<TeamRole, "owner">)}
                   className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
                 >
-                  <option value="Negotiator">Negotiator</option>
-                  <option value="Valuer">Valuer</option>
-                  <option value="Administrator">Administrator</option>
+                  <option value="negotiator">Negotiator</option>
+                  <option value="valuer">Valuer</option>
+                  <option value="administrator">Administrator</option>
                 </select>
                 <p className="text-[11px] text-slate-500 leading-relaxed pt-1">
                   {roleHints[inviteRole]}
                 </p>
+                {inviteFieldErrors.role && <p className="text-[11px] text-rose-600">{inviteFieldErrors.role}</p>}
               </div>
+
+              {inviteError && (
+                <p role="alert" className="text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2">
+                  {inviteError}
+                </p>
+              )}
 
               <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
                 <button
@@ -498,9 +550,10 @@ export const TeamMembersTab: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition cursor-pointer"
+                  disabled={isInviting}
+                  className="h-10 px-6 disabled:opacity-60 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition cursor-pointer"
                 >
-                  Send Invite
+                  {isInviting ? "Sending..." : "Send Invite"}
                 </button>
               </div>
             </form>

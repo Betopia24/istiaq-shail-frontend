@@ -8,6 +8,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { useLogout } from "@/components/auth/SessionBootstrap";
 import { isSuperAdmin } from "@/types/auth";
+import { initials as initialsOf } from "@/lib/format";
+import { useChromeData } from "./useChromeData";
 import {
   LayoutGrid,
   Sparkles,
@@ -20,7 +22,6 @@ import {
   ChevronRight,
   LogOut,
   X,
-  ShieldAlert,
   LifeBuoy,
 } from "lucide-react";
 
@@ -48,13 +49,11 @@ export const agentNavItems: NavItemConfig[] = [
     title: "Saved Packs",
     href: "/agent-dashboard/saved-packs",
     icon: FolderOpen,
-    badge: 18,
   },
   {
     title: "Leads & Inquiries",
     href: "/agent-dashboard/leads",
     icon: Users,
-    badge: 4,
   },
   {
     title: "Agency Branding",
@@ -130,22 +129,18 @@ export function UnifiedSidebar({
     void signOut();
   };
 
-  const displayName =
-    user?.name || (isAdmin ? "Super Admin" : "Ishtiaq Sohail");
+  const chrome = useChromeData(!isAdmin);
+  const displayName = user?.name || (isAdmin ? "Super Admin" : "Account");
   const displayAgency = isAdmin
     ? "Master Platform Access"
-    : "Prestige Estates UK";
-  const initials =
-    displayName && displayName.trim().length > 0
-      ? displayName
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .slice(0, 2)
-          .toUpperCase()
-      : isAdmin
-        ? "SA"
-        : "IS";
+    : chrome.agencyName || user?.email || "";
+  const initials = initialsOf(displayName);
+
+  // Live counts: saved packs total and leads waiting for a response. Hidden until the API answers.
+  const liveBadges: Record<string, number | null> = {
+    "/agent-dashboard/saved-packs": chrome.packsTotal,
+    "/agent-dashboard/leads": chrome.pendingLeads,
+  };
 
   const rootHref = isAdmin ? "/admin-dashboard" : "/agent-dashboard";
 
@@ -275,7 +270,7 @@ export function UnifiedSidebar({
                 {!isCollapsed && (
                   <div className="flex items-center justify-between flex-1 min-w-0">
                     <span className="truncate">{item.title}</span>
-                    {typeof item.badge === "number" && (
+                    {typeof (liveBadges[item.href] ?? item.badge) === "number" && (liveBadges[item.href] ?? item.badge) !== 0 && (
                       <span
                         className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
                           isActive
@@ -283,7 +278,7 @@ export function UnifiedSidebar({
                             : "bg-[#162758] text-slate-300"
                         }`}
                       >
-                        {item.badge}
+                        {liveBadges[item.href] ?? item.badge}
                       </span>
                     )}
                   </div>

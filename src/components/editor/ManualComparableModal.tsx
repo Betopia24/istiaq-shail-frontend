@@ -4,34 +4,32 @@ import React, { useState, useEffect, useRef } from "react";
 import { X, Plus } from "lucide-react";
 import toast from "react-hot-toast";
 
-export interface ManualComparable {
-  id: string;
-  address: string;
-  saleDate: string;
-  price: string;
-  pricePerSqFt: string;
-  distance: string;
-  type: string;
-}
+import { useAddComparableMutation } from "@/redux/api/packs/valuationApi";
+import { apiErrorInfo } from "@/components/ui/ErrorState";
+import { errorText } from "@/lib/auth/client";
+import { parseMoneyToPence } from "@/lib/format";
 
 interface ManualComparableModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (comp: ManualComparable) => void;
+  packId: string;
 }
 
 export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
   isOpen,
   onClose,
-  onAdd,
+  packId,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const [addComparable, { isLoading }] = useAddComparableMutation();
   const [address, setAddress] = useState("");
-  const [saleDate, setSaleDate] = useState("Oct 2026");
-  const [price, setPrice] = useState("£735,000");
-  const [sizeSqFt, setSizeSqFt] = useState("2,200");
-  const [distance, setDistance] = useState("0.2 miles");
-  const [propertyType, setPropertyType] = useState("Detached 4-Bed");
+  const [saleDate, setSaleDate] = useState("");
+  const [price, setPrice] = useState("");
+  const [sizeSqFt, setSizeSqFt] = useState("");
+  const [distance, setDistance] = useState("");
+  const [propertyType, setPropertyType] = useState("");
+  const [bedrooms, setBedrooms] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -49,31 +47,52 @@ export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!address.trim()) {
-      toast.error("Please enter a property address");
+    const pricePence = parseMoneyToPence(price);
+    if (!address.trim() || pricePence === undefined) {
+      setFieldErrors({
+        ...(address.trim() ? {} : { address: "Enter the property address" }),
+        ...(pricePence === undefined ? { pricePence: "Enter the sale price" } : {}),
+      });
       return;
     }
-
-    const cleanPrice = parseInt(price.replace(/[^0-9]/g, ""), 10) || 735000;
-    const cleanSize = parseInt(sizeSqFt.replace(/[^0-9]/g, ""), 10) || 2200;
-    const pricePerSqFt = "£" + Math.round(cleanPrice / cleanSize);
-
-    const newComp: ManualComparable = {
-      id: "comp-" + Date.now(),
-      address: address.trim(),
-      saleDate,
-      price: "£" + cleanPrice.toLocaleString(),
-      pricePerSqFt,
-      distance,
-      type: propertyType,
+    const num = (v: string) => {
+      const n = Number(v.replace(/[^0-9.]/g, ""));
+      return v.trim() && Number.isFinite(n) ? n : undefined;
     };
-
-    onAdd(newComp);
-    toast.success("Custom comparable added to valuation model!");
-    onClose();
+    try {
+      await addComparable({
+        packId,
+        body: {
+          address: address.trim(),
+          pricePence,
+          soldOn: saleDate.trim() || undefined,
+          sizeSqFt: num(sizeSqFt),
+          distanceMiles: num(distance),
+          propertyType: propertyType.trim() || undefined,
+          bedrooms: num(bedrooms),
+        },
+      }).unwrap();
+      toast.success("Custom comparable added to valuation model");
+      setAddress("");
+      setSaleDate("");
+      setPrice("");
+      setSizeSqFt("");
+      setDistance("");
+      setPropertyType("");
+      setBedrooms("");
+      setFieldErrors({});
+      onClose();
+    } catch (err) {
+      const { fields } = apiErrorInfo(err);
+      setFieldErrors(fields);
+      if (Object.keys(fields).length === 0) toast.error(errorText(err));
+    }
   };
+
+  const fieldError = (name: string) =>
+    fieldErrors[name] ? <p className="text-[11px] text-rose-600">{fieldErrors[name]}</p> : null;
 
   return (
     <div
@@ -120,6 +139,7 @@ export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
               onChange={(e) => setAddress(e.target.value)}
               className="w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#092167]"
             />
+            {fieldError("address")}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -135,6 +155,7 @@ export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
                 onChange={(e) => setPrice(e.target.value)}
                 className="w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#092167]"
               />
+              {fieldError("pricePence")}
             </div>
 
             <div className="space-y-1.5">
@@ -143,11 +164,12 @@ export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
               </label>
               <input
                 type="text"
-                placeholder="Oct 2026"
+                placeholder="2026-10 (YYYY-MM)"
                 value={saleDate}
                 onChange={(e) => setSaleDate(e.target.value)}
                 className="w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#092167]"
               />
+              {fieldError("soldOn")}
             </div>
           </div>
 
@@ -163,6 +185,7 @@ export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
                 onChange={(e) => setSizeSqFt(e.target.value)}
                 className="w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#092167]"
               />
+              {fieldError("sizeSqFt")}
             </div>
 
             <div className="space-y-1.5">
@@ -171,25 +194,42 @@ export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
               </label>
               <input
                 type="text"
-                placeholder="0.2 miles"
+                placeholder="0.2 (miles)"
                 value={distance}
                 onChange={(e) => setDistance(e.target.value)}
                 className="w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#092167]"
               />
+              {fieldError("distanceMiles")}
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider">
-              Property Style / Spec
-            </label>
-            <input
-              type="text"
-              placeholder="e.g. Detached 4-Bed, Contemporary Kitchen"
-              value={propertyType}
-              onChange={(e) => setPropertyType(e.target.value)}
-              className="w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#092167]"
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider">
+                Property Style / Spec
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Detached"
+                value={propertyType}
+                onChange={(e) => setPropertyType(e.target.value)}
+                className="w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#092167]"
+              />
+              {fieldError("propertyType")}
+            </div>
+            <div className="space-y-1.5">
+              <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider">
+                Bedrooms
+              </label>
+              <input
+                type="text"
+                placeholder="4"
+                value={bedrooms}
+                onChange={(e) => setBedrooms(e.target.value)}
+                className="w-full h-10 px-3.5 rounded-xl border border-slate-200 text-xs text-slate-900 focus:outline-none focus:border-[#092167]"
+              />
+              {fieldError("bedrooms")}
+            </div>
           </div>
 
           <div className="pt-2 flex items-center justify-end gap-3">
@@ -202,10 +242,11 @@ export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
             </button>
             <button
               type="submit"
-              className="h-10 px-5 rounded-xl bg-[#092167] hover:bg-[#06143E] text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm transition"
+              disabled={isLoading}
+              className="disabled:opacity-60 h-10 px-5 rounded-xl bg-[#092167] hover:bg-[#06143E] text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm transition"
             >
               <Plus className="w-3.5 h-3.5 text-[#E8A808]" />
-              <span>Add to Comparables</span>
+              <span>{isLoading ? "Adding..." : "Add to Comparables"}</span>
             </button>
           </div>
         </form>

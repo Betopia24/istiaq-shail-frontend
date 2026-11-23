@@ -1,175 +1,86 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { DangerModal } from "@/components/ui/DangerModal";
-import {
-  Search,
-  ChevronDown,
-  UserCheck,
-  UserX,
-  Shield,
-  Filter,
-  CheckCircle,
-  AlertCircle,
-} from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Search, ChevronDown, Users } from "lucide-react";
+import toast from "react-hot-toast";
+import { useGetAdminUsersQuery, useSetUserStatusMutation } from "@/redux/api/admin/adminApi";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { TableSkeleton } from "@/components/ui/skeletons/TableSkeleton";
+import { errorText } from "@/lib/auth/client";
+import { formatDateTime, initials } from "@/lib/format";
+import type { AdminUser } from "@/types/models";
 
-interface AgentRecord {
-  id: string;
-  name: string;
-  email: string;
-  initials: string;
-  agency: string;
-  role: "Senior Agent" | "Agency Owner" | "Junior Agent";
-  packsCount: number;
-  status: "ACTIVE" | "SUSPENDED";
-}
+const PAGE_SIZE = 20;
 
-const initialAgents: AgentRecord[] = [
-  {
-    id: "ag-1",
-    name: "Sarah Jenkins",
-    email: "sarah@prestigeestates.co.uk",
-    initials: "SJ",
-    agency: "Prestige Estates UK",
-    role: "Senior Agent",
-    packsCount: 48,
-    status: "ACTIVE",
-  },
-  {
-    id: "ag-2",
-    name: "David Harrison",
-    email: "david@harrison.co.uk",
-    initials: "DH",
-    agency: "Harrison Residential",
-    role: "Agency Owner",
-    packsCount: 12,
-    status: "ACTIVE",
-  },
-  {
-    id: "ag-3",
-    name: "Eleanor Vance",
-    email: "eleanor@vanceprestige.com",
-    initials: "EV",
-    agency: "Vance Prestige Group",
-    role: "Senior Agent",
-    packsCount: 64,
-    status: "ACTIVE",
-  },
-  {
-    id: "ag-4",
-    name: "Charles Pemberton",
-    email: "c.pemberton@cheshireelite.co.uk",
-    initials: "CP",
-    agency: "Cheshire Elite Properties",
-    role: "Agency Owner",
-    packsCount: 19,
-    status: "SUSPENDED",
-  },
-  {
-    id: "ag-5",
-    name: "Amanda Lewis",
-    email: "amanda@didsburyprime.com",
-    initials: "AL",
-    agency: "Didsbury Prime Group",
-    role: "Junior Agent",
-    packsCount: 8,
-    status: "ACTIVE",
-  },
-  {
-    id: "ag-6",
-    name: "Robert Sterling",
-    email: "robert@sterlingprime.co.uk",
-    initials: "RS",
-    agency: "Sterling Prime Estates",
-    role: "Senior Agent",
-    packsCount: 34,
-    status: "ACTIVE",
-  },
-];
+const ROLE_LABEL: Record<string, string> = {
+  owner: "Agency Owner",
+  administrator: "Administrator",
+  valuer: "Valuer",
+  negotiator: "Negotiator",
+  super_admin: "Super Admin",
+};
 
 export default function AgenciesAndUsersPage() {
-  const [agents, setAgents] = useState<AgentRecord[]>(initialAgents);
+  const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [agentToSuspend, setAgentToSuspend] = useState<AgentRecord | null>(
-    null,
-  );
+  const [page, setPage] = useState(1);
+  const [agentToSuspend, setAgentToSuspend] = useState<AdminUser | null>(null);
+  const [reason, setReason] = useState("");
+  const [busyId, setBusyId] = useState<string | null>(null);
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSearchQuery(searchInput.trim());
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
+  const { data, isLoading, isError, error, refetch, isFetching } = useGetAdminUsersQuery({
+    q: searchQuery || undefined,
+    role: roleFilter !== "All" && roleFilter !== "Suspended" ? roleFilter : undefined,
+    status: roleFilter === "Suspended" ? "suspended" : undefined,
+    page,
+    limit: PAGE_SIZE,
+  });
+  const [setUserStatus] = useSetUserStatusMutation();
+
+  const agents = data?.items ?? [];
+  const total = data?.total ?? 0;
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const filtered = !!searchQuery || roleFilter !== "All";
+
+  const changeStatus = async (user: AdminUser, status: "active" | "suspended", why?: string) => {
+    if (!user.id) return;
+    setBusyId(user.id);
+    try {
+      await setUserStatus({ id: user.id, status, reason: why || undefined }).unwrap();
+      toast.success(status === "suspended" ? `Access suspended for ${user.fullName}` : `Access restored for ${user.fullName}`);
+      return true;
+    } catch (err) {
+      toast.error(errorText(err));
+      return false;
+    } finally {
+      setBusyId(null);
+    }
   };
 
-  const confirmSuspendAgent = () => {
+  const confirmSuspendAgent = async () => {
     if (!agentToSuspend) return;
-    setAgents((prev) =>
-      prev.map((a) =>
-        a.id === agentToSuspend.id ? { ...a, status: "SUSPENDED" } : a,
-      ),
-    );
-    showToast(
-      `Access suspended for ${agentToSuspend.name} (${agentToSuspend.agency})`,
-    );
-    setAgentToSuspend(null);
+    const ok = await changeStatus(agentToSuspend, "suspended", reason.trim());
+    if (ok) {
+      setAgentToSuspend(null);
+      setReason("");
+    }
   };
-
-  const handleToggleStatus = (id: string, name: string) => {
-    setAgents((prev) =>
-      prev.map((a) => {
-        if (a.id === id) {
-          const newStatus = a.status === "ACTIVE" ? "SUSPENDED" : "ACTIVE";
-          showToast(
-            newStatus === "SUSPENDED"
-              ? `Access suspended for ${name}`
-              : `Access restored for ${name}`,
-          );
-          return { ...a, status: newStatus };
-        }
-        return a;
-      }),
-    );
-  };
-
-  const filteredAgents = useMemo(() => {
-    return agents.filter((agent) => {
-      const matchSearch =
-        agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        agent.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        agent.agency.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchRole =
-        roleFilter === "All"
-          ? true
-          : roleFilter === "Suspended"
-            ? agent.status === "SUSPENDED"
-            : agent.role === roleFilter;
-
-      return matchSearch && matchRole;
-    });
-  }, [agents, searchQuery, roleFilter]);
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-[#E8A808]/40 animate-fade-in">
-          <CheckCircle className="w-5 h-5 text-[#E8A808]" />
-          <span className="text-sm font-medium">{toastMessage}</span>
-        </div>
-      )}
-
       {/* Title */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-[10px] font-medium text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded">
-              Demo data
-            </span>
-            <span className="text-xs text-slate-400">
-              · 6 Sample Institutional Agent Accounts
-            </span>
-          </div>
           <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
             Agency Teams &amp; User Access Control
           </h1>
@@ -177,20 +88,44 @@ export default function AgenciesAndUsersPage() {
       </div>
 
       {/* Destructive Action Modal */}
-      <DangerModal
-        isOpen={!!agentToSuspend}
-        onClose={() => setAgentToSuspend(null)}
-        onConfirm={confirmSuspendAgent}
-        title="Suspend Agency Account"
-        description="Are you sure you want to suspend this agency user account? Their valuers and active API keys will be immediately revoked."
-        itemName={
-          agentToSuspend
-            ? `${agentToSuspend.name} - ${agentToSuspend.agency} (${agentToSuspend.email})`
-            : undefined
-        }
-        confirmText="Suspend Account"
-        icon="warning"
-      />
+      {agentToSuspend && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs" onClick={() => setAgentToSuspend(null)} aria-hidden="true" />
+          <div role="dialog" aria-modal="true" aria-labelledby="suspend-title" className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl border border-slate-200 p-6 space-y-4">
+            <h2 id="suspend-title" className="font-heading font-semibold text-lg text-slate-900">Suspend Agency Account</h2>
+            <p className="text-sm text-slate-600">
+              Are you sure you want to suspend this user account? They will be signed out and unable to sign in until reactivated.
+            </p>
+            <p className="text-sm font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
+              {agentToSuspend.fullName} - {agentToSuspend.agency?.name ?? "No agency"} ({agentToSuspend.email})
+            </p>
+            <div>
+              <label htmlFor="suspend-reason" className="block text-xs font-semibold text-slate-600 mb-1.5">Reason (optional)</label>
+              <textarea
+                id="suspend-reason"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                rows={3}
+                maxLength={500}
+                className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167]"
+              />
+            </div>
+            <div className="flex justify-end gap-2 pt-1">
+              <button type="button" onClick={() => setAgentToSuspend(null)} className="h-10 px-4 rounded-lg border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 cursor-pointer">
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={confirmSuspendAgent}
+                disabled={busyId === agentToSuspend.id}
+                className="h-10 px-4 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold disabled:opacity-60 cursor-pointer"
+              >
+                {busyId === agentToSuspend.id ? "Suspending..." : "Suspend Account"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Table Card */}
       <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
@@ -201,9 +136,9 @@ export default function AgenciesAndUsersPage() {
             <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search Property Pack AI, email, or agency..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search name, email, or agency..."
               className="w-full h-10 pl-10 pr-4 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-[#092167] focus:bg-white transition"
             />
           </div>
@@ -212,13 +147,17 @@ export default function AgenciesAndUsersPage() {
           <div className="relative">
             <select
               value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
+              onChange={(e) => {
+                setRoleFilter(e.target.value);
+                setPage(1);
+              }}
               className="appearance-none h-10 pl-4 pr-10 text-xs sm:text-sm font-medium bg-white border border-slate-200 rounded-lg text-slate-700 hover:border-slate-300 focus:outline-none focus:border-[#092167] transition cursor-pointer"
             >
               <option value="All">Filter Role: All Agents</option>
-              <option value="Agency Owner">Agency Owner</option>
-              <option value="Senior Agent">Senior Agent</option>
-              <option value="Junior Agent">Junior Agent</option>
+              <option value="owner">Agency Owner</option>
+              <option value="administrator">Administrator</option>
+              <option value="valuer">Valuer</option>
+              <option value="negotiator">Negotiator</option>
               <option value="Suspended">Suspended</option>
             </select>
             <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -226,124 +165,143 @@ export default function AgenciesAndUsersPage() {
         </div>
 
         {/* Agents Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-600">
-                <th className="px-6 py-4">User / Property Pack AI</th>
-                <th className="px-6 py-4">Agency Affiliation</th>
-                <th className="px-6 py-4">Role</th>
-                <th className="px-6 py-4">Packs Created</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-sm">
-              {filteredAgents.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="px-6 py-12 text-center text-slate-500"
-                  >
-                    No agents found matching your query.
-                  </td>
+        {isLoading ? (
+          <TableSkeleton rows={6} columns={6} className="border-0 rounded-none" />
+        ) : isError ? (
+          <div className="p-6">
+            <ErrorState error={error} onRetry={refetch} />
+          </div>
+        ) : agents.length === 0 ? (
+          <div className="p-6">
+            <EmptyState
+              icon={Users}
+              title={filtered ? "No users match your filters" : "No users yet"}
+              description={filtered ? "Try a different search term or role filter." : "Users appear here as agencies sign up."}
+            />
+          </div>
+        ) : (
+          <div className={`overflow-x-auto ${isFetching ? "opacity-70" : ""}`}>
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-xs font-semibold uppercase tracking-wider text-slate-600">
+                  <th className="px-6 py-4">User</th>
+                  <th className="px-6 py-4">Agency Affiliation</th>
+                  <th className="px-6 py-4">Role</th>
+                  <th className="px-6 py-4">Packs Created</th>
+                  <th className="px-6 py-4">Last Login</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
-              ) : (
-                filteredAgents.map((agent) => (
-                  <tr
-                    key={agent.id}
-                    className="hover:bg-slate-50/60 transition-colors"
-                  >
-                    {/* User / Agent */}
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-sm">
+                {agents.map((agent) => (
+                  <tr key={agent.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-slate-100 text-slate-700 font-medium text-xs flex items-center justify-center shrink-0 border border-slate-200">
-                          {agent.initials}
+                          {initials(agent.fullName)}
                         </div>
                         <div>
-                          <div className="font-medium text-slate-900 leading-tight">
-                            {agent.name}
-                          </div>
-                          <div className="text-xs text-slate-400 mt-0.5">
-                            {agent.email}
-                          </div>
+                          <div className="font-medium text-slate-900 leading-tight">{agent.fullName}</div>
+                          <div className="text-xs text-slate-400 mt-0.5">{agent.email}</div>
                         </div>
                       </div>
                     </td>
 
-                    {/* Agency */}
-                    <td className="px-6 py-4 font-medium text-slate-800">
-                      {agent.agency}
-                    </td>
+                    <td className="px-6 py-4 font-medium text-slate-800">{agent.agency?.name ?? "–"}</td>
 
-                    {/* Role */}
                     <td className="px-6 py-4">
-                      {agent.role === "Agency Owner" ? (
+                      {agent.role === "owner" ? (
                         <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200/60">
                           Agency Owner
                         </span>
                       ) : (
                         <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">
-                          {agent.role}
+                          {agent.role ? ROLE_LABEL[agent.role] ?? agent.role : "–"}
                         </span>
                       )}
                     </td>
 
-                    {/* Packs Created */}
-                    <td className="px-6 py-4 font-medium text-slate-800">
-                      {agent.packsCount} Packs
-                    </td>
+                    <td className="px-6 py-4 font-medium text-slate-800">{agent.packsCount ?? 0} Packs</td>
 
-                    {/* Status */}
+                    <td className="px-6 py-4 text-slate-600 text-xs">{agent.lastLoginAt ? formatDateTime(agent.lastLoginAt) : "Never"}</td>
+
                     <td className="px-6 py-4">
-                      {agent.status === "ACTIVE" ? (
+                      {agent.status === "active" ? (
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/50">
                           ACTIVE
                         </span>
-                      ) : (
+                      ) : agent.status === "suspended" ? (
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200/50">
                           SUSPENDED
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                          UNVERIFIED
                         </span>
                       )}
                     </td>
 
-                    {/* Actions */}
                     <td className="px-6 py-4 text-right">
-                      {agent.status === "ACTIVE" ? (
+                      {agent.platformRole === "super_admin" ? (
+                        <span className="text-xs text-slate-400">–</span>
+                      ) : agent.status === "suspended" ? (
                         <button
-                          onClick={() =>
-                            handleToggleStatus(agent.id, agent.name)
-                          }
-                          className="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline transition"
+                          disabled={busyId === agent.id}
+                          onClick={() => changeStatus(agent, "active")}
+                          className="text-xs font-medium text-amber-600 hover:text-amber-800 hover:underline transition disabled:opacity-50 cursor-pointer"
                         >
-                          Suspend
+                          Reactivate
                         </button>
                       ) : (
                         <button
-                          onClick={() =>
-                            handleToggleStatus(agent.id, agent.name)
-                          }
-                          className="text-xs font-medium text-amber-600 hover:text-amber-800 hover:underline transition"
+                          disabled={busyId === agent.id}
+                          onClick={() => {
+                            setReason("");
+                            setAgentToSuspend(agent);
+                          }}
+                          className="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline transition disabled:opacity-50 cursor-pointer"
                         >
-                          Reactivate
+                          Suspend
                         </button>
                       )}
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         {/* Footer pagination info */}
-        <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-          <span>
-            Showing <strong>{filteredAgents.length}</strong> of{" "}
-            <strong>{agents.length}</strong> agents
-          </span>
-          <span className="text-slate-400">Database live sync active</span>
-        </div>
+        {data && agents.length > 0 && (
+          <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <span>
+              Showing <strong>{agents.length}</strong> of <strong>{total}</strong> users
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+                className="h-8 px-3 rounded-lg border border-slate-200 text-slate-700 disabled:opacity-40 hover:bg-slate-50 cursor-pointer"
+              >
+                Previous
+              </button>
+              <span>
+                Page {page} of {pageCount}
+              </span>
+              <button
+                type="button"
+                disabled={page >= pageCount}
+                onClick={() => setPage((p) => p + 1)}
+                className="h-8 px-3 rounded-lg border border-slate-200 text-slate-700 disabled:opacity-40 hover:bg-slate-50 cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

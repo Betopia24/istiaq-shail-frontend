@@ -1,6 +1,6 @@
 import React from "react";
 import { Loader2, CheckCircle2, Clock, AlertTriangle, Globe, Archive } from "lucide-react";
-import { PackStatus } from "@/types/packs";
+import type { PackStatus } from "@/types/models";
 
 interface PackStatusBadgeProps {
   status: PackStatus | string;

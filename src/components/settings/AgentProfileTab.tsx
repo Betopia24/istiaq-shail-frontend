@@ -1,51 +1,110 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import Image from "next/image";
-import {
-  Upload,
-  Check,
-  Phone,
-  Mail,
-  X,
-} from "lucide-react";
+import React, { useState } from "react";
+import { Check, Phone, Mail, X, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { ErrorState, apiErrorInfo } from "@/components/ui/ErrorState";
+import { CardGridSkeleton } from "@/components/ui/skeletons/CardGridSkeleton";
+import { errorText } from "@/lib/auth/client";
+import { initials } from "@/lib/format";
+import { ROLE_LABEL } from "@/types/auth";
+import { useAppSelector } from "@/redux/hook";
+import {
+  useChangePasswordMutation,
+  useGetBrandingQuery,
+  useGetProfileQuery,
+  useUpdateNotificationsMutation,
+  useUpdateProfileMutation,
+} from "@/redux/api/agency/agencyApi";
+
+type NotificationKey = "packComplete" | "lowCredits" | "billingStatements" | "newLead";
+
+interface ProfileForm {
+  fullName: string;
+  phone: string;
+  licenceId: string;
+  bio: string;
+}
 
 export const AgentProfileTab: React.FC = () => {
-  const [profileForm, setProfileForm] = useState({
-    firstName: "Ishtiaq",
-    lastName: "Sohail",
-    email: "ishtiaq@prestigeestates.co.uk",
-    phone: "+44 7911 123456",
-    roleTitle: "Senior Managing Director",
-    licenceId: "NAEA-MEMBER-49201",
-    bio: "Specialising in prime residential properties across Greater Manchester for over 12 years with proven expertise in luxury market valuations.",
-  });
+  const sessionUser = useAppSelector((st) => st.user.user);
+  const profile = useGetProfileQuery();
+  const branding = useGetBrandingQuery();
+  const [updateProfile, { isLoading: isSaving }] = useUpdateProfileMutation();
+  const [updateNotifications, { isLoading: isTogglingNotification }] = useUpdateNotificationsMutation();
+  const [changePassword, { isLoading: isChangingPassword }] = useChangePasswordMutation();
 
-  const [headshotPreview, setHeadshotPreview] = useState<string | null>(null);
-  const headshotInputRef = useRef<HTMLInputElement>(null);
+  const [profileForm, setProfileForm] = useState<ProfileForm | null>(null);
+  const [seededFrom, setSeededFrom] = useState<unknown>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  const [notifications, setNotifications] = useState({
-    packComplete: true,
-    lowCredits: true,
-    monthlyBilling: true,
-  });
+  if (profile.data && seededFrom !== profile.data) {
+    setSeededFrom(profile.data);
+    setProfileForm({
+      fullName: profile.data.fullName ?? "",
+      phone: profile.data.phone ?? "",
+      licenceId: profile.data.licenceId ?? "",
+      bio: profile.data.bio ?? "",
+    });
+  }
 
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "" });
+  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({});
 
-  const handleHeadshotUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setHeadshotPreview(url);
-      toast.success("Headshot photo uploaded!");
+  const handleProfileSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!profileForm) return;
+    setFieldErrors({});
+    try {
+      await updateProfile(profileForm).unwrap();
+      toast.success("Profile information updated successfully!");
+    } catch (err) {
+      const info = apiErrorInfo(err);
+      if (info.status === 422) setFieldErrors(info.fields);
+      toast.error(errorText(err));
     }
   };
 
-  const handleProfileSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    toast.success("Profile information updated successfully!");
+  const toggleNotification = async (key: NotificationKey) => {
+    const current = profile.data?.notifications?.[key] ?? false;
+    try {
+      await updateNotifications({ [key]: !current }).unwrap();
+    } catch (err) {
+      toast.error(errorText(err));
+    }
   };
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordErrors({});
+    try {
+      await changePassword(passwordForm).unwrap();
+      setIsPasswordModalOpen(false);
+      setPasswordForm({ currentPassword: "", newPassword: "" });
+      toast.success("Password updated. Other devices have been signed out.");
+    } catch (err) {
+      const info = apiErrorInfo(err);
+      if (info.status === 400) setPasswordErrors({ currentPassword: "Your current password is incorrect." });
+      else if (info.status === 422) setPasswordErrors(info.fields);
+      else toast.error(errorText(err));
+    }
+  };
+
+  if (profile.isLoading) return <CardGridSkeleton count={2} />;
+  if (profile.error) return <ErrorState error={profile.error} onRetry={() => profile.refetch()} />;
+  if (!profileForm || !profile.data) return null;
+
+  const notifications = profile.data.notifications ?? {};
+  const displayName = profileForm.fullName || profile.data.fullName || "";
+  const roleLabel = sessionUser?.role ? ROLE_LABEL[sessionUser.role] : "";
+  const isDirty =
+    profileForm.fullName !== (profile.data.fullName ?? "") ||
+    profileForm.phone !== (profile.data.phone ?? "") ||
+    profileForm.licenceId !== (profile.data.licenceId ?? "") ||
+    profileForm.bio !== (profile.data.bio ?? "");
+  const fieldErr = (k: string) =>
+    fieldErrors[k] ? <p className="text-[11px] text-rose-600">{fieldErrors[k]}</p> : null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
@@ -56,96 +115,32 @@ export const AgentProfileTab: React.FC = () => {
             Personal Information
           </h2>
           <p className="text-xs text-slate-500 mt-0.5">
-            This contact info &amp; headshot photo will appear on your generated
+            This contact info will appear on your generated
             brochure signature blocks.
           </p>
         </div>
 
-        {/* Avatar & Photo Upload Controls */}
+        {/* Avatar */}
         <div className="flex items-center gap-5 pt-1">
-          <input
-            ref={headshotInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleHeadshotUpload}
-          />
-
           <div className="relative w-16 h-16 rounded-full overflow-hidden bg-[#06143E] text-white flex items-center justify-center font-heading font-medium text-xl shadow-md border-2 border-white/20 shrink-0">
-            {headshotPreview ? (
-              <Image
-                src={headshotPreview}
-                alt="Agent Headshot"
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <span>IS</span>
-            )}
-          </div>
-
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={() => headshotInputRef.current?.click()}
-                className="h-9 px-4 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white font-medium text-xs transition cursor-pointer flex items-center gap-1.5 shadow-2xs"
-              >
-                <Upload className="w-3.5 h-3.5 text-[#E8A808]" />
-                <span>Upload Photo</span>
-              </button>
-
-              {headshotPreview && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setHeadshotPreview(null);
-                    toast.success("Photo removed");
-                  }}
-                  className="h-9 px-3 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 font-medium text-xs transition cursor-pointer"
-                >
-                  Remove
-                </button>
-              )}
-            </div>
-            <p className="text-[11px] text-slate-400">
-              Recommended: Square format (PNG/JPG), min 400x400px.
-            </p>
+            <span>{initials(displayName)}</span>
           </div>
         </div>
 
         {/* Form Fields Grid */}
         <form onSubmit={handleProfileSave} className="space-y-4 pt-2">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
-                FIRST NAME <span className="text-amber-500">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={profileForm.firstName}
-                onChange={(e) =>
-                  setProfileForm({ ...profileForm, firstName: e.target.value })
-                }
-                className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
-                LAST NAME <span className="text-amber-500">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={profileForm.lastName}
-                onChange={(e) =>
-                  setProfileForm({ ...profileForm, lastName: e.target.value })
-                }
-                className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
-              />
-            </div>
+          <div className="space-y-1.5">
+            <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
+              FULL NAME <span className="text-amber-500">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={profileForm.fullName}
+              onChange={(e) => setProfileForm({ ...profileForm, fullName: e.target.value })}
+              className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
+            />
+            {fieldErr("fullName")}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -155,44 +150,38 @@ export const AgentProfileTab: React.FC = () => {
               </label>
               <input
                 type="email"
-                required
-                value={profileForm.email}
-                onChange={(e) =>
-                  setProfileForm({ ...profileForm, email: e.target.value })
-                }
-                className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
+                readOnly
+                value={profile.data.email ?? ""}
+                className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 text-sm focus:outline-none cursor-not-allowed"
               />
             </div>
 
             <div className="space-y-1.5">
               <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
-                DIRECT MOBILE NUMBER <span className="text-amber-500">*</span>
+                DIRECT MOBILE NUMBER
               </label>
               <input
                 type="text"
-                required
                 value={profileForm.phone}
                 onChange={(e) =>
                   setProfileForm({ ...profileForm, phone: e.target.value })
                 }
                 className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
               />
+              {fieldErr("phone")}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider">
-                ROLE / JOB TITLE <span className="text-amber-500">*</span>
+                AGENCY ROLE
               </label>
               <input
                 type="text"
-                required
-                value={profileForm.roleTitle}
-                onChange={(e) =>
-                  setProfileForm({ ...profileForm, roleTitle: e.target.value })
-                }
-                className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
+                readOnly
+                value={roleLabel}
+                className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-500 text-sm focus:outline-none cursor-not-allowed"
               />
             </div>
 
@@ -233,7 +222,7 @@ export const AgentProfileTab: React.FC = () => {
                   Account Security &amp; Password
                 </h4>
                 <p className="text-[11px] text-slate-500 mt-0.5">
-                  Last password update was 3 months ago
+                  Changing your password signs you out of your other devices
                 </p>
               </div>
               <button
@@ -250,14 +239,17 @@ export const AgentProfileTab: React.FC = () => {
           <div className="pt-4 flex items-center gap-3">
             <button
               type="submit"
-              className="h-11 px-7 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-sm shadow-sm transition cursor-pointer"
+              disabled={isSaving || !isDirty}
+              className="disabled:opacity-60 disabled:cursor-not-allowed h-11 px-7 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-sm shadow-sm transition cursor-pointer"
             >
-              Save Changes
+              {isSaving ? "Saving..." : "Save Changes"}
             </button>
-            <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
-              <Check className="w-4 h-4 stroke-[2.5]" />
-              <span>Profile up to date</span>
-            </span>
+            {!isDirty && (
+              <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                <Check className="w-4 h-4 stroke-[2.5]" />
+                <span>Profile up to date</span>
+              </span>
+            )}
           </div>
         </form>
       </div>
@@ -279,34 +271,34 @@ export const AgentProfileTab: React.FC = () => {
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-full bg-[#06143E] text-white flex items-center justify-center font-medium text-sm shrink-0">
-                  IS
+                  {initials(displayName)}
                 </div>
                 <div>
                   <h4 className="font-heading font-medium text-sm text-slate-900">
-                    {profileForm.firstName} {profileForm.lastName}
+                    {displayName}
                   </h4>
-                  <p className="text-xs text-slate-600 font-medium">
-                    {profileForm.roleTitle}
-                  </p>
-                  <p className="text-[11px] text-slate-400">
-                    Prestige Estates UK
-                  </p>
+                  <p className="text-xs text-slate-600 font-medium">{roleLabel}</p>
+                  {branding.data?.agencyName && (
+                    <p className="text-[11px] text-slate-400">{branding.data.agencyName}</p>
+                  )}
                 </div>
               </div>
 
-              <span className="px-2 py-0.5 rounded text-[9px] font-medium bg-[#092167] text-[#FFB800] tracking-wider uppercase">
-                DIRECTOR/VALUER
-              </span>
+              {roleLabel && (
+                <span className="px-2 py-0.5 rounded text-[9px] font-medium bg-[#092167] text-[#FFB800] tracking-wider uppercase">
+                  {roleLabel}
+                </span>
+              )}
             </div>
 
             <div className="pt-2 border-t border-slate-200/80 text-[11px] text-slate-600 space-y-1">
               <div className="flex items-center gap-2">
                 <Phone className="w-3 h-3 text-[#E8A808]" />
-                <span>{profileForm.phone}</span>
+                <span>{profileForm.phone || "No phone number"}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-3 h-3 text-[#E8A808]" />
-                <span className="truncate">{profileForm.email}</span>
+                <span className="truncate">{profile.data.email}</span>
               </div>
             </div>
           </div>
@@ -324,100 +316,38 @@ export const AgentProfileTab: React.FC = () => {
           </div>
 
           <div className="space-y-4 pt-1 divide-y divide-slate-100">
-            <div className="flex items-center justify-between gap-4 pt-2">
-              <div>
-                <p className="text-xs font-medium text-slate-800">
-                  Pack Generation Complete
-                </p>
-                <p className="text-[11px] text-slate-500">
-                  Receive email copy when a brochure is ready
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() =>
-                  setNotifications((prev) => ({
-                    ...prev,
-                    packComplete: !prev.packComplete,
-                  }))
-                }
-                className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${
-                  notifications.packComplete ? "bg-[#092167]" : "bg-slate-300"
-                }`}
-              >
-                <span
-                  className={`block w-4 h-4 rounded-full bg-white shadow transform transition-transform ${
-                    notifications.packComplete
-                      ? "translate-x-6"
-                      : "translate-x-1"
+            {(
+              [
+                ["packComplete", "Pack Generation Complete", "Receive email copy when a brochure is ready"],
+                ["lowCredits", "Low Pack Credits Warning", "Notify when your pack credits are running low"],
+                ["billingStatements", "Monthly Billing Statements", "Send Stripe VAT invoices automatically"],
+                ["newLead", "New Viewing Request", "Email me when a buyer requests a viewing"],
+              ] as [NotificationKey, string, string][]
+            ).map(([key, title, hint], i) => (
+              <div key={key} className={`flex items-center justify-between gap-4 ${i === 0 ? "pt-2" : "pt-3"}`}>
+                <div>
+                  <p className="text-xs font-medium text-slate-800">{title}</p>
+                  <p className="text-[11px] text-slate-500">{hint}</p>
+                </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={!!notifications[key]}
+                  aria-label={title}
+                  disabled={isTogglingNotification}
+                  onClick={() => toggleNotification(key)}
+                  className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer shrink-0 disabled:opacity-60 ${
+                    notifications[key] ? "bg-[#092167]" : "bg-slate-300"
                   }`}
-                />
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between gap-4 pt-3">
-              <div>
-                <p className="text-xs font-medium text-slate-800">
-                  Low Pack Credits Warning
-                </p>
-                <p className="text-[11px] text-slate-500">
-                  Notify when fewer than 15 credits remain
-                </p>
+                >
+                  <span
+                    className={`block w-4 h-4 rounded-full bg-white shadow transform transition-transform ${
+                      notifications[key] ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() =>
-                  setNotifications((prev) => ({
-                    ...prev,
-                    lowCredits: !prev.lowCredits,
-                  }))
-                }
-                className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${
-                  notifications.lowCredits ? "bg-[#092167]" : "bg-slate-300"
-                }`}
-              >
-                <span
-                  className={`block w-4 h-4 rounded-full bg-white shadow transform transition-transform ${
-                    notifications.lowCredits
-                      ? "translate-x-6"
-                      : "translate-x-1"
-                  }`}
-                />
-              </button>
-            </div>
-
-            <div className="flex items-center justify-between gap-4 pt-3">
-              <div>
-                <p className="text-xs font-medium text-slate-800">
-                  Monthly Billing Statements
-                </p>
-                <p className="text-[11px] text-slate-500">
-                  Send Stripe VAT invoices automatically
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() =>
-                  setNotifications((prev) => ({
-                    ...prev,
-                    monthlyBilling: !prev.monthlyBilling,
-                  }))
-                }
-                className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${
-                  notifications.monthlyBilling
-                    ? "bg-[#092167]"
-                    : "bg-slate-300"
-                }`}
-              >
-                <span
-                  className={`block w-4 h-4 rounded-full bg-white shadow transform transition-transform ${
-                    notifications.monthlyBilling
-                      ? "translate-x-6"
-                      : "translate-x-1"
-                  }`}
-                />
-              </button>
-            </div>
+            ))}
           </div>
         </div>
       </div>
@@ -445,11 +375,7 @@ export const AgentProfileTab: React.FC = () => {
             </div>
 
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setIsPasswordModalOpen(false);
-                toast.success("Password updated successfully!");
-              }}
+              onSubmit={handlePasswordSubmit}
               className="space-y-4"
             >
               <div className="space-y-1.5">
@@ -459,9 +385,15 @@ export const AgentProfileTab: React.FC = () => {
                 <input
                   type="password"
                   required
+                  autoComplete="current-password"
+                  value={passwordForm.currentPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
                   placeholder="••••••••••••"
                   className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
                 />
+                {passwordErrors.currentPassword && (
+                  <p className="text-[11px] text-rose-600">{passwordErrors.currentPassword}</p>
+                )}
               </div>
 
               <div className="space-y-1.5">
@@ -471,9 +403,16 @@ export const AgentProfileTab: React.FC = () => {
                 <input
                   type="password"
                   required
-                  placeholder="••••••••••••"
+                  minLength={10}
+                  autoComplete="new-password"
+                  value={passwordForm.newPassword}
+                  onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                  placeholder="At least 10 characters"
                   className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
                 />
+                {passwordErrors.newPassword && (
+                  <p className="text-[11px] text-rose-600">{passwordErrors.newPassword}</p>
+                )}
               </div>
 
               <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
@@ -486,8 +425,10 @@ export const AgentProfileTab: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition cursor-pointer"
+                  disabled={isChangingPassword}
+                  className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-medium text-xs shadow-sm transition cursor-pointer disabled:opacity-60 flex items-center gap-1.5"
                 >
+                  {isChangingPassword && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                   Update Password
                 </button>
               </div>

@@ -1,77 +1,111 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
-import { PropertySpecs } from "@/types/packs";
+import toast from "react-hot-toast";
 import { CreateStep1Details } from "@/components/packs/create/CreateStep1Details";
-import { CreateStep2Photos, UploadedPhoto } from "@/components/packs/create/CreateStep2Photos";
+import { CreateStep2Photos, MIN_PHOTOS } from "@/components/packs/create/CreateStep2Photos";
 import { CreateStep3Review } from "@/components/packs/create/CreateStep3Review";
-import { BuyPacksModal } from "@/components/packs/BuyPacksModal";
+import { DetailsForm, emptyForm, formFromPack, toPropertyInput } from "@/components/packs/create/details";
+import { ErrorState, apiErrorInfo } from "@/components/ui/ErrorState";
+import { errorText } from "@/lib/auth/client";
+import { usePack } from "@/hooks/usePack";
+import { useCreatePackMutation, useUpdatePackMutation } from "@/redux/api/packs/packsApi";
 
 function CreatePackContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const demoStateParam = searchParams.get("state"); // ?state=generating|failed|nocredits
+  const packId = searchParams.get("pack") ?? undefined;
 
-  // Stepper state (1, 2, or 3)
-  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(demoStateParam ? 3 : 1);
-  const [showBuyModal, setShowBuyModal] = useState(false);
+  const pack = usePack(packId);
+  const [createPack, { isLoading: creating }] = useCreatePackMutation();
+  const [updatePack, { isLoading: updating }] = useUpdatePackMutation();
 
-  // Form State (Step 1)
-  const [formData, setFormData] = useState<PropertySpecs>({
-    title: "16 Gorse Drive Executive Detached",
-    address: "16 Gorse Drive, Chorlton, Manchester",
-    postcode: "M21 8XQ",
-    price: "£750,000",
-    propertyType: "Detached Home",
-    tenure: "Freehold",
-    epcRating: "B",
-    councilTaxBand: "E",
-    bedrooms: "4 Bedrooms",
-    bathrooms: "3 Bathrooms",
-    size: "2,150 sq ft",
-    parking: "Private driveway with space for 2 cars & double garage",
-    bulletFeatures: [
-      "South-facing mature rear garden",
-      "Bespoke fitted kitchen (2024)",
-      "Underfloor heating throughout ground floor",
-      "5 mins walk to Metrolink station",
-    ],
-    highlights:
-      "South-facing mature rear garden, bespoke kitchen fitted 2024, open-plan living space, underfloor heating, 5 mins walk to Chorlton Metrolink station.",
-  });
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3 | null>(packId ? null : 1);
+  const [formData, setFormData] = useState<DetailsForm>(emptyForm);
+  const [formLoadedFor, setFormLoadedFor] = useState<string | undefined>(undefined);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // Photos State (Step 2)
-  const [photos, setPhotos] = useState<UploadedPhoto[]>([
-    {
-      id: "photo-1",
-      src: "/landing/villa-dusk.jpg",
-      label: "COVER",
-      isCover: true,
-    },
-    {
-      id: "photo-2",
-      src: "/landing/townhouse-dusk.jpg",
-      label: "LIVING",
-    },
-    {
-      id: "photo-3",
-      src: "/landing/semi-detached-wilmslow.jpg",
-      label: "GARDEN",
-    },
-  ]);
+  // Resuming a draft: fill the form once, and pick the step from what the pack already has.
+  // (State is adjusted during render, the React-recommended way to derive state from fetched data.)
+  if (packId && pack.data && formLoadedFor !== packId) {
+    const data = pack.data;
+    setFormLoadedFor(packId);
+    setFormData(formFromPack(data));
+    const photoCount = (data.photos ?? []).filter((p) => p.kind === "photo").length;
+    const p = data.property ?? {};
+    const detailsDone = Boolean(p.referenceTitle && p.address?.line1);
+    if (data.status !== "draft" || photoCount >= MIN_PHOTOS) setCurrentStep(3);
+    else if (detailsDone) setCurrentStep(2);
+    else setCurrentStep(1);
+  }
 
-  const [floorPlan, setFloorPlan] = useState<string | null>(null);
-  const [epcFile, setEpcFile] = useState<string | null>(null);
+  // A pack that already finished goes straight to the editor.
+  useEffect(() => {
+    const status = pack.data?.status;
+    if (status === "ready" || status === "live") router.replace(`/agent-dashboard/editor?pack=${packId}`);
+  }, [pack.data?.status, packId, router]);
+
+  /** Saves Step 1 (creating the draft the first time). Returns the pack id, or null on failure. */
+  const saveDetails = async (): Promise<string | null> => {
+    setFieldErrors({});
+    const body = toPropertyInput(formData);
+    if (!body.referenceTitle) {
+      setFieldErrors({ referenceTitle: "Add a reference title" });
+      return null;
+    }
+    try {
+      if (packId) {
+        await updatePack({ id: packId, body }).unwrap();
+        return packId;
+      }
+      const created = await createPack(body).unwrap();
+      const id = created.id as string;
+      setFormLoadedFor(id);
+      router.replace(`/agent-dashboard/create?pack=${id}`);
+      return id;
+    } catch (err) {
+      const { status, fields } = apiErrorInfo(err);
+      if (status === 422 && Object.keys(fields).length) setFieldErrors(fields);
+      else toast.error(errorText(err));
+      return null;
+    }
+  };
+
+  const goToStep = async (step: 1 | 2 | 3) => {
+    if (step === currentStep) return;
+    if (currentStep === 1 && step > 1) {
+      const id = await saveDetails();
+      if (!id) return;
+    } else if (!packId) {
+      return; // later steps need the draft created by Step 1
+    }
+    setCurrentStep(step);
+  };
+
+  if (packId && pack.isError && !pack.data) {
+    const notFound = apiErrorInfo(pack.error).status === 404;
+    return (
+      <ErrorState
+        error={pack.error}
+        onRetry={notFound ? () => router.replace("/agent-dashboard/create") : () => pack.refetch()}
+      />
+    );
+  }
+
+  if (currentStep === null || (packId && !pack.data && currentStep !== 1)) {
+    return (
+      <div className="space-y-6" aria-busy="true">
+        <div className="h-8 w-64 rounded-lg bg-slate-100 animate-pulse" />
+        <div className="h-12 max-w-2xl mx-auto rounded-2xl bg-slate-100 animate-pulse" />
+        <div className="h-96 rounded-2xl bg-slate-100 animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      {/* Buy Packs Modal for S07 / S06 out-of-credits */}
-      <BuyPacksModal
-        isOpen={showBuyModal}
-        onClose={() => setShowBuyModal(false)}
-      />
-
       {/* Top Page Header */}
       <div>
         <h1 className="font-heading font-semibold text-2xl text-slate-900 tracking-tight">
@@ -89,7 +123,7 @@ function CreatePackContent() {
             {/* Step 1 */}
             <button
               type="button"
-              onClick={() => setCurrentStep(1)}
+              onClick={() => goToStep(1)}
               className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl transition-all cursor-pointer ${
                 currentStep === 1
                   ? "bg-[#06143E] text-white shadow-xs font-semibold"
@@ -117,7 +151,7 @@ function CreatePackContent() {
             {/* Step 2 */}
             <button
               type="button"
-              onClick={() => setCurrentStep(2)}
+              onClick={() => goToStep(2)}
               className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl transition-all cursor-pointer ${
                 currentStep === 2
                   ? "bg-[#06143E] text-white shadow-xs font-semibold"
@@ -145,7 +179,7 @@ function CreatePackContent() {
             {/* Step 3 */}
             <button
               type="button"
-              onClick={() => setCurrentStep(3)}
+              onClick={() => goToStep(3)}
               className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl transition-all cursor-pointer ${
                 currentStep === 3
                   ? "bg-[#06143E] text-white shadow-xs font-semibold"
@@ -175,32 +209,28 @@ function CreatePackContent() {
           <CreateStep1Details
             formData={formData}
             setFormData={setFormData}
-            onContinue={() => setCurrentStep(2)}
+            fieldErrors={fieldErrors}
+            saving={creating || updating}
+            onContinue={() => goToStep(2)}
           />
         )}
 
-        {currentStep === 2 && (
+        {currentStep === 2 && packId && pack.data && (
           <CreateStep2Photos
-            photos={photos}
-            setPhotos={setPhotos}
-            floorPlan={floorPlan}
-            setFloorPlan={setFloorPlan}
-            epcFile={epcFile}
-            setEpcFile={setEpcFile}
-            onBack={() => setCurrentStep(1)}
-            onContinue={() => setCurrentStep(3)}
+            packId={packId}
+            pack={pack.data}
+            onBack={() => goToStep(1)}
+            onContinue={() => goToStep(3)}
           />
         )}
 
-        {currentStep === 3 && (
+        {currentStep === 3 && packId && pack.data && (
           <CreateStep3Review
-            formData={formData}
-            photos={photos}
-            floorPlan={floorPlan}
-            epcFile={epcFile}
-            initialDemoState={demoStateParam}
-            onBack={() => setCurrentStep(2)}
-            onOpenBuyModal={() => setShowBuyModal(true)}
+            packId={packId}
+            pack={pack.data}
+            onBack={() => goToStep(2)}
+            onGoToStep={(step) => setCurrentStep(step)}
+            onRefetch={() => pack.refetch()}
           />
         )}
       </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import Link from "next/link";
 import {
   X,
   Calendar,
@@ -16,38 +15,78 @@ import {
   Mail,
   User,
 } from "lucide-react";
-import { BookingModalState } from "@/types/buyer";
-import toast from "react-hot-toast";
+import { useSendInquiryMutation } from "@/redux/api/public/publicApi";
+import { apiErrorInfo } from "@/components/ui/ErrorState";
+import { errorText } from "@/lib/auth/client";
+
+type BookingModalState = "form" | "submitting" | "success" | "error" | "rate_limited" | "gone";
 
 interface BookingViewingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  /** The share token of the public page. */
+  token: string;
   propertyTitle: string;
-  agentName: string;
   agencyName: string;
+  agencyPhone?: string | null;
+}
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+const TURNSTILE_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+
+interface TurnstileApi {
+  render: (el: HTMLElement, opts: { sitekey: string; callback: (token: string) => void; "expired-callback": () => void; "error-callback": () => void }) => string;
+  reset: (id?: string) => void;
+  remove: (id?: string) => void;
+}
+
+const TIME_SLOTS = [
+  { value: "09:30", label: "09:30 AM (Morning)" },
+  { value: "11:00", label: "11:00 AM (Late Morning)" },
+  { value: "14:00", label: "02:00 PM (Afternoon)" },
+  { value: "15:30", label: "03:30 PM (Mid Afternoon)" },
+  { value: "17:00", label: "05:00 PM (Early Evening)" },
+  { value: "18:30", label: "06:30 PM (Evening)" },
+];
+
+function isoDate(d: Date) {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
 export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
   isOpen,
   onClose,
+  token,
   propertyTitle,
-  agentName,
   agencyName,
+  agencyPhone,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const turnstileRef = useRef<HTMLDivElement>(null);
+  const turnstileId = useRef<string | undefined>(undefined);
 
-  // Form State
-  const [fullName, setFullName] = useState("David Harrison");
-  const [email, setEmail] = useState("david.harrison@gmail.com");
-  const [phone, setPhone] = useState("+44 7911 123456");
-  const [bookingDate, setBookingDate] = useState("2026-11-28");
-  const [bookingTime, setBookingTime] = useState("11:00 AM");
-  const [notes, setNotes] = useState("");
-  const [gdprConsent, setGdprConsent] = useState(true);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [bookingDate, setBookingDate] = useState("");
+  const [bookingTime, setBookingTime] = useState(TIME_SLOTS[1].value);
+  const [gdprConsent, setGdprConsent] = useState(false);
+  const [website, setWebsite] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // State machine: form | submitting | success | error | rate_limited
   const [modalState, setModalState] = useState<BookingModalState>("form");
-  const [demoScenario, setDemoScenario] = useState<"success" | "error" | "rate_limited">("success");
+  const [sendInquiry] = useSendInquiryMutation();
+
+  const minDate = isoDate(new Date());
+  const maxDate = (() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 6);
+    d.setDate(d.getDate() - 1);
+    return isoDate(d);
+  })();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -63,31 +102,94 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
     };
   }, [isOpen, onClose, modalState]);
 
+  // Cloudflare Turnstile (only when a site key is configured)
+  const showForm = modalState === "form" || modalState === "submitting";
+  useEffect(() => {
+    if (!isOpen || !showForm || !TURNSTILE_SITE_KEY) return;
+    let cancelled = false;
+    const mount = () => {
+      const api = (window as unknown as { turnstile?: TurnstileApi }).turnstile;
+      if (cancelled || !api || !turnstileRef.current || turnstileId.current) return;
+      turnstileId.current = api.render(turnstileRef.current, {
+        sitekey: TURNSTILE_SITE_KEY,
+        callback: (t) => setCaptchaToken(t),
+        "expired-callback": () => setCaptchaToken(""),
+        "error-callback": () => setCaptchaToken(""),
+      });
+    };
+    let script = document.querySelector<HTMLScriptElement>(`script[src="${TURNSTILE_SRC}"]`);
+    if (!script) {
+      script = document.createElement("script");
+      script.src = TURNSTILE_SRC;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+    if ((window as unknown as { turnstile?: TurnstileApi }).turnstile) mount();
+    else script.addEventListener("load", mount);
+    return () => {
+      cancelled = true;
+      script?.removeEventListener("load", mount);
+      const api = (window as unknown as { turnstile?: TurnstileApi }).turnstile;
+      if (turnstileId.current && api) api.remove(turnstileId.current);
+      turnstileId.current = undefined;
+      setCaptchaToken("");
+    };
+  }, [isOpen, showForm]);
+
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFieldErrors({});
 
     if (!gdprConsent) {
-      toast.error("Please agree to the privacy policy to book a viewing.");
+      setFieldErrors({ consent: "Please agree so the agency can contact you." });
+      return;
+    }
+    const preferred = new Date(`${bookingDate}T${bookingTime}:00`);
+    if (Number.isNaN(preferred.getTime())) {
+      setFieldErrors({ preferredAt: "Choose a viewing date and time." });
       return;
     }
 
     setModalState("submitting");
-
-    setTimeout(() => {
-      if (demoScenario === "error") {
-        setModalState("error");
-        toast.error("Booking submission failed");
-      } else if (demoScenario === "rate_limited") {
+    try {
+      await sendInquiry({
+        token,
+        body: {
+          fullName: fullName.trim(),
+          email: email.trim(),
+          phone: phone.trim() || undefined,
+          preferredAt: preferred.toISOString(),
+          consent: true,
+          captchaToken: captchaToken || undefined,
+          website,
+        },
+      }).unwrap();
+      setModalState("success");
+    } catch (err) {
+      const info = apiErrorInfo(err);
+      if (info.status === 429) {
         setModalState("rate_limited");
-        toast.error("Rate limit exceeded");
+      } else if (info.status === 410) {
+        setModalState("gone");
+      } else if (info.status === 422) {
+        setFieldErrors(info.fields);
+        setErrorMessage(errorText(err));
+        setModalState("form");
       } else {
-        setModalState("success");
-        toast.success("Viewing appointment requested successfully!");
+        setErrorMessage(errorText(err));
+        setModalState("error");
       }
-    }, 900);
+      const api = (window as unknown as { turnstile?: TurnstileApi }).turnstile;
+      if (turnstileId.current && api) api.reset(turnstileId.current);
+      setCaptchaToken("");
+    }
   };
+
+  const fieldError = (name: string) =>
+    fieldErrors[name] ? <p className="text-[11px] text-rose-600 mt-1">{fieldErrors[name]}</p> : null;
 
   return (
     <div
@@ -111,55 +213,6 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
           <X className="w-5 h-5" />
         </button>
 
-        {/* DEMO SCENARIO TOGGLE */}
-        <div className="mb-4 p-2.5 rounded-xl bg-amber-50/80 border border-amber-200 text-xs text-amber-900 flex items-center justify-between gap-2">
-          <span className="font-semibold text-[11px]">S10 Demo:</span>
-          <div className="flex gap-1.5">
-            <button
-              type="button"
-              onClick={() => {
-                setDemoScenario("success");
-                setModalState("form");
-              }}
-              className={`px-2 py-0.5 rounded text-[11px] font-semibold cursor-pointer ${
-                demoScenario === "success"
-                  ? "bg-[#092167] text-white"
-                  : "bg-white text-slate-700 border border-amber-300"
-              }`}
-            >
-              Success
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setDemoScenario("error");
-                setModalState("form");
-              }}
-              className={`px-2 py-0.5 rounded text-[11px] font-semibold cursor-pointer ${
-                demoScenario === "error"
-                  ? "bg-rose-700 text-white"
-                  : "bg-white text-slate-700 border border-amber-300"
-              }`}
-            >
-              Error
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setDemoScenario("rate_limited");
-                setModalState("form");
-              }}
-              className={`px-2 py-0.5 rounded text-[11px] font-semibold cursor-pointer ${
-                demoScenario === "rate_limited"
-                  ? "bg-amber-800 text-white"
-                  : "bg-white text-slate-700 border border-amber-300"
-              }`}
-            >
-              Rate Limit
-            </button>
-          </div>
-        </div>
-
         {/* STATE 1: SUCCESS CONFIRMATION */}
         {modalState === "success" && (
           <div className="py-6 text-center space-y-4 animate-in fade-in">
@@ -169,7 +222,7 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
 
             <div>
               <span className="inline-block px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold text-xs mb-2">
-                APPOINTMENT CONFIRMED
+                REQUEST RECEIVED
               </span>
               <h3 className="font-heading font-bold text-2xl text-slate-900">
                 Viewing Request Received!
@@ -189,19 +242,16 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
               </div>
               <div className="flex justify-between">
                 <span className="text-slate-500">Requested Time</span>
-                <span className="font-bold text-[#092167]">{bookingTime}</span>
+                <span className="font-bold text-[#092167]">{TIME_SLOTS.find((t) => t.value === bookingTime)?.label.split(" (")[0]}</span>
               </div>
               <div className="flex justify-between pt-2 border-t border-slate-200">
-                <span className="text-slate-500">Listing Agent</span>
-                <span className="font-medium text-slate-800">
-                  {agentName} ({agencyName})
-                </span>
+                <span className="text-slate-500">Listing Agency</span>
+                <span className="font-medium text-slate-800">{agencyName}</span>
               </div>
             </div>
 
             <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
-              We have dispatched a calendar placeholder and confirmation email to{" "}
-              <strong>{email}</strong>. {agentName} will contact you if any schedule adjustment is needed.
+              We have emailed a confirmation to <strong>{email}</strong>. {agencyName} will be in touch to confirm the appointment.
             </p>
 
             <div className="pt-2">
@@ -228,7 +278,7 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
                 Booking Request Failed
               </h3>
               <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto mt-1 leading-relaxed">
-                We could not connect to the agency calendar server. Please check your network and try again.
+                {errorMessage || "Something went wrong. Please try again."}
               </p>
             </div>
 
@@ -267,14 +317,16 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
                 Too Many Requests
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 max-w-sm mx-auto mt-1 leading-relaxed">
-                Multiple viewing inquiries have been sent recently from your connection. Please wait 60 seconds before trying again, or call the listing agency directly.
+                Too many requests, try again later. You can also contact the listing agency directly.
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 flex items-center justify-center gap-2 font-semibold">
-              <Phone className="w-4 h-4 text-[#092167]" />
-              <span>Direct Agency Desk: +44 20 7946 0912</span>
-            </div>
+            {agencyPhone && (
+              <a href={`tel:${agencyPhone.replace(/\s+/g, "")}`} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 flex items-center justify-center gap-2 font-semibold">
+                <Phone className="w-4 h-4 text-[#092167]" />
+                <span>Direct Agency Desk: {agencyPhone}</span>
+              </a>
+            )}
 
             <div className="pt-2">
               <button
@@ -285,6 +337,29 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
                 Close
               </button>
             </div>
+          </div>
+        )}
+
+        {modalState === "gone" && (
+          <div className="py-6 text-center space-y-4 animate-in fade-in">
+            <div className="w-16 h-16 rounded-full bg-slate-100 border-4 border-slate-200 text-slate-500 flex items-center justify-center mx-auto shadow-sm">
+              <AlertCircle className="w-8 h-8 stroke-[2]" />
+            </div>
+            <div>
+              <h3 className="font-heading font-bold text-2xl text-slate-900">
+                This Link is No Longer Available
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-500 max-w-sm mx-auto mt-1 leading-relaxed">
+                The agency has disabled or expired this listing, so viewing requests are closed.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full h-11 rounded-xl bg-[#06143E] hover:bg-[#092167] text-white font-semibold text-sm cursor-pointer"
+            >
+              Close
+            </button>
           </div>
         )}
 
@@ -299,7 +374,7 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
                 Book a Private Viewing
               </h3>
               <p className="text-xs text-slate-500 mt-1">
-                Schedule an exclusive walkthrough of {propertyTitle} with {agentName}.
+                Schedule an exclusive walkthrough of {propertyTitle} with {agencyName}.
               </p>
             </div>
 
@@ -320,6 +395,7 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
                     className="w-full h-11 pl-10 pr-3.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#092167] focus:bg-white transition"
                   />
                 </div>
+                {fieldError("fullName")}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -338,6 +414,7 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
                       className="w-full h-11 pl-10 pr-3.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#092167] focus:bg-white transition"
                     />
                   </div>
+                  {fieldError("email")}
                 </div>
 
                 <div>
@@ -355,6 +432,7 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
                       className="w-full h-11 pl-10 pr-3.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#092167] focus:bg-white transition"
                     />
                   </div>
+                  {fieldError("phone")}
                 </div>
               </div>
 
@@ -370,7 +448,8 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
                     required
                     value={bookingDate}
                     onChange={(e) => setBookingDate(e.target.value)}
-                    min={new Date().toISOString().split("T")[0]}
+                    min={minDate}
+                    max={maxDate}
                     className="w-full h-10 px-3 text-xs bg-white border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-[#092167]"
                   />
                 </div>
@@ -385,29 +464,28 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
                     onChange={(e) => setBookingTime(e.target.value)}
                     className="w-full h-10 px-3 text-xs bg-white border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:border-[#092167] cursor-pointer"
                   >
-                    <option value="09:30 AM">09:30 AM (Morning)</option>
-                    <option value="11:00 AM">11:00 AM (Late Morning)</option>
-                    <option value="02:00 PM">02:00 PM (Afternoon)</option>
-                    <option value="03:30 PM">03:30 PM (Mid Afternoon)</option>
-                    <option value="05:00 PM">05:00 PM (Early Evening)</option>
-                    <option value="06:30 PM">06:30 PM (Evening)</option>
+                    {TIME_SLOTS.map((t) => (
+                      <option key={t.value} value={t.value}>
+                        {t.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
 
-              {/* Notes */}
-              <div>
-                <label className="block text-[11px] font-semibold uppercase tracking-wider text-slate-600 mb-1">
-                  Questions or Special Requirements (Optional)
-                </label>
-                <textarea
-                  rows={2}
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="e.g. Inquiring about garden boundaries, chain-free status..."
-                  className="w-full p-3 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-[#092167] focus:bg-white resize-none"
-                />
-              </div>
+              {fieldError("preferredAt")}
+
+              {/* Honeypot: people leave this empty */}
+              <input
+                type="text"
+                name="website"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                tabIndex={-1}
+                aria-hidden="true"
+                autoComplete="off"
+                className="absolute -left-[9999px] w-px h-px opacity-0"
+              />
 
               {/* GDPR CONSENT CHECKBOX (E03) */}
               <div className="pt-1">
@@ -420,18 +498,18 @@ export const BookingViewingModal: React.FC<BookingViewingModalProps> = ({
                     className="mt-0.5 w-4 h-4 rounded text-[#092167] border-slate-300 focus:ring-2 focus:ring-[#092167]/20 cursor-pointer"
                   />
                   <span className="text-xs text-slate-600 leading-normal">
-                    I agree to the processing of my contact details by {agencyName} to schedule this property viewing in accordance with the{" "}
-                    <Link
-                      href="/privacy"
-                      target="_blank"
-                      className="font-medium text-[#092167] underline hover:text-[#06143E]"
-                    >
-                      Privacy Policy
-                    </Link>
-                    .
+                    I agree that {agencyName} may contact me about this property and store my details for that purpose.
                   </span>
                 </label>
+                {fieldError("consent")}
               </div>
+
+              {TURNSTILE_SITE_KEY && (
+                <div>
+                  <div ref={turnstileRef} />
+                  {fieldError("captchaToken")}
+                </div>
+              )}
 
               {/* Submit CTA */}
               <div className="pt-2">

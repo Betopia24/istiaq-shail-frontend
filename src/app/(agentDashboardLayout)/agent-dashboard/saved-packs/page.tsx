@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { DangerModal } from "@/components/ui/DangerModal";
-import Image from "next/image";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import {
   Search,
   ChevronDown,
-  Plus,
   ExternalLink,
   FileText,
   Trash2,
@@ -16,223 +15,93 @@ import {
   Sparkles,
   CreditCard,
   Share2,
+  Loader2,
+  FolderOpen,
 } from "lucide-react";
 import { PackStatusBadge } from "@/components/packs/PackStatusBadge";
 import { ShareDialog } from "@/components/packs/ShareDialog";
 import { BuyPacksModal } from "@/components/packs/BuyPacksModal";
+import { usePdfDownload } from "@/components/packs/usePdfDownload";
+import { ApiImage } from "@/components/ui/ApiImage";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { CardGridSkeleton } from "@/components/ui/skeletons/CardGridSkeleton";
+import {
+  useDeletePackMutation,
+  useGetDashboardSummaryQuery,
+  useListPacksQuery,
+} from "@/redux/api/packs/packsApi";
+import { useAppSelector } from "@/redux/hook";
+import { errorText } from "@/lib/auth/client";
+import { formatMoney, formatNumber } from "@/lib/format";
+import type { PackListQuery, PackSummary } from "@/types/models";
 
 type FilterStatus = "all" | "ready" | "draft";
 type SortOption = "newest" | "oldest" | "price-high" | "price-low";
 
-interface SavedPack {
-  id: string;
-  title: string;
-  address: string;
-  price: number;
-  displayPrice: string;
-  status: "ready" | "draft";
-  country: string;
-  beds: number;
-  baths: number;
-  sqft: number;
-  propertyType: string;
-  image: string | null;
-  createdAt: string;
-}
+const SORT_PARAM: Record<SortOption, NonNullable<PackListQuery["sort"]>> = {
+  newest: "newest",
+  oldest: "oldest",
+  "price-high": "price_desc",
+  "price-low": "price_asc",
+};
 
-const INITIAL_PACKS: SavedPack[] = [
-  {
-    id: "pack-1",
-    title: "Substantial 4-Bedroom Detached Family...",
-    address: "14 Willow Crescent, London",
-    price: 875000,
-    displayPrice: "£875,000",
-    status: "draft",
-    country: "UK",
-    beds: 4,
-    baths: 3,
-    sqft: 2450,
-    propertyType: "Detached",
-    image: null,
-    createdAt: "2026-10-24T12:00:00Z",
-  },
-  {
-    id: "pack-2",
-    title: "Substantial 4-Bedroom Detached Family...",
-    address: "14 Willow Crescent, London",
-    price: 875000,
-    displayPrice: "£875,000",
-    status: "ready",
-    country: "UK",
-    beds: 4,
-    baths: 3,
-    sqft: 2450,
-    propertyType: "Detached",
-    image: "/landing/villa-dusk.jpg",
-    createdAt: "2026-10-23T15:30:00Z",
-  },
-  {
-    id: "pack-3",
-    title: "Substantial 4-Bedroom Detached Family...",
-    address: "14 Willow Crescent, London",
-    price: 875000,
-    displayPrice: "£875,000",
-    status: "ready",
-    country: "UK",
-    beds: 4,
-    baths: 3,
-    sqft: 2450,
-    propertyType: "Detached",
-    image: "/landing/villa-dusk.jpg",
-    createdAt: "2026-10-22T09:15:00Z",
-  },
-  {
-    id: "pack-4",
-    title: "16 Gorse Drive, Executive Family Home",
-    address: "16 Gorse Drive, Chorlton, Manchester",
-    price: 745000,
-    displayPrice: "£745,000",
-    status: "ready",
-    country: "UK",
-    beds: 4,
-    baths: 2,
-    sqft: 2150,
-    propertyType: "Detached",
-    image: "/landing/semi-detached-wilmslow.jpg",
-    createdAt: "2026-10-21T14:20:00Z",
-  },
-  {
-    id: "pack-5",
-    title: "Modern Contemporary Townhouse",
-    address: "8 Victoria Square, Manchester",
-    price: 520000,
-    displayPrice: "£520,000",
-    status: "ready",
-    country: "UK",
-    beds: 3,
-    baths: 2,
-    sqft: 1850,
-    propertyType: "Townhouse",
-    image: "/landing/townhouse-dusk.jpg",
-    createdAt: "2026-10-20T11:00:00Z",
-  },
-  {
-    id: "pack-6",
-    title: "Executive Country Residence & Gardens",
-    address: "24 Meadow Lane, Wilmslow",
-    price: 925000,
-    displayPrice: "£925,000",
-    status: "draft",
-    country: "UK",
-    beds: 5,
-    baths: 4,
-    sqft: 3100,
-    propertyType: "Detached",
-    image: null,
-    createdAt: "2026-10-19T08:45:00Z",
-  },
-];
+const PAGE_SIZE = 9;
 
 export default function SavedPacksPage() {
-  const [packs, setPacks] = useState<SavedPack[]>(INITIAL_PACKS);
+  const role = useAppSelector((state) => state.user.user?.role);
+  const canBuy = role === "owner";
+
   const [activeFilter, setActiveFilter] = useState<FilterStatus>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [sortOption, setSortOption] = useState<SortOption>("newest");
   const [currentPage, setCurrentPage] = useState(1);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [packToDelete, setPackToDelete] = useState<SavedPack | null>(null);
-  const [showShareModal, setShowShareModal] = useState(false);
+  const [packToDelete, setPackToDelete] = useState<PackSummary | null>(null);
+  const [sharePackId, setSharePackId] = useState<string | null>(null);
   const [showBuyModal, setShowBuyModal] = useState(false);
-  const [sharePackTarget, setSharePackTarget] = useState<{ id: string; title: string }>({
-    id: "pack-1",
-    title: "14 Willow Crescent, London",
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery.trim());
+      setCurrentPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const summary = useGetDashboardSummaryQuery();
+  const list = useListPacksQuery({
+    status: activeFilter === "all" ? undefined : activeFilter,
+    q: debouncedQuery || undefined,
+    sort: SORT_PARAM[sortOption],
+    page: currentPage,
+    pageSize: PAGE_SIZE,
   });
+  const [deletePack, deleteState] = useDeletePackMutation();
+  const { download, busyId } = usePdfDownload();
 
-  const ITEMS_PER_PAGE = 3;
+  const items = list.data?.items ?? [];
+  const total = list.data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+  const confirmDeletePack = async () => {
+    if (!packToDelete?.id) return;
+    try {
+      await deletePack(packToDelete.id).unwrap();
+      toast.success("Property pack permanently deleted.");
+      if (items.length === 1 && currentPage > 1) setCurrentPage(currentPage - 1);
+      setPackToDelete(null);
+    } catch (err) {
+      toast.error(errorText(err));
+    }
   };
 
-  const copyLink = (pack: SavedPack) => {
-    setSharePackTarget({ id: pack.id, title: pack.title });
-    setShowShareModal(true);
-  };
-
-  const confirmDeletePack = () => {
-    if (!packToDelete) return;
-    setPacks((prev) => prev.filter((p) => p.id !== packToDelete.id));
-    showToast(`Property pack for ${packToDelete.address} permanently deleted.`);
-    setPackToDelete(null);
-  };
-
-  const deletePack = (packId: string) => {
-    setPacks((prev) => prev.filter((p) => p.id !== packId));
-    showToast("Property pack removed.");
-  };
-
-  // Filtered and sorted list
-  const filteredPacks = useMemo(() => {
-    return packs
-      .filter((pack) => {
-        if (activeFilter === "ready") return pack.status === "ready";
-        if (activeFilter === "draft") return pack.status === "draft";
-        return true;
-      })
-      .filter((pack) => {
-        if (!searchQuery.trim()) return true;
-        const q = searchQuery.toLowerCase();
-        return (
-          pack.title.toLowerCase().includes(q) ||
-          pack.address.toLowerCase().includes(q)
-        );
-      })
-      .sort((a, b) => {
-        if (sortOption === "newest") {
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        }
-        if (sortOption === "oldest") {
-          return (
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-        }
-        if (sortOption === "price-high") {
-          return b.price - a.price;
-        }
-        if (sortOption === "price-low") {
-          return a.price - b.price;
-        }
-        return 0;
-      });
-  }, [packs, activeFilter, searchQuery, sortOption]);
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredPacks.length / ITEMS_PER_PAGE),
-  );
-  const validPage = Math.min(currentPage, totalPages);
-  const startIndex = (validPage - 1) * ITEMS_PER_PAGE;
-  const currentPacks = filteredPacks.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE,
-  );
-
-  const readyCount = packs.filter((p) => p.status === "ready").length;
-  const draftCount = packs.filter((p) => p.status === "draft").length;
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1)
+    .filter((n) => n === 1 || n === totalPages || Math.abs(n - currentPage) <= 1);
 
   return (
     <div className="space-y-6">
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-bottom-3 duration-200">
-          <span className="w-2 h-2 rounded-full bg-[#FFB800]" />
-          <span className="text-xs sm:text-sm font-medium">{toastMessage}</span>
-        </div>
-      )}
-
       {/* =========================================================================
           TOP HEADER
       ========================================================================= */}
@@ -248,16 +117,20 @@ export default function SavedPacksPage() {
 
         <div className="flex items-center gap-2.5 self-start sm:self-auto">
           {/* Credits Badge */}
-          <div className="h-9 px-3 rounded-lg border border-[#FDE68A] bg-[#FEF3C7] flex items-center gap-2 text-xs font-semibold text-[#8C6605]">
-            <span className="w-2 h-2 rounded-full bg-[#E8A808] animate-pulse" />
-            <span>78 Packs Available</span>
-          </div>
+          {summary.data && (
+            <div className="h-9 px-3 rounded-lg border border-[#FDE68A] bg-[#FEF3C7] flex items-center gap-2 text-xs font-semibold text-[#8C6605]">
+              <span className="w-2 h-2 rounded-full bg-[#E8A808] animate-pulse" />
+              <span>{formatNumber(summary.data.creditsRemaining)} Packs Available</span>
+            </div>
+          )}
 
           {/* Buy Packs Top-Up Button */}
           <button
             type="button"
             onClick={() => setShowBuyModal(true)}
-            className="h-9 px-3 rounded-lg border border-[#06143E] bg-[#06143E] hover:bg-[#0B1E48] text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+            disabled={!canBuy}
+            title={canBuy ? undefined : "Only the agency owner can buy packs"}
+            className="h-9 px-3 rounded-lg border border-[#06143E] bg-[#06143E] hover:bg-[#0B1E48] text-white text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <CreditCard className="w-3.5 h-3.5 text-[#E8A808]" />
             <span>Buy Packs</span>
@@ -291,7 +164,7 @@ export default function SavedPacksPage() {
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
             }`}
           >
-            All ({packs.length})
+            All{summary.data ? ` (${summary.data.totalPacks})` : ""}
           </button>
 
           <button
@@ -305,7 +178,7 @@ export default function SavedPacksPage() {
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
             }`}
           >
-            Ready ({readyCount})
+            Ready{summary.data ? ` (${summary.data.readyPacks})` : ""}
           </button>
 
           <button
@@ -319,7 +192,7 @@ export default function SavedPacksPage() {
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100 font-medium"
             }`}
           >
-            Drafts ({draftCount})
+            Drafts{summary.data ? ` (${summary.data.draftPacks})` : ""}
           </button>
         </div>
 
@@ -344,7 +217,10 @@ export default function SavedPacksPage() {
           <div className="relative shrink-0">
             <select
               value={sortOption}
-              onChange={(e) => setSortOption(e.target.value as SortOption)}
+              onChange={(e) => {
+                setSortOption(e.target.value as SortOption);
+                setCurrentPage(1);
+              }}
               className="h-9 pl-3.5 pr-8 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:border-[#092167] transition appearance-none cursor-pointer"
             >
               <option value="newest">Newest First</option>
@@ -360,237 +236,228 @@ export default function SavedPacksPage() {
       {/* =========================================================================
           PROPERTY CARDS GRID (3 Columns)
       ========================================================================= */}
-      {currentPacks.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3">
-          <p className="font-heading font-medium text-slate-800 text-lg">
-            No saved property packs found
-          </p>
-          <p className="text-xs text-slate-500 max-w-md mx-auto">
-            Try adjusting your search query or filter pills to see other saved
-            packs.
-          </p>
-        </div>
+      {list.isLoading ? (
+        <CardGridSkeleton count={6} />
+      ) : list.isError ? (
+        <ErrorState error={list.error} onRetry={() => list.refetch()} />
+      ) : items.length === 0 ? (
+        debouncedQuery || activeFilter !== "all" ? (
+          <EmptyState
+            icon={Search}
+            title="No saved property packs found"
+            description="Try adjusting your search query or filter pills to see other saved packs."
+          />
+        ) : (
+          <EmptyState
+            icon={FolderOpen}
+            title="No saved property packs yet"
+            description="Packs you create will be saved here so you can edit, export and share them."
+            primaryAction={{ label: "New Property Pack", href: "/agent-dashboard/create", icon: Sparkles }}
+          />
+        )
       ) : (
         <div className="@container">
           <div className="grid grid-cols-1 @sm:grid-cols-2 @xl:grid-cols-3 @4xl:grid-cols-4 gap-6">
-          {currentPacks.map((pack) => (
-            <div
-              key={pack.id}
-              className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col group"
-            >
-              {/* Card Image / Visual Area */}
-              <div className="relative aspect-[16/10] bg-slate-900 w-full overflow-hidden select-none">
-                {pack.image ? (
-                  <Image
-                    src={pack.image}
-                    alt={pack.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  /* Draft Placeholder Visual matching Figma Card 1 */
-                  <div className="w-full h-full relative bg-[#1E293B] overflow-hidden flex flex-col justify-end">
-                    {/* Architectural schematic grid background */}
-                    <div className="absolute inset-0 opacity-40 bg-[radial-gradient(#475569_1px,transparent_1px)] [background-size:16px_16px]" />
+            {items.map((pack) => {
+              const id = pack.id ?? "";
+              const title = pack.title || pack.address || "Untitled property";
+              return (
+                <div
+                  key={id}
+                  className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs hover:shadow-md transition-all duration-200 overflow-hidden flex flex-col group"
+                >
+                  {/* Card Image / Visual Area */}
+                  <div className="relative aspect-[16/10] bg-slate-900 w-full overflow-hidden select-none">
+                    <ApiImage
+                      src={pack.coverUrl}
+                      alt={title}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fallback={
+                        <div className="w-full h-full relative bg-[#1E293B] overflow-hidden flex flex-col justify-end">
+                          <div className="absolute inset-0 opacity-40 bg-[radial-gradient(#475569_1px,transparent_1px)] [background-size:16px_16px]" />
+                          <div className="w-full h-7 bg-[#1C4E2D] relative z-10 shrink-0" />
+                        </div>
+                      }
+                    />
 
-                    {/* Green ground lawn bar */}
-                    <div className="w-full h-7 bg-[#1C4E2D] relative z-10 shrink-0" />
+                    {/* Top Left Badge: Status */}
+                    <div className="absolute top-3 left-3 z-20">
+                      <PackStatusBadge status={pack.status ?? "draft"} size="sm" />
+                    </div>
+
+                    {/* Top Right Badge: Market */}
+                    {pack.market && (
+                      <div className="absolute top-3 right-3 z-20">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#06143E]/85 backdrop-blur-xs text-white">
+                          {pack.market}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                )}
 
-                {/* Top Left Badge: Status */}
-                <div className="absolute top-3 left-3 z-20">
-                  <PackStatusBadge status={pack.status} size="sm" />
-                </div>
+                  {/* Card Body Content */}
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div>
+                      <Link
+                        href={`/agent-dashboard/editor?pack=${id}`}
+                        className="block font-heading font-medium text-base text-slate-900 tracking-tight hover:text-[#092167] transition line-clamp-1"
+                        title={title}
+                      >
+                        {title}
+                      </Link>
 
-                {/* Top Right Badge: Country / Region */}
-                <div className="absolute top-3 right-3 z-20">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#06143E]/85 backdrop-blur-xs text-white">
-                    {pack.country}
-                  </span>
-                </div>
-              </div>
+                      <p className="text-xs text-slate-500 mt-1 line-clamp-1">{pack.address}</p>
 
-              {/* Card Body Content */}
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                <div>
-                  {/* Property Title */}
-                  <Link
-                    href={`/agent-dashboard/editor?pack=${pack.id}`}
-                    className="block font-heading font-medium text-base text-slate-900 tracking-tight hover:text-[#092167] transition line-clamp-1"
-                    title={pack.title}
-                  >
-                    {pack.title}
-                  </Link>
+                      <p className="font-heading font-medium text-xl text-slate-900 mt-2.5">
+                        {formatMoney(pack.pricePence, pack.market === "US" ? "USD" : "GBP")}
+                      </p>
 
-                  {/* Property Address */}
-                  <p className="text-xs text-slate-500 mt-1 line-clamp-1">
-                    {pack.address}
-                  </p>
+                      {/* Specs Pills */}
+                      <div className="flex items-center flex-wrap gap-1.5 mt-3 select-none">
+                        {pack.bedrooms != null && (
+                          <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700">
+                            {pack.bedrooms} Beds
+                          </span>
+                        )}
+                        {pack.bathrooms != null && (
+                          <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700">
+                            {pack.bathrooms} Baths
+                          </span>
+                        )}
+                        {pack.sizeSqFt != null && (
+                          <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700">
+                            {formatNumber(pack.sizeSqFt)} sq ft
+                          </span>
+                        )}
+                        {pack.propertyType && (
+                          <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700">
+                            {pack.propertyType}
+                          </span>
+                        )}
+                      </div>
+                    </div>
 
-                  {/* Price */}
-                  <p className="font-heading font-medium text-xl text-slate-900 mt-2.5">
-                    {pack.displayPrice}
-                  </p>
+                    {/* Card Action Buttons Footer */}
+                    <div className="pt-2 border-t border-slate-100 flex items-center gap-2">
+                      <Link
+                        href={`/agent-dashboard/editor?pack=${id}`}
+                        className="h-9 px-5 rounded-lg bg-[#06143E] hover:bg-[#0A1F5C] active:bg-[#040D28] text-white font-heading font-medium text-xs flex items-center justify-center transition shadow-2xs"
+                      >
+                        Edit
+                      </Link>
 
-                  {/* Specs Pills */}
-                  <div className="flex items-center flex-wrap gap-1.5 mt-3 select-none">
-                    <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700">
-                      {pack.beds} Beds
-                    </span>
-                    <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700">
-                      {pack.baths} Baths
-                    </span>
-                    <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700">
-                      {pack.sqft} sq ft
-                    </span>
-                    <span className="px-2.5 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700">
-                      {pack.propertyType}
-                    </span>
+                      <button
+                        type="button"
+                        onClick={() => setSharePackId(id)}
+                        className="h-9 w-9 rounded-lg border border-[#FFB800] bg-amber-50/20 hover:bg-amber-50 text-[#D49800] flex items-center justify-center transition cursor-pointer"
+                        title="Share property pack"
+                      >
+                        <Share2 className="w-4 h-4" />
+                      </button>
+
+                      {/* Public buyer page, once the pack has been shared */}
+                      {pack.shareToken && (
+                        <Link
+                          href={`/property/${pack.shareToken}`}
+                          target="_blank"
+                          className="h-9 w-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 flex items-center justify-center transition cursor-pointer shadow-2xs"
+                          title="Open live public buyer page"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Link>
+                      )}
+
+                      {/* Printable PDF brochure */}
+                      <button
+                        type="button"
+                        onClick={() => download(id)}
+                        disabled={busyId !== null}
+                        className="h-9 w-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 flex items-center justify-center transition cursor-pointer shadow-2xs disabled:opacity-60"
+                        title="Download PDF brochure"
+                      >
+                        {busyId === id ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setPackToDelete(pack)}
+                        className="ml-auto p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition cursor-pointer"
+                        title="Delete saved pack"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-
-                {/* Card Action Buttons Footer */}
-                <div className="pt-2 border-t border-slate-100 flex items-center gap-2">
-                  {/* Edit Button */}
-                  <Link
-                    href={`/agent-dashboard/editor?pack=${pack.id}`}
-                    className="h-9 px-5 rounded-lg bg-[#06143E] hover:bg-[#0A1F5C] active:bg-[#040D28] text-white font-heading font-medium text-xs flex items-center justify-center transition shadow-2xs"
-                  >
-                    Edit
-                  </Link>
-
-                  {/* Copy Link / Share Button */}
-                  <button
-                    type="button"
-                    onClick={() => copyLink(pack)}
-                    className="h-9 w-9 rounded-lg border border-[#FFB800] bg-amber-50/20 hover:bg-amber-50 text-[#D49800] flex items-center justify-center transition cursor-pointer"
-                    title="Share property pack"
-                  >
-                    <Share2 className="w-4 h-4" />
-                  </button>
-
-                  {/* External View Button (Public Buyer Page) */}
-                  <Link
-                    href="/property/16-gorse-drive"
-                    target="_blank"
-                    className="h-9 w-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 flex items-center justify-center transition cursor-pointer shadow-2xs"
-                    title="Open live public buyer page"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                  </Link>
-
-                  {/* 2-Page Printable PDF Brochure */}
-                  <Link
-                    href="/property/16-gorse-drive/pdf"
-                    target="_blank"
-                    className="h-9 w-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 flex items-center justify-center transition cursor-pointer shadow-2xs"
-                    title="View 2-Page PDF brochure"
-                  >
-                    <FileText className="w-4 h-4" />
-                  </Link>
-
-                  {/* Delete Trash Button */}
-                  <button
-                    type="button"
-                    onClick={() => setPackToDelete(pack)}
-                    className="ml-auto p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition cursor-pointer"
-                    title="Delete saved pack"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
+              );
+            })}
+          </div>
         </div>
-      </div>
       )}
 
       {/* =========================================================================
           BOTTOM FOOTER: COUNT & PAGINATION
       ========================================================================= */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-slate-200/60 select-none">
-        <p className="text-xs text-slate-500 font-medium">
-          Showing {filteredPacks.length === 0 ? 0 : startIndex + 1} to{" "}
-          {Math.min(startIndex + ITEMS_PER_PAGE, filteredPacks.length)} of{" "}
-          {filteredPacks.length} saved packs
-        </p>
+      {items.length > 0 && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-slate-200/60 select-none">
+          <p className="text-xs text-slate-500 font-medium">
+            Showing {startIndex + 1} to {Math.min(startIndex + PAGE_SIZE, total)} of {total} saved packs
+          </p>
 
-        {/* Pagination Buttons */}
-        <div className="flex items-center gap-1.5 self-center sm:self-auto">
-          {/* Previous Page */}
-          <button
-            type="button"
-            disabled={validPage === 1}
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            className="w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white flex items-center justify-center text-xs transition cursor-pointer disabled:cursor-not-allowed shadow-2xs"
-          >
-            <ChevronLeft className="w-3.5 h-3.5" />
-          </button>
-
-          {/* Page 1 */}
-          <button
-            type="button"
-            onClick={() => setCurrentPage(1)}
-            className={`w-8 h-8 rounded-lg font-heading text-xs transition cursor-pointer ${
-              validPage === 1
-                ? "bg-[#06143E] text-white font-medium shadow-xs"
-                : "border border-slate-200 bg-white text-slate-700 font-medium hover:bg-slate-50"
-            }`}
-          >
-            1
-          </button>
-
-          {/* Page 2 */}
-          {totalPages >= 2 && (
+          <div className="flex items-center gap-1.5 self-center sm:self-auto">
             <button
               type="button"
-              onClick={() => setCurrentPage(2)}
-              className={`w-8 h-8 rounded-lg font-heading text-xs transition cursor-pointer ${
-                validPage === 2
-                  ? "bg-[#06143E] text-white font-medium shadow-xs"
-                  : "border border-slate-200 bg-white text-slate-700 font-medium hover:bg-slate-50"
-              }`}
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              className="w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white flex items-center justify-center text-xs transition cursor-pointer disabled:cursor-not-allowed shadow-2xs"
             >
-              2
+              <ChevronLeft className="w-3.5 h-3.5" />
             </button>
-          )}
 
-          {/* Next Page */}
-          <button
-            type="button"
-            disabled={validPage === totalPages}
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            className="w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white flex items-center justify-center text-xs transition cursor-pointer disabled:cursor-not-allowed shadow-2xs"
-          >
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
+            {pageNumbers.map((n, idx) => (
+              <React.Fragment key={n}>
+                {idx > 0 && n - pageNumbers[idx - 1] > 1 && <span className="text-slate-400 text-xs">…</span>}
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(n)}
+                  className={`w-8 h-8 rounded-lg font-heading text-xs transition cursor-pointer ${
+                    currentPage === n
+                      ? "bg-[#06143E] text-white font-medium shadow-xs"
+                      : "border border-slate-200 bg-white text-slate-700 font-medium hover:bg-slate-50"
+                  }`}
+                >
+                  {n}
+                </button>
+              </React.Fragment>
+            ))}
+
+            <button
+              type="button"
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              className="w-8 h-8 rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white flex items-center justify-center text-xs transition cursor-pointer disabled:cursor-not-allowed shadow-2xs"
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* S05 Share Dialog */}
-      <ShareDialog
-        isOpen={showShareModal}
-        onClose={() => setShowShareModal(false)}
-        packId={sharePackTarget.id}
-        packTitle={sharePackTarget.title}
-      />
+      {/* Share Dialog */}
+      {sharePackId && <ShareDialog isOpen onClose={() => setSharePackId(null)} packId={sharePackId} />}
 
-      {/* S07 Buy Packs Modal */}
-      <BuyPacksModal
-        isOpen={showBuyModal}
-        onClose={() => setShowBuyModal(false)}
-      />
+      {/* Buy Packs Modal */}
+      <BuyPacksModal isOpen={showBuyModal} onClose={() => setShowBuyModal(false)} />
 
       {/* Delete Confirmation Modal */}
       <DangerModal
         isOpen={!!packToDelete}
         onClose={() => setPackToDelete(null)}
         onConfirm={confirmDeletePack}
+        isLoading={deleteState.isLoading}
         title="Delete Property Pack"
         description="Are you sure you want to permanently delete this property pack? All generated marketing copy, public brochure links, and analytics will be removed."
-        itemName={packToDelete?.title}
+        itemName={packToDelete?.title || packToDelete?.address}
         confirmText="Delete Pack"
       />
     </div>

@@ -6,73 +6,75 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, CheckCircle2, AlertCircle, Loader2, ArrowLeft, RefreshCw } from "lucide-react";
 import { OtpInput } from "@/components/ui/OtpInput";
 import toast from "react-hot-toast";
+import { apiErrorInfo } from "@/components/ui/ErrorState";
+import { errorText } from "@/lib/auth/client";
+import { useAppSelector } from "@/redux/hook";
+import { useResendVerificationMutation, useVerifyOtpMutation } from "@/redux/api/auth/authApi";
+
+const RESEND_COOLDOWN_SECONDS = 45;
 
 function VerifyEmailForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const sessionEmail = useAppSelector((st) => st.user.user?.email);
   const emailParam = searchParams.get("email");
-  const email = emailParam ? decodeURIComponent(emailParam) : "eleanor@vanceprestige.com";
+  const email = emailParam ?? sessionEmail ?? "";
+
+  const [verifyOtp, { isLoading: isSubmitting }] = useVerifyOtpMutation();
+  const [resendVerification, { isLoading: isResending }] = useResendVerificationMutation();
 
   const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
-  const [resendTimer, setResendTimer] = useState(45);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isResending, setIsResending] = useState(false);
+  const [resendTimer, setResendTimer] = useState(RESEND_COOLDOWN_SECONDS);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (resendTimer > 0) {
-      interval = setInterval(() => {
-        setResendTimer((prev) => prev - 1);
-      }, 1000);
-    }
-    return () => {
-      if (interval) clearInterval(interval);
-    };
+    if (resendTimer <= 0) return;
+    const interval = setInterval(() => setResendTimer((prev) => prev - 1), 1000);
+    return () => clearInterval(interval);
   }, [resendTimer]);
 
-  const handleVerify = (codeToVerify?: string) => {
+  const handleVerify = async (codeToVerify?: string) => {
     const code = codeToVerify || otp.join("");
     if (code.length < 6) {
       setErrorMessage("Please enter the complete 6-digit verification code.");
       return;
     }
+    if (!email) {
+      setErrorMessage("We don't know which email to verify. Please sign in again.");
+      return;
+    }
 
     setErrorMessage(null);
-    setIsSubmitting(true);
-
-    // Simulate verification
-    setTimeout(() => {
-      setIsSubmitting(false);
-      // Simulate error code condition for demonstration
-      if (code === "000000") {
-        setErrorMessage("Invalid or expired verification code. Please check and try again.");
-        toast.error("Invalid verification code");
-        return;
-      }
-
+    try {
+      await verifyOtp({ email, code, purpose: "email_verify" }).unwrap();
       setIsSuccess(true);
       toast.success("Email verified successfully!");
-
-      // Route to plan selection
-      setTimeout(() => {
-        router.push(`/onboarding/plan?email=${encodeURIComponent(email)}`);
-      }, 900);
-    }, 600);
+      router.push("/onboarding/plan");
+    } catch (err) {
+      const info = apiErrorInfo(err);
+      const message =
+        info.status === 400
+          ? "Invalid or expired verification code. Please check and try again."
+          : errorText(err);
+      setErrorMessage(message);
+      toast.error(message);
+    }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     if (resendTimer > 0 || isResending) return;
-    setIsResending(true);
     setErrorMessage(null);
-
-    setTimeout(() => {
-      setIsResending(false);
-      setResendTimer(45);
+    try {
+      await resendVerification().unwrap();
+      setResendTimer(RESEND_COOLDOWN_SECONDS);
       setOtp(["", "", "", "", "", ""]);
-      toast.success(`A new verification code has been sent to ${email}`);
-    }, 500);
+      toast.success(`A new verification code has been sent${email ? ` to ${email}` : ""}`);
+    } catch (err) {
+      const message = errorText(err);
+      setErrorMessage(message);
+      toast.error(message);
+    }
   };
 
   return (
@@ -132,13 +134,6 @@ function VerifyEmailForm() {
             disabled={isSubmitting || isSuccess}
             onComplete={(code) => handleVerify(code)}
           />
-        </div>
-
-        {/* Quick Demo Helper */}
-        <div className="text-center">
-          <p className="text-[11px] text-slate-400">
-            Demo tip: Type <span className="font-mono text-slate-600">123456</span> to continue, or <span className="font-mono text-slate-600">000000</span> to test error handling.
-          </p>
         </div>
 
         {/* Submit Button */}

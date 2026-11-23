@@ -1,32 +1,31 @@
 "use client";
 
-import React, { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Check, ArrowRight, Sparkles } from "lucide-react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Check, ArrowRight, Sparkles, Layers } from "lucide-react";
 import { OnboardingStepProgress } from "@/components/onboarding/OnboardingStepProgress";
-import { getPlans } from "@/mocks/onboarding";
-import { BillingCycle, PlanTier } from "@/types/onboarding";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorState } from "@/components/ui/ErrorState";
+import { CardGridSkeleton } from "@/components/ui/skeletons/CardGridSkeleton";
+import { useGetPlansQuery } from "@/redux/api/billing/billingApi";
+import { formatMoney } from "@/lib/format";
+import type { Plan } from "@/types/models";
 
-function PlanSelectionContent() {
+export default function PlanSelectionPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const emailParam = searchParams.get("email") || "";
+  const { data: plans, isLoading, isError, error, refetch } = useGetPlansQuery();
+  const [chosenCode, setChosenCode] = useState<string | null>(null);
 
-  const plans = getPlans();
-  const [selectedPlanId, setSelectedPlanId] = useState<string>("professional");
-  const [billingCycle, setBillingCycle] = useState<BillingCycle>("monthly");
+  const selectedPlan: Plan | undefined =
+    plans?.find((p) => p.code === chosenCode) ?? plans?.find((p) => p.isPopular) ?? plans?.[0];
+  const selectedPlanId = selectedPlan?.code;
 
   const handleContinue = () => {
-    const params = new URLSearchParams();
-    params.set("plan", selectedPlanId);
-    params.set("billing", billingCycle);
-    if (emailParam) params.set("email", emailParam);
-    router.push(`/onboarding/payment?${params.toString()}`);
+    if (!selectedPlan?.code) return;
+    router.push(`/onboarding/payment?plan=${encodeURIComponent(selectedPlan.code)}`);
   };
-
-  const selectedPlan = plans.find((p) => p.id === selectedPlanId) || plans[1];
 
   return (
     <div className="w-full max-w-6xl mx-auto">
@@ -41,59 +40,34 @@ function PlanSelectionContent() {
         <p className="font-sans text-base text-slate-600 leading-relaxed">
           Transform your property marketing with high-speed AI brochure packs. Change or cancel your subscription at any time.
         </p>
-
-        {/* Monthly / Annual Toggle */}
-        <div className="mt-8 inline-flex items-center p-1.5 rounded-2xl bg-white/80 border border-slate-300 shadow-xs">
-          <button
-            type="button"
-            onClick={() => setBillingCycle("monthly")}
-            className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 cursor-pointer ${
-              billingCycle === "monthly"
-                ? "bg-[#092167] text-white shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            Monthly billing
-          </button>
-          <button
-            type="button"
-            onClick={() => setBillingCycle("annual")}
-            className={`px-5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 flex items-center gap-1.5 cursor-pointer ${
-              billingCycle === "annual"
-                ? "bg-[#092167] text-white shadow-xs"
-                : "text-slate-600 hover:text-slate-900"
-            }`}
-          >
-            <span>Annual billing</span>
-            <span className="bg-[#FEF3C7] text-[#8C6605] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-              Save 20%
-            </span>
-          </button>
-        </div>
       </div>
 
-      {/* Plans Grid */}
+      {isLoading && <CardGridSkeleton count={3} />}
+      {isError && <ErrorState error={error} onRetry={refetch} className="mb-10" />}
+      {!isLoading && !isError && (!plans || plans.length === 0) && (
+        <EmptyState icon={Layers} title="No plans available" description="Subscription plans are not available right now. Please try again shortly." primaryAction={{ label: "Reload plans", onClick: () => refetch() }} />
+      )}
+      {plans && plans.length > 0 && selectedPlan && (
+      <>
       <div
         role="radiogroup"
         aria-label="Subscription Plans"
         className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch mb-10"
       >
-        {plans.map((plan: PlanTier) => {
-          const isSelected = selectedPlanId === plan.id;
-          const displayPrice =
-            billingCycle === "annual" ? plan.priceAnnualMonthly : plan.priceMonthly;
+        {plans.map((plan: Plan) => {
+          const isSelected = selectedPlanId === plan.code;
 
           return (
             <div
-              key={plan.id}
+              key={plan.code}
               role="radio"
               aria-checked={isSelected}
               tabIndex={0}
-              onClick={() => setSelectedPlanId(plan.id)}
+              onClick={() => setChosenCode(plan.code ?? null)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
                   e.preventDefault();
-                  setSelectedPlanId(plan.id);
+                  setChosenCode(plan.code ?? null);
                 }
               }}
               className={`relative rounded-3xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-200 cursor-pointer outline-none ${
@@ -107,11 +81,11 @@ function PlanSelectionContent() {
               }`}
             >
               {/* Badge if Popular */}
-              {plan.badge && (
+              {plan.isPopular && (
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                   <span className="inline-flex items-center gap-1 bg-[#E8A808] text-[#06143E] font-heading font-bold text-xs uppercase tracking-wider px-3.5 py-1 rounded-full shadow-md">
                     <Sparkles className="w-3.5 h-3.5 fill-current" />
-                    <span>{plan.badge}</span>
+                    <span>Most Popular</span>
                   </span>
                 </div>
               )}
@@ -135,26 +109,18 @@ function PlanSelectionContent() {
                   </div>
                 </div>
 
-                <p
-                  className={`text-xs sm:text-sm mb-6 ${
-                    plan.isPopular ? "text-slate-300" : "text-slate-500"
-                  }`}
-                >
-                  {plan.tagline}
-                </p>
-
                 {/* Pricing Box */}
                 <div className="mb-6 pb-6 border-b border-slate-200/40">
                   <div className="flex items-baseline gap-1.5">
                     <span className="font-heading font-extrabold text-4xl sm:text-5xl tracking-tight">
-                      £{displayPrice}
+                      {formatMoney(plan.pricePence, plan.currency?.toUpperCase())}
                     </span>
                     <span
                       className={`text-xs sm:text-sm font-medium ${
                         plan.isPopular ? "text-slate-300" : "text-slate-500"
                       }`}
                     >
-                      / month
+                      / {plan.interval ?? "month"}
                     </span>
                   </div>
                   <p
@@ -162,9 +128,7 @@ function PlanSelectionContent() {
                       plan.isPopular ? "text-[#E8A808]" : "text-slate-500"
                     }`}
                   >
-                    {billingCycle === "annual"
-                      ? "Billed annually (2 months free included)"
-                      : "Billed monthly, cancel anytime"}
+                    Billed {plan.interval === "year" ? "annually" : "monthly"}, cancel anytime
                   </p>
                 </div>
 
@@ -179,9 +143,9 @@ function PlanSelectionContent() {
                       Allowance
                     </span>
                     <span className="font-heading font-bold text-base sm:text-lg">
-                      {plan.packsPerMonth} Packs
+                      {plan.packAllowance} Packs
                     </span>
-                    <span className="block text-[10px] text-slate-400">per month</span>
+                    <span className="block text-[10px] text-slate-400">per {plan.interval ?? "month"}</span>
                   </div>
                   <div
                     className={`p-3 rounded-2xl ${
@@ -192,7 +156,7 @@ function PlanSelectionContent() {
                       Seats
                     </span>
                     <span className="font-heading font-bold text-base sm:text-lg">
-                      {plan.seats} {plan.seats === 1 ? "Seat" : "Seats"}
+                      {plan.seatLimit} {plan.seatLimit === 1 ? "Seat" : "Seats"}
                     </span>
                     <span className="block text-[10px] text-slate-400">team members</span>
                   </div>
@@ -200,7 +164,7 @@ function PlanSelectionContent() {
 
                 {/* Features List */}
                 <ul className="space-y-3 mb-6 text-xs sm:text-sm">
-                  {plan.features.map((feature, idx) => (
+                  {(plan.features ?? []).map((feature, idx) => (
                     <li key={idx} className="flex items-start gap-2.5">
                       <div
                         className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
@@ -225,7 +189,7 @@ function PlanSelectionContent() {
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedPlanId(plan.id);
+                    setChosenCode(plan.code ?? null);
                   }}
                   className={`w-full py-3 px-4 rounded-xl font-heading font-semibold text-sm transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                     isSelected
@@ -263,16 +227,14 @@ function PlanSelectionContent() {
               {selectedPlan.name} Plan
             </h3>
             <span className="font-semibold text-slate-600">
-              • £{billingCycle === "annual" ? selectedPlan.priceAnnualMonthly : selectedPlan.priceMonthly} / month
+              • {formatMoney(selectedPlan.pricePence, selectedPlan.currency?.toUpperCase())} / {selectedPlan.interval ?? "month"}
             </span>
             <Badge variant="brand">
-              {selectedPlan.packsPerMonth} Packs & {selectedPlan.seats} Seats
+              {selectedPlan.packAllowance} Packs & {selectedPlan.seatLimit} Seats
             </Badge>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            {billingCycle === "annual"
-              ? "Billed annually. 14-day money-back satisfaction guarantee."
-              : "Billed monthly. Cancel or change tier at any time."}
+            Billed {selectedPlan.interval === "year" ? "annually" : "monthly"}. Cancel or change tier at any time.
           </p>
         </div>
 
@@ -288,21 +250,8 @@ function PlanSelectionContent() {
           </Button>
         </div>
       </div>
+      </>
+      )}
     </div>
-  );
-}
-
-export default function PlanSelectionPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="max-w-2xl mx-auto bg-white rounded-3xl p-12 text-center text-slate-500 shadow-lg">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#092167] mx-auto mb-4" />
-          <p className="text-sm">Loading available plans...</p>
-        </div>
-      }
-    >
-      <PlanSelectionContent />
-    </Suspense>
   );
 }

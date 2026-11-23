@@ -3,19 +3,41 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, Plus, X } from "lucide-react";
-import { PropertySpecs } from "@/types/packs";
+import { Loader2 } from "lucide-react";
+import type { DetailsForm } from "./details";
 
 interface CreateStep1DetailsProps {
-  formData: PropertySpecs;
-  setFormData: React.Dispatch<React.SetStateAction<PropertySpecs>>;
+  formData: DetailsForm;
+  setFormData: React.Dispatch<React.SetStateAction<DetailsForm>>;
+  /** API field errors keyed like `address.postcode`. */
+  fieldErrors: Record<string, string>;
+  saving: boolean;
   onContinue: () => void;
+}
+
+const MAX_HIGHLIGHTS = 15;
+const MAX_HIGHLIGHT_LENGTH = 120;
+
+function FieldError({ message }: { message?: string }) {
+  return message ? (
+    <p className="text-[11px] text-rose-600 mt-1">{message}</p>
+  ) : null;
 }
 
 export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
   formData,
   setFormData,
+  fieldErrors,
+  saving,
   onContinue,
 }) => {
+  const err = (...keys: string[]) => {
+    for (const k of keys) if (fieldErrors[k]) return fieldErrors[k];
+    return undefined;
+  };
+  const highlightsError = Object.entries(fieldErrors).find(([k]) =>
+    k.startsWith("highlights"),
+  )?.[1];
   const [newBullet, setNewBullet] = useState("");
 
   const handleInputChange = (
@@ -24,16 +46,24 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
     >,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "transaction" ? (value as "sale" | "let") : value,
+    }));
   };
 
   const handleAddBullet = () => {
     const trimmed = newBullet.trim();
     if (!trimmed) return;
-    if (!formData.bulletFeatures.includes(trimmed)) {
+    if (
+      trimmed.length > MAX_HIGHLIGHT_LENGTH ||
+      formData.highlights.length >= MAX_HIGHLIGHTS
+    )
+      return;
+    if (!formData.highlights.includes(trimmed)) {
       setFormData((prev) => ({
         ...prev,
-        bulletFeatures: [...prev.bulletFeatures, trimmed],
+        highlights: [...prev.highlights, trimmed],
       }));
     }
     setNewBullet("");
@@ -42,7 +72,7 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
   const handleRemoveBullet = (feature: string) => {
     setFormData((prev) => ({
       ...prev,
-      bulletFeatures: prev.bulletFeatures.filter((f) => f !== feature),
+      highlights: prev.highlights.filter((f) => f !== feature),
     }));
   };
 
@@ -54,24 +84,26 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
           Property Information
         </h2>
         <p className="text-sm text-slate-500 mt-1">
-          Provide factual specifications to generate compliant UK brochure copy and layout.
+          Provide factual specifications to generate compliant UK brochure copy
+          and layout.
         </p>
       </div>
 
       <div className="space-y-4 pt-2">
-        {/* Estimated Listing Title */}
+        {/* Reference Title */}
         <div>
           <label className="block text-[11px] font-semibold text-slate-600 tracking-wider uppercase mb-1.5">
-            Estimated Listing Title <span className="text-amber-500">*</span>
+            Reference Title <span className="text-amber-500">*</span>
           </label>
           <input
             type="text"
-            name="title"
-            value={formData.title}
+            name="referenceTitle"
+            value={formData.referenceTitle}
             onChange={handleInputChange}
             placeholder="e.g. 16 Gorse Drive Executive Detached"
             className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167] focus:ring-1 focus:ring-[#092167]"
           />
+          <FieldError message={err("referenceTitle")} />
         </div>
 
         {/* Address and Separate Postcode */}
@@ -82,12 +114,13 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
             </label>
             <input
               type="text"
-              name="address"
-              value={formData.address}
+              name="line1"
+              value={formData.line1}
               onChange={handleInputChange}
-              placeholder="e.g. 16 Gorse Drive, Chorlton, Manchester"
+              placeholder="e.g. 16 Gorse Drive"
               className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167] focus:ring-1 focus:ring-[#092167]"
             />
+            <FieldError message={err("address.line1", "address")} />
           </div>
           <div>
             <label className="block text-[11px] font-semibold text-slate-600 tracking-wider uppercase mb-1.5">
@@ -101,6 +134,39 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
               placeholder="e.g. M21 8XQ"
               className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm uppercase focus:outline-none focus:border-[#092167] focus:ring-1 focus:ring-[#092167]"
             />
+            <FieldError message={err("address.postcode")} />
+          </div>
+        </div>
+
+        {/* Town & Transaction */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-600 tracking-wider uppercase mb-1.5">
+              Town / City
+            </label>
+            <input
+              type="text"
+              name="town"
+              value={formData.town}
+              onChange={handleInputChange}
+              placeholder="e.g. Manchester"
+              className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167] focus:ring-1 focus:ring-[#092167]"
+            />
+            <FieldError message={err("address.town")} />
+          </div>
+          <div>
+            <label className="block text-[11px] font-semibold text-slate-600 tracking-wider uppercase mb-1.5">
+              Listing Type <span className="text-amber-500">*</span>
+            </label>
+            <select
+              name="transaction"
+              value={formData.transaction}
+              onChange={handleInputChange}
+              className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167] focus:ring-1 focus:ring-[#092167]"
+            >
+              <option value="sale">For sale</option>
+              <option value="let">To let</option>
+            </select>
           </div>
         </div>
 
@@ -108,16 +174,22 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-[11px] font-semibold text-slate-600 tracking-wider uppercase mb-1.5">
-              Guide / Asking Price (£) <span className="text-amber-500">*</span>
+              {formData.transaction === "let"
+                ? "Monthly Rent (£ pcm)"
+                : "Guide / Asking Price (£)"}{" "}
+              <span className="text-amber-500">*</span>
             </label>
             <input
               type="text"
               name="price"
               value={formData.price}
               onChange={handleInputChange}
-              placeholder="£750,000"
+              placeholder={
+                formData.transaction === "let" ? "£1,850" : "£750,000"
+              }
               className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167] focus:ring-1 focus:ring-[#092167]"
             />
+            <FieldError message={err("guidePricePence", "rentPcmPence")} />
           </div>
 
           <div>
@@ -130,6 +202,7 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
               onChange={handleInputChange}
               className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167] focus:ring-1 focus:ring-[#092167]"
             >
+              <option value="">Select</option>
               <option>Detached Home</option>
               <option>Semi-Detached</option>
               <option>Terraced</option>
@@ -138,6 +211,7 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
               <option>Bungalow</option>
               <option>Maisonette</option>
             </select>
+            <FieldError message={err("propertyType")} />
           </div>
         </div>
 
@@ -153,11 +227,13 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
               onChange={handleInputChange}
               className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-slate-900 text-xs focus:outline-none focus:border-[#092167]"
             >
-              <option value="Freehold">Freehold</option>
-              <option value="Leasehold">Leasehold</option>
-              <option value="Share of Freehold">Share of Freehold</option>
-              <option value="Commonhold">Commonhold</option>
+              <option value="">Select</option>
+              <option value="freehold">Freehold</option>
+              <option value="leasehold">Leasehold</option>
+              <option value="share_of_freehold">Share of Freehold</option>
+              <option value="commonhold">Commonhold</option>
             </select>
+            <FieldError message={err("tenure")} />
           </div>
 
           <div>
@@ -170,6 +246,7 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
               onChange={handleInputChange}
               className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-slate-900 text-xs focus:outline-none focus:border-[#092167]"
             >
+              <option value="">Select</option>
               <option value="A">Band A (92-100)</option>
               <option value="B">Band B (81-91)</option>
               <option value="C">Band C (69-80)</option>
@@ -177,8 +254,8 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
               <option value="E">Band E (39-54)</option>
               <option value="F">Band F (21-38)</option>
               <option value="G">Band G (1-20)</option>
-              <option value="Exempt">Exempt / In Progress</option>
             </select>
+            <FieldError message={err("epcRating")} />
           </div>
 
           <div>
@@ -191,12 +268,14 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
               onChange={handleInputChange}
               className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-slate-900 text-xs focus:outline-none focus:border-[#092167]"
             >
-              {["A", "B", "C", "D", "E", "F", "G", "H"].map((band) => (
+              <option value="">Select</option>
+              {["A", "B", "C", "D", "E", "F", "G", "H", "I"].map((band) => (
                 <option key={band} value={band}>
                   Band {band}
                 </option>
               ))}
             </select>
+            <FieldError message={err("councilTaxBand")} />
           </div>
         </div>
 
@@ -211,9 +290,11 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
               name="bedrooms"
               value={formData.bedrooms}
               onChange={handleInputChange}
-              placeholder="4 Bedrooms"
+              placeholder="4"
+              inputMode="numeric"
               className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
             />
+            <FieldError message={err("bedrooms")} />
           </div>
 
           <div>
@@ -225,9 +306,11 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
               name="bathrooms"
               value={formData.bathrooms}
               onChange={handleInputChange}
-              placeholder="3 Bathrooms"
+              placeholder="3"
+              inputMode="numeric"
               className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
             />
+            <FieldError message={err("bathrooms")} />
           </div>
 
           <div>
@@ -236,12 +319,14 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
             </label>
             <input
               type="text"
-              name="size"
-              value={formData.size}
+              name="sizeSqFt"
+              value={formData.sizeSqFt}
               onChange={handleInputChange}
-              placeholder="2,150 sq ft"
+              placeholder="2150"
+              inputMode="numeric"
               className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
             />
+            <FieldError message={err("sizeSqFt")} />
           </div>
         </div>
 
@@ -258,6 +343,7 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
             placeholder="Private driveway with space for 2 cars & double garage"
             className="w-full h-11 px-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167]"
           />
+          <FieldError message={err("parking")} />
         </div>
 
         {/* Bullet Features (E01) */}
@@ -289,9 +375,10 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
             </button>
           </div>
 
+          <FieldError message={highlightsError} />
           {/* Feature Pills */}
           <div className="flex flex-wrap gap-2 pt-1">
-            {formData.bulletFeatures.map((feature, idx) => (
+            {formData.highlights.map((feature, idx) => (
               <span
                 key={idx}
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs text-slate-700 font-medium"
@@ -316,13 +403,14 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
             Property Highlights & Detailed Notes
           </label>
           <textarea
-            name="highlights"
+            name="specialNotes"
             rows={3}
-            value={formData.highlights}
+            value={formData.specialNotes}
             onChange={handleInputChange}
             placeholder="South-facing mature rear garden, bespoke kitchen fitted 2024, open-plan living space..."
             className="w-full p-4 rounded-xl border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:border-[#092167] resize-y"
           />
+          <FieldError message={err("specialNotes")} />
         </div>
       </div>
 
@@ -339,10 +427,15 @@ export const CreateStep1Details: React.FC<CreateStep1DetailsProps> = ({
         <button
           type="button"
           onClick={onContinue}
-          className="h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-semibold text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer"
+          disabled={saving}
+          className="disabled:opacity-60 h-10 px-6 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] active:bg-[#B58306] text-[#06143E] font-heading font-semibold text-xs shadow-sm transition inline-flex items-center gap-2 cursor-pointer"
         >
           <span>Continue to Photos & Floor Plan</span>
-          <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+          {saving ? (
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          ) : (
+            <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+          )}
         </button>
       </div>
     </div>

@@ -1,269 +1,114 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Download,
   Eye,
   Mail,
   Trash2,
-  Calendar,
-  Check,
-  CheckCircle2,
-  Clock,
   ChevronDown,
-  X,
-  Phone,
-  Building,
-  Send,
-  AlertCircle,
-  FileSpreadsheet,
+  Search,
+  Users,
 } from "lucide-react";
+import toast from "react-hot-toast";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { DangerModal } from "@/components/ui/DangerModal";
-import { LeadDetailSlideOver } from "@/components/leads/LeadDetailSlideOver";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorState, apiErrorInfo } from "@/components/ui/ErrorState";
+import TableSkeleton from "@/components/ui/skeletons/TableSkeleton";
+import StatsSkeleton from "@/components/ui/skeletons/StatsSkeleton";
+import { LeadDetailSlideOver, LEAD_STATUS_LABEL } from "@/components/leads/LeadDetailSlideOver";
+import {
+  useDeleteLeadMutation,
+  useGetLeadsQuery,
+  useUpdateLeadStatusMutation,
+} from "@/redux/api/leads/leadsApi";
+import { useListPacksQuery } from "@/redux/api/packs/packsApi";
+import { errorText } from "@/lib/auth/client";
+import { formatDate, formatDateTime, initials } from "@/lib/format";
+import type { Lead, LeadStatus } from "@/types/models";
 
-type InquiryStatus = "Pending Action" | "Confirmed" | "Completed" | "Cancelled";
+const LIMIT = 20;
+type Row = Lead & { id: string; status: LeadStatus; buyerName: string; email: string; createdAt: string };
+const AVATAR_COLORS = ["bg-[#06143E]", "bg-[#065F46]", "bg-[#C2410C]", "bg-[#7C3AED]", "bg-[#0E7490]"];
+const STATUS_STYLE: Record<LeadStatus, { pill: string; dot: string; text: string }> = {
+  pending: { pill: "bg-amber-50 text-amber-800 border-amber-200/70 hover:bg-amber-100", dot: "bg-amber-500", text: "text-amber-800" },
+  confirmed: { pill: "bg-emerald-50 text-emerald-800 border-emerald-200/70 hover:bg-emerald-100", dot: "bg-emerald-500", text: "text-emerald-800" },
+  completed: { pill: "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200", dot: "bg-slate-500", text: "text-slate-700" },
+  cancelled: { pill: "bg-rose-50 text-rose-800 border-rose-200/70 hover:bg-rose-100", dot: "bg-rose-500", text: "text-rose-800" },
+};
 
-interface LeadInquiry {
-  id: string;
-  ref: string;
-  buyerName: string;
-  email: string;
-  phone: string;
-  initials: string;
-  avatarColor: string;
-  propertyTitle: string;
-  propertyPrice: string;
-  requestedDate: string;
-  requestedTime: string;
-  statusNote: string;
-  statusNoteType: "warning" | "success" | "muted" | "danger";
-  status: InquiryStatus;
-  message?: string;
-  preApproved?: boolean;
+function avatarColor(id: string) {
+  let h = 0;
+  for (const c of id) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
 }
 
 export default function LeadsInquiriesPage() {
-  const [activeFilter, setActiveFilter] = useState<
-    "all" | "pending" | "confirmed" | "completed" | "cancelled"
-  >("all");
-
-  const [selectedPropertyFilter, setSelectedPropertyFilter] =
-    useState("All Listings");
+  const [activeFilter, setActiveFilter] = useState<"all" | LeadStatus>("all");
+  const [packId, setPackId] = useState<string | undefined>(undefined);
   const [isPropertyDropdownOpen, setIsPropertyDropdownOpen] = useState(false);
   const [openStatusMenuId, setOpenStatusMenuId] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [q, setQ] = useState("");
+  const [page, setPage] = useState(1);
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+  const [leadToDelete, setLeadToDelete] = useState<{ id: string; buyerName: string } | null>(null);
 
-  const [selectedLeadForDetails, setSelectedLeadForDetails] =
-    useState<LeadInquiry | null>(null);
-  const [selectedLeadForEmail, setSelectedLeadForEmail] =
-    useState<LeadInquiry | null>(null);
-  const [emailSubject, setEmailSubject] = useState(
-    "Regarding your viewing request for 16 Gorse Drive",
-  );
-  const [emailBody, setEmailBody] = useState(
-    "Hi David,\n\nThank you for booking a viewing for 16 Gorse Drive, Chorlton. We are pleased to confirm your appointment for Saturday, 17 October at 10:30 AM.\n\nOur valuer will meet you at the property.\n\nBest regards,\nPrestige Estates UK",
-  );
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setQ(search.trim());
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [search]);
 
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [leadToDelete, setLeadToDelete] = useState<LeadInquiry | null>(null);
+  const status = activeFilter === "all" ? undefined : activeFilter;
+  const { data, isLoading, isFetching, error, refetch } = useGetLeadsQuery({ status, packId, q: q || undefined, page, limit: LIMIT });
+  const { data: packs } = useListPacksQuery({ pageSize: 100 });
+  const [updateStatus] = useUpdateLeadStatusMutation();
+  const [deleteLead, { isLoading: isDeleting }] = useDeleteLeadMutation();
 
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
+  const stats = data?.stats;
+  const leads = (data?.items ?? []) as Row[];
+  const total = data?.total ?? 0;
+  const pageCount = Math.max(1, Math.ceil(total / LIMIT));
+  const selectedPackTitle = packs?.items.find((p) => p.id === packId)?.title ?? "All Listings";
 
-  const [leads, setLeads] = useState<LeadInquiry[]>([
-    {
-      id: "lead-1",
-      ref: "#PP-8492",
-      buyerName: "David Harrison",
-      email: "david.h@gmail.com",
-      phone: "+44 7911 234567",
-      initials: "DH",
-      avatarColor: "bg-[#06143E]",
-      propertyTitle: "16 Gorse Drive, Chorlton",
-      propertyPrice: "£750,000 Guide",
-      requestedDate: "Sat, 17 Oct",
-      requestedTime: "10:30 AM",
-      statusNote: "Submitted 24 mins ago",
-      statusNoteType: "warning",
-      status: "Pending Action",
-      message:
-        "Looking to view this Saturday morning. We are chain-free cash buyers with mortgage in principle ready.",
-      preApproved: true,
-    },
-    {
-      id: "lead-2",
-      ref: "#PP-8492",
-      buyerName: "Emma Richardson",
-      email: "emma.r@outlook.co.uk",
-      phone: "+44 7822 998811",
-      initials: "ER",
-      avatarColor: "bg-[#1E293B]",
-      propertyTitle: "16 Gorse Drive, Chorlton",
-      propertyPrice: "£750,000 Guide",
-      requestedDate: "Sat, 17 Oct",
-      requestedTime: "11:30 AM",
-      statusNote: "Calendar synced",
-      statusNoteType: "success",
-      status: "Confirmed",
-      message:
-        "Second viewing with my partner. Very interested in making an offer if conditions match survey.",
-      preApproved: true,
-    },
-    {
-      id: "lead-3",
-      ref: "#PP-8104",
-      buyerName: "Marcus Wright",
-      email: "m.wright@gmail.com",
-      phone: "+44 7700 900142",
-      initials: "MW",
-      avatarColor: "bg-[#0A2540]",
-      propertyTitle: "42 Brookburn Road, Didsbury",
-      propertyPrice: "£620,000 Guide",
-      requestedDate: "Thu, 15 Oct",
-      requestedTime: "02:00 PM",
-      statusNote: "Viewing attended",
-      statusNoteType: "muted",
-      status: "Completed",
-      message:
-        "Attended viewing on Thursday. Awaiting vendor feedback on our £615k verbal proposal.",
-      preApproved: false,
-    },
-    {
-      id: "lead-4",
-      ref: "#PP-7940",
-      buyerName: "Sophie Lewis",
-      email: "sophie.l@icloud.com",
-      phone: "+44 7412 883344",
-      initials: "SL",
-      avatarColor: "bg-[#E11D48]",
-      propertyTitle: "14 Victoria Road, Altrincham",
-      propertyPrice: "£895,000 Guide",
-      requestedDate: "Tue, 13 Oct",
-      requestedTime: "04:30 PM",
-      statusNote: "Buyer cancelled slot",
-      statusNoteType: "danger",
-      status: "Cancelled",
-      message:
-        "Had to reschedule due to work commitments. Will rebook for next weekend.",
-      preApproved: false,
-    },
-    {
-      id: "lead-5",
-      ref: "#PP-8492",
-      buyerName: "Jonathan Miller",
-      email: "j.miller@hotmail.co.uk",
-      phone: "+44 7921 556677",
-      initials: "JM",
-      avatarColor: "bg-[#065F46]",
-      propertyTitle: "16 Gorse Drive, Chorlton",
-      propertyPrice: "£750,000 Guide",
-      requestedDate: "Sun, 18 Oct",
-      requestedTime: "01:00 PM",
-      statusNote: "Submitted 1 hour ago",
-      statusNoteType: "warning",
-      status: "Pending Action",
-      message:
-        "First-time buyers with DIP certificate from Santander ready for inspection.",
-      preApproved: true,
-    },
-    {
-      id: "lead-6",
-      ref: "#PP-8104",
-      buyerName: "Rachel Davies",
-      email: "rachel.d@live.com",
-      phone: "+44 7789 123987",
-      initials: "RD",
-      avatarColor: "bg-[#C2410C]",
-      propertyTitle: "42 Brookburn Road, Didsbury",
-      propertyPrice: "£620,000 Guide",
-      requestedDate: "Sat, 17 Oct",
-      requestedTime: "03:15 PM",
-      statusNote: "Calendar synced",
-      statusNoteType: "success",
-      status: "Confirmed",
-      message:
-        "Relocating from London next month, looking for quick completion.",
-      preApproved: true,
-    },
-  ]);
-
-  // Buyers' personal data is never kept in the browser (GDPR): real leads come from GET /leads during API
-  // integration. Old browser copies (`pp_captured_leads`) are deleted by SessionBootstrap.
-
-  const handleUpdateStatus = (leadId: string, newStatus: InquiryStatus) => {
-    setLeads((prev) =>
-      prev.map((item) =>
-        item.id === leadId ? { ...item, status: newStatus } : item,
-      ),
-    );
+  const handleUpdateStatus = async (leadId: string, newStatus: LeadStatus) => {
     setOpenStatusMenuId(null);
-    showToast(`Inquiry status updated to ${newStatus}`);
-  };
-
-  const confirmDeleteLead = () => {
-    if (!leadToDelete) return;
-    setLeads((prev) => prev.filter((item) => item.id !== leadToDelete.id));
-    showToast(`Viewing inquiry from ${leadToDelete.buyerName} permanently removed.`);
-    setLeadToDelete(null);
-  };
-
-  const handleDeleteLead = (leadId: string) => {
-    setLeads((prev) => prev.filter((item) => item.id !== leadId));
-    showToast("Lead removed from inquiries list");
-  };
-
-  const handleExportCSV = () => {
-    const csvHeader =
-      "Buyer Name,Email,Phone,Property Title,Price,Requested Date,Time,Status\n";
-    const csvRows = leads
-      .map(
-        (l) =>
-          `"${l.buyerName}","${l.email}","${l.phone}","${l.propertyTitle}","${l.propertyPrice}","${l.requestedDate}","${l.requestedTime}","${l.status}"`,
-      )
-      .join("\n");
-    const blob = new Blob([csvHeader + csvRows], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `leads_inquiries_${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    showToast("Leads CSV exported successfully!");
-  };
-
-  const filteredLeads = leads.filter((lead) => {
-    if (activeFilter === "pending" && lead.status !== "Pending Action")
-      return false;
-    if (activeFilter === "confirmed" && lead.status !== "Confirmed")
-      return false;
-    if (activeFilter === "completed" && lead.status !== "Completed")
-      return false;
-    if (activeFilter === "cancelled" && lead.status !== "Cancelled")
-      return false;
-
-    if (
-      selectedPropertyFilter !== "All Listings" &&
-      lead.propertyTitle !== selectedPropertyFilter
-    ) {
-      return false;
+    try {
+      await updateStatus({ id: leadId, status: newStatus }).unwrap();
+      toast.success(`Inquiry status updated to ${LEAD_STATUS_LABEL[newStatus]}`);
+    } catch (err) {
+      if (apiErrorInfo(err).code === "lead_changed") {
+        toast.error("Someone else just changed this inquiry. The latest version is now shown.");
+        refetch();
+      } else {
+        toast.error(errorText(err));
+      }
     }
-    return true;
-  });
+  };
+
+  const confirmDeleteLead = async () => {
+    if (!leadToDelete) return;
+    try {
+      await deleteLead(leadToDelete.id).unwrap();
+      toast.success("Personal data erased. The inquiry stays in your statistics.");
+      if (selectedLeadId === leadToDelete.id) setSelectedLeadId(null);
+      setLeadToDelete(null);
+    } catch (err) {
+      toast.error(errorText(err));
+    }
+  };
+
+  const exportParams = new URLSearchParams();
+  if (status) exportParams.set("status", status);
+  if (packId) exportParams.set("packId", packId);
+  const exportHref = `/api/backend/leads/export${exportParams.size ? `?${exportParams}` : ""}`;
 
   return (
     <div className="space-y-6">
-      {/* Toast Feedback */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#06143E] text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center gap-3 backdrop-blur-md animate-in fade-in slide-in-from-bottom-4 duration-200">
-          <div className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-            <Check className="w-3.5 h-3.5 stroke-[2]" />
-          </div>
-          <p className="text-xs sm:text-sm font-medium">{toastMessage}</p>
-        </div>
-      )}
-
       {/* =========================================================================
           TOP PAGE HEADER (Concise & Clean Typography)
       ========================================================================= */}
@@ -277,78 +122,67 @@ export default function LeadsInquiriesPage() {
           </p>
         </div>
 
-        {/* Reusable Button component with concise semibold weight */}
-        <Button
-          type="button"
-          onClick={handleExportCSV}
-          variant="secondary"
-          size="md"
-          icon={<Download className="w-4 h-4 text-[#E8A808]" />}
-          className="self-start sm:self-auto"
+        <a
+          href={exportHref}
+          className="self-start sm:self-auto inline-flex items-center justify-center font-heading transition-all duration-200 cursor-pointer select-none h-10 px-5 text-xs sm:text-sm rounded-xl gap-2 bg-[#06143E] hover:bg-[#0B1E48] text-white font-semibold border border-[#162758] shadow-xs"
         >
-          Export Leads CSV
-        </Button>
+          <span>Export Leads CSV</span>
+          <Download className="w-4 h-4 text-[#E8A808]" />
+        </a>
       </div>
 
       {/* =========================================================================
           TOP 4 METRICS CARDS (Clean, Concise Semibold Metrics)
       ========================================================================= */}
+      {isLoading ? (
+        <StatsSkeleton />
+      ) : (
       <div className="@container"><div className="grid grid-cols-1 @sm:grid-cols-2 @xl:grid-cols-4 gap-4 sm:gap-5">
-        {/* Card 1: Total Inquiries */}
         <div className="@container bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow space-y-3">
           <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider block">
             TOTAL INQUIRIES
           </span>
           <div className="flex items-baseline justify-between">
             <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
-              28
-            </span>
-            <span className="text-xs font-medium text-emerald-600 flex items-center gap-1 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
-              <span>▲</span>
-              <span>+12 this week</span>
+              {stats?.total ?? 0}
             </span>
           </div>
         </div>
 
-        {/* Card 2: Pending Review */}
         <div className="@container bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow space-y-3">
           <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider block">
             PENDING REVIEW
           </span>
           <div className="flex items-baseline justify-between">
             <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
-              4
+              {stats?.pending ?? 0}
             </span>
-            <Badge variant="brand" className="font-medium">
-              Needs Action
-            </Badge>
+            {(stats?.pending ?? 0) > 0 && (
+              <Badge variant="brand" className="font-medium">
+                Needs Action
+              </Badge>
+            )}
           </div>
         </div>
 
-        {/* Card 3: Confirmed Viewings */}
         <div className="@container bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow space-y-3">
           <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider block">
             CONFIRMED VIEWINGS
           </span>
           <div className="flex items-baseline justify-between">
             <span className="font-heading font-medium text-2xl sm:text-3xl text-slate-900 tracking-tight">
-              18
-            </span>
-            <span className="text-xs font-medium text-blue-600 flex items-center gap-1.5 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200/60">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
-              <span>6 this weekend</span>
+              {stats?.confirmed ?? 0}
             </span>
           </div>
         </div>
 
-        {/* Card 4: Viewing Conversion */}
         <div className="@container bg-white rounded-3xl p-6 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow space-y-3">
           <span className="text-xs font-semibold text-slate-600 uppercase tracking-wider block">
             VIEWING CONVERSION
           </span>
           <div className="flex items-baseline justify-between">
             <span className="font-heading font-medium text-2xl sm:text-3xl text-emerald-600 tracking-tight">
-              78.5%
+              {stats?.conversionPct ?? 0}%
             </span>
             <span className="text-xs text-slate-400 font-normal">
               Lead to viewing
@@ -357,6 +191,7 @@ export default function LeadsInquiriesPage() {
         </div>
       </div>
       </div>
+      )}
 
       {/* =========================================================================
           FILTER PILLS & PROPERTY DROPDOWN
@@ -365,15 +200,18 @@ export default function LeadsInquiriesPage() {
         {/* Left Filter Pills */}
         <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto select-none py-1">
           {[
-            { id: "all", label: "All (28)" },
-            { id: "pending", label: "Pending (4)" },
-            { id: "confirmed", label: "Confirmed (18)" },
-            { id: "completed", label: "Completed (4)" },
-            { id: "cancelled", label: "Cancelled (2)" },
+            { id: "all", label: `All (${stats?.total ?? 0})` },
+            { id: "pending", label: `Pending (${stats?.pending ?? 0})` },
+            { id: "confirmed", label: `Confirmed (${stats?.confirmed ?? 0})` },
+            { id: "completed", label: `Completed (${stats?.completed ?? 0})` },
+            { id: "cancelled", label: `Cancelled (${stats?.cancelled ?? 0})` },
           ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveFilter(tab.id as any)}
+              onClick={() => {
+                setActiveFilter(tab.id as "all" | LeadStatus);
+                setPage(1);
+              }}
               className={`px-3.5 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 cursor-pointer shrink-0 ${
                 activeFilter === tab.id
                   ? "bg-[#06143E] text-white shadow-xs font-medium"
@@ -386,6 +224,18 @@ export default function LeadsInquiriesPage() {
         </div>
 
         {/* Right Property Selector Dropdown */}
+        <div className="flex items-center gap-2">
+        <div className="relative">
+          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search name or email"
+            aria-label="Search inquiries"
+            className="h-10 w-48 pl-8 pr-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-[#E8A808] shadow-2xs"
+          />
+        </div>
         <div className="relative">
           <button
             type="button"
@@ -394,43 +244,51 @@ export default function LeadsInquiriesPage() {
           >
             <span className="text-slate-400">Filter by Property:</span>
             <span className="font-medium text-slate-900 truncate max-w-[200px]">
-              {selectedPropertyFilter}
+              {selectedPackTitle}
             </span>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           </button>
 
           {isPropertyDropdownOpen && (
             <div className="absolute right-0 top-11 z-30 w-64 rounded-2xl bg-white border border-slate-200 shadow-xl p-2 space-y-1 text-left animate-in fade-in zoom-in-95 duration-150">
-              {[
-                "All Listings",
-                "16 Gorse Drive, Chorlton",
-                "42 Brookburn Road, Didsbury",
-                "14 Victoria Road, Altrincham",
-              ].map((prop) => (
+              {[{ id: undefined as string | undefined, title: "All Listings" }, ...(packs?.items ?? [])].map((prop) => (
                 <button
-                  key={prop}
+                  key={prop.id ?? "all"}
                   type="button"
                   onClick={() => {
-                    setSelectedPropertyFilter(prop);
+                    setPackId(prop.id);
+                    setPage(1);
                     setIsPropertyDropdownOpen(false);
                   }}
-                  className={`w-full px-3 py-2 text-xs rounded-xl text-left transition cursor-pointer ${
-                    selectedPropertyFilter === prop
+                  className={`w-full px-3 py-2 text-xs rounded-xl text-left transition cursor-pointer truncate ${
+                    packId === prop.id
                       ? "bg-slate-100 text-slate-900 font-medium"
                       : "text-slate-600 hover:bg-slate-50 font-normal"
                   }`}
                 >
-                  {prop}
+                  {prop.title}
                 </button>
               ))}
             </div>
           )}
+        </div>
         </div>
       </div>
 
       {/* =========================================================================
           TABLE: BUYER DETAILS & VIEWINGS (Readable, Medium & Semibold locked)
       ========================================================================= */}
+      {isLoading ? (
+        <TableSkeleton rows={6} columns={4} />
+      ) : error && !data ? (
+        <ErrorState error={error} onRetry={refetch} />
+      ) : leads.length === 0 ? (
+        <EmptyState
+          icon={Users}
+          title={q || status || packId ? "No inquiries match these filters" : "No inquiries yet"}
+          description={q || status || packId ? "Try a different search or clear the filters." : "Viewing requests from your public property pages will appear here."}
+        />
+      ) : (
       <div className="@container bg-white rounded-3xl border border-slate-200/90 shadow-xs overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs min-w-[760px]">
@@ -444,14 +302,8 @@ export default function LeadsInquiriesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {filteredLeads.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-12 text-center text-slate-400">
-                    No inquiries found for this filter criteria.
-                  </td>
-                </tr>
-              ) : (
-                filteredLeads.map((lead) => (
+              {
+                leads.map((lead) => (
                   <tr
                     key={lead.id}
                     className="hover:bg-slate-50/80 transition-colors group"
@@ -460,16 +312,16 @@ export default function LeadsInquiriesPage() {
                     <td className="py-4 pl-6">
                       <div className="flex items-center gap-3.5">
                         <div
-                          className={`w-9 h-9 rounded-full ${lead.avatarColor} text-white flex items-center justify-center font-medium text-xs shrink-0 shadow-2xs`}
+                          className={`w-9 h-9 rounded-full ${avatarColor(lead.id)} text-white flex items-center justify-center font-medium text-xs shrink-0 shadow-2xs`}
                         >
-                          {lead.initials}
+                          {initials(lead.buyerName)}
                         </div>
                         <div className="min-w-0">
                           <p className="font-medium text-slate-900 text-sm leading-snug">
                             {lead.buyerName}
                           </p>
                           <p className="text-slate-500 text-[11px] truncate mt-0.5">
-                            {lead.email} • {lead.phone}
+                            {[lead.email, lead.phone].filter(Boolean).join(" • ")}
                           </p>
                         </div>
                       </div>
@@ -481,9 +333,11 @@ export default function LeadsInquiriesPage() {
                         <p className="font-medium text-slate-900 text-xs">
                           {lead.propertyTitle}
                         </p>
-                        <p className="text-slate-500 text-[11px] mt-0.5">
-                          {lead.propertyPrice} • Ref: {lead.ref}
-                        </p>
+                        {lead.propertyAddress && (
+                          <p className="text-slate-500 text-[11px] mt-0.5">
+                            {lead.propertyAddress}
+                          </p>
+                        )}
                       </div>
                     </td>
 
@@ -491,20 +345,20 @@ export default function LeadsInquiriesPage() {
                     <td className="py-4">
                       <div>
                         <p className="font-medium text-slate-900 text-xs">
-                          {lead.requestedDate} • {lead.requestedTime}
+                          {lead.requestedAt ? formatDateTime(lead.requestedAt) : "No time requested"}
                         </p>
                         <p
                           className={`text-[11px] mt-0.5 ${
-                            lead.statusNoteType === "warning"
+                            lead.status === "pending"
                               ? "text-amber-700 font-medium"
-                              : lead.statusNoteType === "success"
+                              : lead.status === "confirmed"
                                 ? "text-emerald-700 font-medium"
-                                : lead.statusNoteType === "danger"
+                                : lead.status === "cancelled"
                                   ? "text-rose-700 font-medium"
                                   : "text-slate-400 font-normal"
                           }`}
                         >
-                          {lead.statusNote}
+                          Submitted {formatDate(lead.createdAt)}
                         </p>
                       </div>
                     </td>
@@ -519,75 +373,31 @@ export default function LeadsInquiriesPage() {
                               openStatusMenuId === lead.id ? null : lead.id,
                             )
                           }
-                          className={`h-8 px-3 rounded-full text-xs font-medium transition flex items-center gap-1.5 cursor-pointer border shadow-2xs ${
-                            lead.status === "Pending Action"
-                              ? "bg-amber-50 text-amber-800 border-amber-200/70 hover:bg-amber-100"
-                              : lead.status === "Confirmed"
-                                ? "bg-emerald-50 text-emerald-800 border-emerald-200/70 hover:bg-emerald-100"
-                                : lead.status === "Completed"
-                                  ? "bg-slate-100 text-slate-700 border-slate-200 hover:bg-slate-200"
-                                  : "bg-rose-50 text-rose-800 border-rose-200/70 hover:bg-rose-100"
-                          }`}
+                          className={`h-8 px-3 rounded-full text-xs font-medium transition flex items-center gap-1.5 cursor-pointer border shadow-2xs ${STATUS_STYLE[lead.status].pill}`}
                         >
                           <span
-                            className={`w-2 h-2 rounded-full ${
-                              lead.status === "Pending Action"
-                                ? "bg-amber-500"
-                                : lead.status === "Confirmed"
-                                  ? "bg-emerald-500"
-                                  : lead.status === "Completed"
-                                    ? "bg-slate-500"
-                                    : "bg-rose-500"
-                            }`}
+                            className={`w-2 h-2 rounded-full ${STATUS_STYLE[lead.status].dot}`}
                           />
-                          <span>{lead.status}</span>
+                          <span>{LEAD_STATUS_LABEL[lead.status]}</span>
                           <ChevronDown className="w-3 h-3 text-slate-400" />
                         </button>
 
                         {/* Dropdown Menu */}
                         {openStatusMenuId === lead.id && (
                           <div className="absolute left-0 top-9 z-30 w-44 rounded-2xl bg-white border border-slate-200 shadow-xl p-1.5 space-y-0.5 text-left animate-in fade-in zoom-in-95 duration-100">
-                            {[
-                              {
-                                label: "Pending Action",
-                                dot: "bg-amber-500",
-                                text: "text-amber-800",
-                              },
-                              {
-                                label: "Confirmed",
-                                dot: "bg-emerald-500",
-                                text: "text-emerald-800",
-                              },
-                              {
-                                label: "Completed",
-                                dot: "bg-slate-500",
-                                text: "text-slate-700",
-                              },
-                              {
-                                label: "Cancelled",
-                                dot: "bg-rose-500",
-                                text: "text-rose-800",
-                              },
-                            ].map((s) => (
+                            {(Object.keys(LEAD_STATUS_LABEL) as LeadStatus[]).map((st) => (
                               <button
-                                key={s.label}
+                                key={st}
                                 type="button"
-                                onClick={() =>
-                                  handleUpdateStatus(
-                                    lead.id,
-                                    s.label as InquiryStatus,
-                                  )
-                                }
-                                className={`w-full px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 hover:bg-slate-50 transition ${s.text} font-medium cursor-pointer ${
-                                  lead.status === s.label
-                                    ? "bg-slate-100 font-medium"
-                                    : ""
+                                onClick={() => handleUpdateStatus(lead.id, st)}
+                                className={`w-full px-3 py-1.5 rounded-xl text-xs flex items-center gap-2 hover:bg-slate-50 transition ${STATUS_STYLE[st].text} font-medium cursor-pointer ${
+                                  lead.status === st ? "bg-slate-100 font-medium" : ""
                                 }`}
                               >
                                 <span
-                                  className={`w-2 h-2 rounded-full ${s.dot}`}
+                                  className={`w-2 h-2 rounded-full ${STATUS_STYLE[st].dot}`}
                                 />
-                                <span>{s.label}</span>
+                                <span>{LEAD_STATUS_LABEL[st]}</span>
                               </button>
                             ))}
                           </div>
@@ -600,29 +410,21 @@ export default function LeadsInquiriesPage() {
                       <div className="inline-flex items-center gap-1.5">
                         <button
                           type="button"
-                          onClick={() => setSelectedLeadForDetails(lead)}
+                          onClick={() => setSelectedLeadId(lead.id)}
                           className="p-1.5 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition cursor-pointer"
                           title="View lead viewing details"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
 
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedLeadForEmail(lead);
-                            setEmailSubject(
-                              `Regarding your viewing request for ${lead.propertyTitle}`,
-                            );
-                            setEmailBody(
-                              `Hi ${lead.buyerName.split(" ")[0]},\n\nThank you for booking a viewing for ${lead.propertyTitle}. We are pleased to confirm your appointment for ${lead.requestedDate} at ${lead.requestedTime}.\n\nOur agent will meet you at the property.\n\nBest regards,\nPrestige Estates`,
-                            );
-                          }}
+                        <a
+                          href={`mailto:${lead.email}`}
                           className="p-1.5 rounded-lg text-slate-400 hover:text-[#092167] hover:bg-slate-100 transition cursor-pointer"
                           title="Send email reply to lead"
+                          aria-label={`Email ${lead.buyerName}`}
                         >
                           <Mail className="w-4 h-4" />
-                        </button>
+                        </a>
 
                         <button
                           type="button"
@@ -636,143 +438,60 @@ export default function LeadsInquiriesPage() {
                     </td>
                   </tr>
                 ))
-              )}
+              }
             </tbody>
           </table>
         </div>
 
         {/* Pagination Footer */}
         <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-normal">
-          <p>Showing {filteredLeads.length} of 6 inquiries</p>
+          <p>Showing {leads.length} of {total} inquiries</p>
           <div className="flex items-center gap-1.5">
-            <button className="w-8 h-8 rounded-xl border border-slate-200 text-slate-400 flex items-center justify-center hover:bg-slate-50 transition cursor-pointer">
+            <button
+              type="button"
+              disabled={page <= 1 || isFetching}
+              onClick={() => setPage((p) => p - 1)}
+              aria-label="Previous page"
+              className="w-8 h-8 rounded-xl border border-slate-200 text-slate-400 flex items-center justify-center hover:bg-slate-50 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               ‹
             </button>
-            <button className="w-8 h-8 rounded-xl bg-[#06143E] text-white font-medium flex items-center justify-center shadow-2xs">
-              1
-            </button>
-            <button className="w-8 h-8 rounded-xl border border-slate-200 text-slate-600 flex items-center justify-center hover:bg-slate-50 transition cursor-pointer">
-              2
-            </button>
-            <button className="w-8 h-8 rounded-xl border border-slate-200 text-slate-400 flex items-center justify-center hover:bg-slate-50 transition cursor-pointer">
+            <span className="px-2 font-medium text-slate-700">
+              {page} / {pageCount}
+            </span>
+            <button
+              type="button"
+              disabled={page >= pageCount || isFetching}
+              onClick={() => setPage((p) => p + 1)}
+              aria-label="Next page"
+              className="w-8 h-8 rounded-xl border border-slate-200 text-slate-400 flex items-center justify-center hover:bg-slate-50 transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               ›
             </button>
           </div>
         </div>
       </div>
+      )}
 
       {/* S11 LEAD DETAIL SLIDE-OVER */}
       <LeadDetailSlideOver
-        isOpen={!!selectedLeadForDetails}
-        onClose={() => setSelectedLeadForDetails(null)}
-        lead={selectedLeadForDetails}
-        onStatusChange={(leadId, newStatus) => {
-          handleUpdateStatus(leadId, newStatus);
-          if (selectedLeadForDetails?.id === leadId) {
-            setSelectedLeadForDetails((prev) =>
-              prev ? { ...prev, status: newStatus } : null,
-            );
-          }
-        }}
-        onEmailLead={(lead) => {
-          setSelectedLeadForDetails(null);
-          const matched = leads.find((l) => l.id === lead.id);
-          if (matched) {
-            setSelectedLeadForEmail(matched);
-          }
-          setEmailSubject(
-            `Regarding your viewing request for ${lead.propertyTitle}`,
-          );
-          setEmailBody(
-            `Hi ${lead.buyerName.split(" ")[0]},\n\nThank you for booking a viewing for ${lead.propertyTitle}. We are pleased to confirm your appointment for ${lead.requestedDate} at ${lead.requestedTime}.\n\nBest regards,\nPrestige Estates`,
-          );
-        }}
-        onDeleteLead={(lead) => {
-          setSelectedLeadForDetails(null);
-          const matched = leads.find((l) => l.id === lead.id);
-          if (matched) {
-            setLeadToDelete(matched);
-          }
-        }}
+        isOpen={!!selectedLeadId}
+        onClose={() => setSelectedLeadId(null)}
+        leadId={selectedLeadId}
+        onStatusChange={handleUpdateStatus}
+        onDeleteLead={(lead) => setLeadToDelete({ id: lead.id, buyerName: lead.buyerName })}
       />
 
-      {/* =========================================================================
-          MODAL: SEND EMAIL TO LEAD
-      ========================================================================= */}
-      {selectedLeadForEmail && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl w-full max-w-lg p-6 sm:p-7 shadow-2xl border border-slate-200 space-y-5 animate-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-50 text-[#8C6605] flex items-center justify-center">
-                  <Mail className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="font-heading font-medium text-lg text-slate-900">
-                    Reply to {selectedLeadForEmail.buyerName}
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    To: {selectedLeadForEmail.email}
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => setSelectedLeadForEmail(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-4 text-xs">
-              <div>
-                <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider mb-1.5">
-                  Subject Line
-                </label>
-                <input
-                  type="text"
-                  value={emailSubject}
-                  onChange={(e) => setEmailSubject(e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl border border-slate-200 text-xs text-slate-800 focus:outline-none focus:border-[#E8A808] focus:ring-1 focus:ring-[#E8A808]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-medium text-slate-600 uppercase tracking-wider mb-1.5">
-                  Email Message
-                </label>
-                <textarea
-                  rows={6}
-                  value={emailBody}
-                  onChange={(e) => setEmailBody(e.target.value)}
-                  className="w-full p-3 rounded-xl border border-slate-200 text-xs text-slate-800 leading-relaxed focus:outline-none focus:border-[#E8A808] focus:ring-1 focus:ring-[#E8A808]"
-                />
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedLeadForEmail(null)}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => {
-                  showToast(`Email sent to ${selectedLeadForEmail.email}`);
-                  setSelectedLeadForEmail(null);
-                }}
-                icon={<Send className="w-3.5 h-3.5" />}
-              >
-                Send Message
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DangerModal
+        isOpen={!!leadToDelete}
+        onClose={() => setLeadToDelete(null)}
+        onConfirm={confirmDeleteLead}
+        isLoading={isDeleting}
+        title="Delete this inquiry?"
+        description="The buyer's personal data is erased. The row stays in your statistics, without any personal details."
+        itemName={leadToDelete?.buyerName}
+        confirmText="Erase Personal Data"
+      />
     </div>
   );
 }

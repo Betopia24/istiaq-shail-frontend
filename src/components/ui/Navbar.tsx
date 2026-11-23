@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { initials as initialsOf } from "@/lib/format";
 import { useLogout } from "@/components/auth/SessionBootstrap";
 import { isSuperAdmin } from "@/types/auth";
 import {
@@ -119,19 +120,9 @@ export default function Navbar() {
 
   const isAdmin = isSuperAdmin(user);
   const dashboardHref = isAdmin ? "/admin-dashboard" : "/agent-dashboard";
-  const displayName = user?.name || (isAdmin ? "Super Admin" : "Ishtiaq Sohail");
-  const displayEmail = user?.email || (isAdmin ? "admin@propertypack.ai" : "ishtiaq@prestigeestates.co.uk");
-  const initials =
-    displayName && displayName.trim().length > 0
-      ? displayName
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .slice(0, 2)
-          .toUpperCase()
-      : isAdmin
-      ? "SA"
-      : "IS";
+  const displayName = user?.name || (isAdmin ? "Super Admin" : "Account");
+  const displayEmail = user?.email || "";
+  const initials = initialsOf(displayName);
 
   return (
     <header className="sticky top-0 z-50 w-full py-1 bg-[#0A132C]/90 backdrop-blur-md text-white transition-all border-b border-white/5">

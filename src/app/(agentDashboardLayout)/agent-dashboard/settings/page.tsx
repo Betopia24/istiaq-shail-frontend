@@ -6,13 +6,14 @@ import { AgentProfileTab } from "@/components/settings/AgentProfileTab";
 import { SubscriptionBillingTab } from "@/components/settings/SubscriptionBillingTab";
 import { TeamMembersTab } from "@/components/settings/TeamMembersTab";
 import { RegionalComplianceTab } from "@/components/settings/RegionalComplianceTab";
+import { useGetSubscriptionQuery } from "@/redux/api/billing/billingApi";
 
 type ActiveTab = "profile" | "billing" | "team" | "compliance";
 
 function SettingsContent() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab") as ActiveTab | null;
-  const pastDueParam = searchParams.get("pastdue") === "true";
+  const { data: subscription } = useGetSubscriptionQuery();
 
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => {
     if (tabParam && ["profile", "billing", "team", "compliance"].includes(tabParam)) {
@@ -34,7 +35,7 @@ function SettingsContent() {
           </h1>
           <p className="text-sm text-slate-500 mt-1">
             {activeTab === "profile" &&
-              "Manage your agent bio, headshot photo, and security credentials."}
+              "Manage your agent bio, and security credentials."}
             {activeTab === "billing" &&
               "Manage your agency plan, payment methods, pack credits, and Stripe VAT invoices."}
             {activeTab === "team" &&
@@ -46,10 +47,12 @@ function SettingsContent() {
 
         {/* Top Right Badges */}
         <div className="flex items-center gap-4 self-start sm:self-auto">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium shadow-2xs">
-            <span className="w-2 h-2 rounded-full bg-[#E8A808] animate-pulse" />
-            <span>14 Packs Remaining</span>
-          </div>
+          {subscription && (
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-xs font-medium shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-[#E8A808] animate-pulse" />
+              <span>{subscription.creditsRemaining ?? 0} Packs Remaining</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -102,10 +105,8 @@ function SettingsContent() {
 
       {/* Tab Views */}
       {activeTab === "profile" && <AgentProfileTab />}
-      {activeTab === "billing" && (
-        <SubscriptionBillingTab initialPastDue={pastDueParam} />
-      )}
-      {activeTab === "team" && <TeamMembersTab />}
+      {activeTab === "billing" && <SubscriptionBillingTab />}
+      {activeTab === "team" && <TeamMembersTab onOpenBilling={() => setActiveTab("billing")} />}
       {activeTab === "compliance" && <RegionalComplianceTab />}
     </div>
   );

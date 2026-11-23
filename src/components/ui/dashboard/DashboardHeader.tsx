@@ -5,77 +5,25 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { initials as initialsOf } from "@/lib/format";
+import { useChromeData } from "./useChromeData";
 import { useLogout } from "@/components/auth/SessionBootstrap";
 import {
   ChevronRight,
   ChevronDown,
   LogOut,
   Menu,
-  User,
   Settings,
   Sparkles,
   Shield,
   ExternalLink,
   Bell,
-  CheckCheck,
 } from "lucide-react";
 
 interface DashboardHeaderProps {
   role?: "admin" | "agent";
   onToggleMobileMenu?: () => void;
 }
-
-interface NotificationItem {
-  id: string;
-  title: string;
-  description: string;
-  time: string;
-  read: boolean;
-  type: "pack" | "credit" | "lead" | "billing" | "team";
-}
-
-const defaultNotifications: NotificationItem[] = [
-  {
-    id: "notif-1",
-    title: "Property Pack Ready",
-    description: "Brochure for 16 Gorse Drive, Chorlton is ready for export.",
-    time: "10m ago",
-    read: false,
-    type: "pack",
-  },
-  {
-    id: "notif-2",
-    title: "New Buyer Viewing Lead",
-    description: "James Davies requested a viewing for 16 Gorse Drive.",
-    time: "45m ago",
-    read: false,
-    type: "lead",
-  },
-  {
-    id: "notif-3",
-    title: "Low Pack Credits Warning",
-    description: "14 packs remaining on your Professional Tier monthly quota.",
-    time: "3h ago",
-    read: false,
-    type: "credit",
-  },
-  {
-    id: "notif-4",
-    title: "Team Invite Accepted",
-    description: "Sarah Jenkins joined Prestige Estates UK as a Valuer.",
-    time: "1d ago",
-    read: true,
-    type: "team",
-  },
-  {
-    id: "notif-5",
-    title: "VAT Invoice Ready",
-    description: "Invoice #INV-2026-11 (£79.00) is available for download.",
-    time: "3d ago",
-    read: true,
-    type: "billing",
-  },
-];
 
 const breadcrumbTitles: Record<string, { portal: string; page: string }> = {
   "/agent-dashboard": { portal: "Agent Portal", page: "Overview" },
@@ -105,7 +53,6 @@ export function DashboardHeader({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [notifications, setNotifications] = useState<NotificationItem[]>(defaultNotifications);
   const notifRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown on outside click or escape key
@@ -141,32 +88,17 @@ export function DashboardHeader({
     };
   }, [profileOpen, notificationsOpen]);
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
-
-  const markAllRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-  };
-
   const handleLogout = () => {
     setProfileOpen(false);
     void signOut();
   };
 
-  const displayName = user?.name || (role === "admin" ? "Super Admin" : "Ishtiaq Sohail");
-  const displayEmail = user?.email || (role === "admin" ? "admin@propertypack.ai" : "ishtiaq@prestigeestates.co.uk");
+  const chrome = useChromeData(role === "agent");
+  const displayName = user?.name || (role === "admin" ? "Super Admin" : "Account");
+  const displayEmail = user?.email || "";
   const displayAgency =
-    role === "admin" ? "Master Platform Access" : "Prestige Estates UK";
-  const initials =
-    displayName && displayName.trim().length > 0
-      ? displayName
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .slice(0, 2)
-          .toUpperCase()
-      : role === "admin"
-      ? "SA"
-      : "IS";
+    role === "admin" ? "Master Platform Access" : chrome.agencyName || displayEmail;
+  const initials = initialsOf(displayName);
 
   // Dynamic route resolution
   let currentCrumb = {
@@ -221,69 +153,21 @@ export function DashboardHeader({
               aria-label="Notifications"
             >
               <Bell className="w-5 h-5" />
-              {unreadCount > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#E8A808] ring-2 ring-white" />
-              )}
             </button>
 
             {notificationsOpen && (
               <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-200/90 py-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                <div className="px-4 pb-2.5 border-b border-slate-100 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-heading font-semibold text-sm text-slate-900">
-                      Notifications
-                    </h3>
-                    {unreadCount > 0 && (
-                      <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-[#FEF3C7] text-[#8C6605]">
-                        {unreadCount} new
-                      </span>
-                    )}
-                  </div>
-                  {unreadCount > 0 && (
-                    <button
-                      type="button"
-                      onClick={markAllRead}
-                      className="text-[11px] text-[#092167] hover:underline font-medium flex items-center gap-1 cursor-pointer"
-                    >
-                      <CheckCheck className="w-3.5 h-3.5 text-[#E8A808]" />
-                      <span>Mark all as read</span>
-                    </button>
-                  )}
+                <div className="px-4 pb-2.5 border-b border-slate-100">
+                  <h3 className="font-heading font-semibold text-sm text-slate-900">
+                    Notifications
+                  </h3>
                 </div>
-
-                <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto">
-                  {notifications.map((item) => (
-                    <div
-                      key={item.id}
-                      onClick={() =>
-                        setNotifications((prev) =>
-                          prev.map((n) =>
-                            n.id === item.id ? { ...n, read: true } : n,
-                          ),
-                        )
-                      }
-                      className={`p-3.5 hover:bg-slate-50 transition cursor-pointer flex items-start gap-3 ${
-                        !item.read ? "bg-amber-50/20" : ""
-                      }`}
-                    >
-                      <span
-                        className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
-                          !item.read ? "bg-[#E8A808]" : "bg-transparent"
-                        }`}
-                      />
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-xs text-slate-900">
-                          {item.title}
-                        </p>
-                        <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
-                          {item.description}
-                        </p>
-                        <p className="text-[10px] text-slate-400 mt-1">
-                          {item.time}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                <div className="px-4 py-8 text-center">
+                  <Bell className="w-5 h-5 text-slate-300 mx-auto" />
+                  <p className="text-xs font-medium text-slate-700 mt-2">No notifications</p>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    Pack, lead and billing updates will appear here.
+                  </p>
                 </div>
               </div>
             )}
@@ -346,6 +230,24 @@ export function DashboardHeader({
                   >
                     {role === "admin" ? "Super Admin" : "Agency Agent"}
                   </span>
+                  {role === "agent" && chrome.creditsRemaining !== null && (
+                    <p className="text-[11px] text-slate-500 mt-1.5">
+                      {chrome.noSubscription ? (
+                        <Link
+                          href="/agent-dashboard/settings"
+                          onClick={() => setProfileOpen(false)}
+                          className="font-medium text-[#092167] hover:underline"
+                        >
+                          Choose a plan
+                        </Link>
+                      ) : (
+                        <>
+                          <strong className="text-slate-800">{chrome.creditsRemaining}</strong> pack
+                          {chrome.creditsRemaining === 1 ? "" : "s"} available
+                        </>
+                      )}
+                    </p>
+                  )}
                 </div>
               </div>
 
