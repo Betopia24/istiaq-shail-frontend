@@ -29,11 +29,6 @@ const authApi = baseApi.injectEndpoints({
     resendVerification: builder.mutation<void, void>({
       query: () => ({ url: "/auth/resend-verification", method: "POST" }),
     }),
-
-    getProfile: builder.query<Record<string, unknown>, void>({
-      query: () => "/me/profile",
-      providesTags: ["User"],
-    }),
   }),
 });
 
@@ -42,7 +37,6 @@ export const {
   useVerifyOtpMutation,
   useResetPasswordMutation,
   useResendVerificationMutation,
-  useGetProfileQuery,
 } = authApi;
 
 export default authApi;
