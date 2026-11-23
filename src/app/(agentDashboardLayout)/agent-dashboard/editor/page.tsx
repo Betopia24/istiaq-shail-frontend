@@ -1,5 +1,6 @@
 "use client";
 
+import { startDownload } from "@/lib/download";
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -143,7 +144,7 @@ function usePdfDownload(packId: string, kind: "pack" | "valuation") {
     if (!finished || handled.current === attempt || !st) return;
     handled.current = attempt;
     if (st.status === "done" && st.url) {
-      window.open(st.url, "_blank", "noopener");
+      startDownload(st.url);
     } else {
       toast.error(st.error || "The PDF could not be generated. Please try again.");
     }
@@ -795,8 +796,7 @@ function PackEditor() {
             </Link>
             <span>/</span>
             <span className="font-semibold text-slate-900">
-              {pack.address}
-              {a?.postcode ? ` (${a.postcode})` : ""}
+              {pack.title}
             </span>
           </div>
           <div className="flex items-center gap-3">

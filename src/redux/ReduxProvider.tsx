@@ -46,10 +46,17 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 }
 
+/**
+ * The store's state when the page first loads. Hydration must render from this, not from the live state: parts of
+ * a streamed page hydrate later than SessionBootstrap, by which time the user and API data are already in the store,
+ * and rendering them would not match the server's HTML (React error #418).
+ */
+const hydrationState = store.getState();
+
 const ReduxProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <ErrorBoundary>
-      <Provider store={store}>
+      <Provider store={store} serverState={hydrationState}>
         {children}
         <SessionBootstrap />
         <Toaster position="top-right" reverseOrder={false} />

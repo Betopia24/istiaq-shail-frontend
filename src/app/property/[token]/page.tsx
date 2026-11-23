@@ -19,7 +19,7 @@ import { useBrochureDownload } from "@/components/property/useBrochureDownload";
 import { ApiImage } from "@/components/ui/ApiImage";
 import { ErrorState, apiErrorInfo } from "@/components/ui/ErrorState";
 import { useGetPublicPackQuery } from "@/redux/api/public/publicApi";
-import { initials } from "@/lib/format";
+import { formatMoney, initials } from "@/lib/format";
 
 const HEX = /^#[0-9a-fA-F]{6}$/;
 const safeColour = (value: string | undefined, fallback: string) => (value && HEX.test(value) ? value : fallback);
@@ -80,7 +80,7 @@ export default function PublicBuyerPropertyPage({ params }: { params: Promise<{ 
     facts.sizeSqFt != null && { label: "TOTAL AREA", value: `${facts.sizeSqFt.toLocaleString("en-GB")} sq ft`, sub: sizeSqM ? `${sizeSqM} sq m` : undefined },
     facts.type && { label: "PROPERTY TYPE", value: facts.type },
     facts.epc && { label: "ENERGY RATING", value: facts.epc, green: true },
-    facts.tenure && { label: "TENURE", value: facts.tenure },
+    facts.tenure && { label: "TENURE", value: facts.tenure.replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase()) },
   ].filter(Boolean) as { label: string; value: React.ReactNode; sub?: string; green?: boolean }[];
 
   const openGallery = (i: number) => {
@@ -190,10 +190,14 @@ export default function PublicBuyerPropertyPage({ params }: { params: Promise<{ 
               {subtitle && <p className="text-sm sm:text-base text-slate-500 mt-1">{subtitle}</p>}
             </div>
 
-            {property.priceLabel && (
+            {property.pricePence != null && (
               <div className="sm:text-right">
+                {property.priceLabel && (
+                  <div className="text-xs font-medium uppercase tracking-wider text-slate-500 mb-1">{property.priceLabel}</div>
+                )}
                 <div className="font-heading font-semibold text-3xl sm:text-4xl text-slate-900 tracking-tight">
-                  {property.priceLabel}
+                  {formatMoney(property.pricePence, property.currency)}
+                  {property.transaction === "let" && <span className="text-base font-medium text-slate-500"> {property.market === "US" ? "/ month" : "pcm"}</span>}
                 </div>
               </div>
             )}

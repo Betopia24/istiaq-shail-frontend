@@ -38,7 +38,6 @@ export default function LoginForm() {
       toast.success("Signed in successfully!");
       // Only paths on this site: an attacker's ?redirect=https://... link must not send people elsewhere.
       router.replace(safeRedirect(searchParams?.get("redirect")) ?? homeFor(user));
-      router.refresh();
     } catch (err) {
       // No fallback session: a failed sign-in stays signed out.
       setErrorMsg(errorText(err));

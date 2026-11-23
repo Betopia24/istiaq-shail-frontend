@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import packsApi, { useRequestPdfMutation } from "@/redux/api/packs/packsApi";
 import { useAppDispatch } from "@/redux/hook";
 import { errorText } from "@/lib/auth/client";
+import { startDownload } from "@/lib/download";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -21,8 +22,6 @@ export function usePdfDownload() {
     async (packId: string) => {
       if (busyId) return;
       setBusyId(packId);
-      // Opened straight away (inside the click) so the browser does not block it as a popup.
-      const tab = window.open("", "_blank");
       const loading = toast.loading("Generating PDF report...");
       try {
         await requestPdf(packId).unwrap();
@@ -33,14 +32,12 @@ export function usePdfDownload() {
           if (status.status === "failed") throw new Error(status.error || "The PDF could not be generated.");
           if (status.status === "done" && status.url) {
             toast.success("PDF report ready.", { id: loading });
-            if (tab) tab.location.href = status.url;
-            else window.location.assign(status.url);
+            startDownload(status.url);
             return;
           }
         }
         throw new Error("The PDF is taking longer than expected. Please try again in a moment.");
       } catch (err) {
-        tab?.close();
         toast.error(err instanceof Error && !("data" in err) ? err.message : errorText(err), { id: loading });
       } finally {
         setBusyId(null);

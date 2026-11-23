@@ -65,7 +65,7 @@ export default function LeadsInquiriesPage() {
 
   const status = activeFilter === "all" ? undefined : activeFilter;
   const { data, isLoading, isFetching, error, refetch } = useGetLeadsQuery({ status, packId, q: q || undefined, page, limit: LIMIT });
-  const { data: packs } = useListPacksQuery({ pageSize: 100 });
+  const { data: packs } = useListPacksQuery({ pageSize: 50 });
   const [updateStatus] = useUpdateLeadStatusMutation();
   const [deleteLead, { isLoading: isDeleting }] = useDeleteLeadMutation();
 
