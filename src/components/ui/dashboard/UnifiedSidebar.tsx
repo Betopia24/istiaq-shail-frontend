@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { logout } from "@/feature/user/userSlice";
+import { useLogout } from "@/components/auth/SessionBootstrap";
+import { isSuperAdmin } from "@/types/auth";
 import {
   LayoutGrid,
   Sparkles,
@@ -22,7 +23,6 @@ import {
   ShieldAlert,
   LifeBuoy,
 } from "lucide-react";
-import Cookies from "js-cookie";
 
 export interface NavItemConfig {
   title: string;
@@ -110,7 +110,7 @@ export function UnifiedSidebar({
 }: UnifiedSidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
-  const dispatch = useDispatch();
+  const signOut = useLogout();
   const user = useSelector((state: RootState) => state.user?.user);
 
   // Auto-detect role if not explicitly provided
@@ -118,7 +118,7 @@ export function UnifiedSidebar({
     role ||
     (pathname.startsWith("/admin-dashboard") ||
     pathname.startsWith("/admin") ||
-    user?.role?.toUpperCase() === "ADMIN"
+    isSuperAdmin(user)
       ? "admin"
       : "agent");
 
@@ -127,13 +127,7 @@ export function UnifiedSidebar({
   const isCollapsed = !isMobile && collapsed;
 
   const handleLogout = () => {
-    if (isAdmin) {
-      Cookies.remove("adminAuthorized", { path: "/" });
-      window.location.reload();
-    } else {
-      dispatch(logout());
-      window.location.href = "/login";
-    }
+    void signOut();
   };
 
   const displayName =

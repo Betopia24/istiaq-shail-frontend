@@ -1,77 +1,43 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import Cookies from "js-cookie";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import type { SessionUser } from "@/types/auth";
 
-export interface UserProfile {
-  id: string;
-  name: string;
-  email: string;
-  role?: string;
-  phone?: string;
-  profileImage?: string;
-}
+/**
+ * Who is signed in, as told by the server (`/api/auth/session`). No tokens here: they live in httpOnly
+ * cookies the browser's JavaScript cannot read. Nothing is persisted to localStorage.
+ */
+export type UserProfile = SessionUser;
 
 interface UserState {
-  user: UserProfile | null;
-  accessToken: string | null;
-  refreshToken: string | null;
+  user: SessionUser | null;
+  /** `unknown` until the first session check finishes. */
+  status: "unknown" | "authenticated" | "anonymous";
+  /** The API said the session ended (refresh token expired or revoked): show the session-expired dialog. */
+  expired: boolean;
 }
 
-const initialState: UserState = {
-  user: null,
-  accessToken: null,
-  refreshToken: null,
-};
+const initialState: UserState = { user: null, status: "unknown", expired: false };
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setCredentials: (
-      state,
-      action: PayloadAction<{
-        user: UserProfile;
-        accessToken: string;
-        refreshToken?: string;
-      }>
-    ) => {
-      state.user = action.payload.user;
-      state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refreshToken ?? null;
-
-      const isSecure =
-        typeof window !== "undefined" && window.location.protocol === "https:";
-
-      // set main token in cookie
-      Cookies.set("accessToken", action.payload.accessToken, {
-        secure: isSecure,
-        sameSite: "strict",
-        expires: 7,
-        path: "/",
-      });
-
-      // set refresh token if exists
-      if (action.payload.refreshToken) {
-        Cookies.set("refreshToken", action.payload.refreshToken, {
-          secure: isSecure,
-          sameSite: "strict",
-          expires: 7,
-          path: "/",
-        });
-      }
+    setSession: (state, action: PayloadAction<SessionUser | null>) => {
+      state.user = action.payload;
+      state.status = action.payload ? "authenticated" : "anonymous";
+      if (action.payload) state.expired = false;
+    },
+    sessionExpired: (state) => {
+      if (state.user) state.expired = true;
+      state.user = null;
+      state.status = "anonymous";
     },
     logout: (state) => {
       state.user = null;
-      state.accessToken = null;
-      state.refreshToken = null;
-
-      const isSecure =
-        typeof window !== "undefined" && window.location.protocol === "https:";
-
-      Cookies.remove("accessToken", { path: "/", secure: isSecure });
-      Cookies.remove("refreshToken", { path: "/", secure: isSecure });
+      state.status = "anonymous";
+      state.expired = false;
     },
   },
 });
 
-export const { setCredentials, logout } = userSlice.actions;
+export const { setSession, sessionExpired, logout } = userSlice.actions;
 export default userSlice.reducer;

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { Suspense } from "react";
+import { GateFallback, RequireSession } from "@/components/auth/RequireSession";
 import type { Metadata } from "next";
 import { AgentLayoutShell } from "@/components/ui/dashboard/AgentLayoutShell";
 
@@ -21,5 +22,12 @@ export default function AgentDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <AgentLayoutShell>{children}</AgentLayoutShell>;
+  // Signed-in agency users, checked on the server (proxy.ts redirects earlier; the API enforces every call).
+  return (
+    <Suspense fallback={<GateFallback />}>
+      <RequireSession area="agency">
+        <AgentLayoutShell>{children}</AgentLayoutShell>
+      </RequireSession>
+    </Suspense>
+  );
 }

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { logout } from "@/feature/user/userSlice";
+
+import { useLogout } from "@/components/auth/SessionBootstrap";
 import {
   ShieldCheck,
   CheckCircle2,
@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 export default function SuperAdminSettingsPage() {
-  const dispatch = useDispatch();
+  const signOut = useLogout();
 
   // Profile Form State
   const [ownerName, setOwnerName] = useState("Ishtiaq Sohail");
@@ -52,8 +52,7 @@ export default function SuperAdminSettingsPage() {
   };
 
   const handleLogout = () => {
-    dispatch(logout());
-    window.location.href = "/login";
+    void signOut();
   };
 
   // Password entropy calculation

@@ -3,9 +3,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { logout } from "@/feature/user/userSlice";
+import { useLogout } from "@/components/auth/SessionBootstrap";
 import {
   ChevronRight,
   ChevronDown,
@@ -19,7 +19,6 @@ import {
   Bell,
   CheckCheck,
 } from "lucide-react";
-import Cookies from "js-cookie";
 
 interface DashboardHeaderProps {
   role?: "admin" | "agent";
@@ -100,7 +99,7 @@ export function DashboardHeader({
 }: DashboardHeaderProps) {
   const pathname = usePathname();
   const user = useSelector((state: RootState) => state.user?.user);
-  const dispatch = useDispatch();
+  const signOut = useLogout();
 
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -150,13 +149,7 @@ export function DashboardHeader({
 
   const handleLogout = () => {
     setProfileOpen(false);
-    if (role === "admin") {
-      Cookies.remove("adminAuthorized", { path: "/" });
-      window.location.reload();
-    } else {
-      dispatch(logout());
-      window.location.href = "/login";
-    }
+    void signOut();
   };
 
   const displayName = user?.name || (role === "admin" ? "Super Admin" : "Ishtiaq Sohail");

@@ -12,8 +12,10 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useResetPasswordMutation } from "@/redux/api/auth/authApi";
+import { errorText } from "@/lib/auth/client";
 import toast from "react-hot-toast";
 
+/** Sets a new password with a reset token from the code check (`/reset-password?token=...`). */
 export default function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") || "";
@@ -23,18 +25,19 @@ export default function ResetPasswordForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [resetPassword, { isLoading: isApiLoading }] =
-    useResetPasswordMutation();
-  const [isLocalLoading, setIsLocalLoading] = useState(false);
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
   const [isSuccess, setIsSuccess] = useState(false);
 
   const router = useRouter();
-  const isLoading = isApiLoading || isLocalLoading;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (password.length < 8) {
-      toast.error("Password must be at least 8 characters.");
+    if (!token) {
+      toast.error("This link is incomplete. Request a new code from Forgot password.");
+      return;
+    }
+    if (password.length < 10) {
+      toast.error("Password must be at least 10 characters.");
       return;
     }
     if (password !== confirmPassword) {
@@ -43,21 +46,12 @@ export default function ResetPasswordForm() {
     }
 
     try {
-      setIsLocalLoading(true);
-      await resetPassword({
-        token: token || "demo-token",
-        password,
-      }).unwrap();
-
+      await resetPassword({ resetToken: token, password }).unwrap();
       toast.success("Password reset successfully!");
       setIsSuccess(true);
       setTimeout(() => router.push("/login"), 1500);
-    } catch (err: any) {
-      toast.success("Password reset successfully! (demo mode)");
-      setIsSuccess(true);
-      setTimeout(() => router.push("/login"), 1500);
-    } finally {
-      setIsLocalLoading(false);
+    } catch (err) {
+      toast.error(errorText(err));
     }
   };
 

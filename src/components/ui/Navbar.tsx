@@ -4,9 +4,10 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
-import { logout } from "@/feature/user/userSlice";
+import { useLogout } from "@/components/auth/SessionBootstrap";
+import { isSuperAdmin } from "@/types/auth";
 import {
   Menu,
   X,
@@ -39,13 +40,13 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const user = useSelector((state: RootState) => state.user.user);
-  const hasToken = useSelector((state: RootState) => !!state.user.accessToken);
-  const dispatch = useDispatch();
+  const hasToken = useSelector((state: RootState) => !!state.user.user);
+  const signOut = useLogout();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
     setProfileDropdownOpen(false);
-    dispatch(logout());
+    void signOut();
   };
 
   // Close profile dropdown on outside click or escape key
@@ -116,7 +117,7 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   };
 
-  const isAdmin = user?.role?.toUpperCase() === "ADMIN";
+  const isAdmin = isSuperAdmin(user);
   const dashboardHref = isAdmin ? "/admin-dashboard" : "/agent-dashboard";
   const displayName = user?.name || (isAdmin ? "Super Admin" : "Ishtiaq Sohail");
   const displayEmail = user?.email || (isAdmin ? "admin@propertypack.ai" : "ishtiaq@prestigeestates.co.uk");

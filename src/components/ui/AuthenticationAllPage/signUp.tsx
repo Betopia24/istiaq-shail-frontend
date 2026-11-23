@@ -13,32 +13,27 @@ import {
   Loader2,
   CheckCircle2,
 } from "lucide-react";
-import { useSignUpMutation } from "@/redux/api/auth/authApi";
 import { useAppDispatch } from "@/redux/hook";
-import { setCredentials } from "@/feature/user/userSlice";
+import { setSession } from "@/feature/user/userSlice";
+import { authClient, errorText } from "@/lib/auth/client";
 import toast from "react-hot-toast";
 
 export default function SignUpForm() {
-  const [fullName, setFullName] = useState("Eleanor Vance");
-  const [companyName, setCompanyName] = useState("Vance Prestige Properties");
-  const [email, setEmail] = useState("eleanor@vanceprestige.com");
-  const [password, setPassword] = useState("KensingtonVault2024!");
-  const [confirmPassword, setConfirmPassword] = useState(
-    "KensingtonVault2024!",
-  );
+  const [fullName, setFullName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  const [signUp, { isLoading: isApiLoading }] = useSignUpMutation();
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const [isLocalLoading, setIsLocalLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-
-  const isLoading = isApiLoading || isLocalLoading;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,66 +42,35 @@ export default function SignUpForm() {
       toast.error("Please accept the Terms of Service and Privacy Policy.");
       return;
     }
-
+    if (password.length < 10) {
+      toast.error("Use at least 10 characters for your password.");
+      return;
+    }
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
 
+    setIsLoading(true);
     try {
-      setIsLocalLoading(true);
-      const res = await signUp({
-        name: fullName,
+      const { user } = await authClient.signup({
+        fullName,
+        company: companyName || undefined,
         email,
         password,
-        companyName,
-      }).unwrap();
-
-      if (res?.data?.accessToken) {
-        dispatch(
-          setCredentials({
-            user: {
-              id: res.data.id || "agent-1",
-              name: res.data.name || fullName,
-              email: res.data.email || email,
-              role: res.data.role || "AGENT",
-            },
-            accessToken: res.data.accessToken,
-          }),
-        );
-      }
-
-      toast.success(res?.message || "Account created successfully!");
+        acceptTerms: true,
+      });
+      dispatch(setSession(user));
+      toast.success("Account created successfully!");
       setIsSuccess(true);
       setTimeout(() => {
         router.push(`/verify-email?email=${encodeURIComponent(email)}`);
       }, 800);
-    } catch (err: any) {
-      // In demo mode or if server is offline
-      const errorMsg =
-        err?.data?.message ||
-        err?.message ||
-        "Account created (demo workstation mode)";
-      toast.success(errorMsg);
-
-      dispatch(
-        setCredentials({
-          user: {
-            id: "demo-registered-user",
-            name: fullName,
-            email,
-            role: "AGENT",
-          },
-          accessToken: "demo-jwt-token",
-        }),
-      );
-
-      setIsSuccess(true);
-      setTimeout(() => {
-        router.push(`/verify-email?email=${encodeURIComponent(email)}`);
-      }, 800);
+    } catch (err) {
+      // No fallback account: a failed sign-up stays signed out.
+      toast.error(errorText(err));
     } finally {
-      setIsLocalLoading(false);
+      setIsLoading(false);
     }
   };
 

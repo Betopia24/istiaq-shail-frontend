@@ -4,25 +4,23 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, Loader2, Check } from "lucide-react";
-import { useLogInMutation } from "@/redux/api/auth/authApi";
 import { useAppDispatch } from "@/redux/hook";
-import { setCredentials, UserProfile } from "@/feature/user/userSlice";
+import { setSession } from "@/feature/user/userSlice";
+import { authClient, errorText } from "@/lib/auth/client";
+import { homeFor, safeRedirect } from "@/lib/auth/session-token";
 import toast from "react-hot-toast";
 
 export default function LoginForm() {
-  const [email, setEmail] = useState("eleanor@vanceprestige.com");
-  const [password, setPassword] = useState("KensingtonVault2024!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [keepSignedIn, setKeepSignedIn] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [logIn, { isLoading: isApiLoading }] = useLogInMutation();
-  const [isLocalLoading, setIsLocalLoading] = useState(false);
   const dispatch = useAppDispatch();
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  const isLoading = isApiLoading || isLocalLoading;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,80 +28,22 @@ export default function LoginForm() {
 
     if (!email || !password) {
       setErrorMsg("Please enter both work email and password.");
-      toast.error("Please fill in all required fields.");
       return;
     }
 
+    setIsLoading(true);
     try {
-      setIsLocalLoading(true);
-      const res = await logIn({ email, password }).unwrap();
-
-      const accessToken =
-        res?.accessToken ||
-        (res as any)?.token ||
-        (res as any)?.data?.accessToken ||
-        "mock-demo-access-token";
-
-      const userData: UserProfile = {
-        id: (res as any)?.data?.user?.id || (res as any)?.data?.id || "user-1",
-        name:
-          (res as any)?.data?.user?.name ||
-          (res as any)?.data?.name ||
-          email.split("@")[0],
-        email:
-          (res as any)?.data?.user?.email || (res as any)?.data?.email || email,
-        role:
-          (res as any)?.data?.user?.role || (res as any)?.data?.role || "AGENT",
-      };
-
-      dispatch(
-        setCredentials({
-          user: userData,
-          accessToken,
-        }),
-      );
-
+      const { user } = await authClient.login({ email, password, rememberMe: keepSignedIn });
+      dispatch(setSession(user));
       toast.success("Signed in successfully!");
-
-      const redirect = searchParams?.get("redirect");
-      if (redirect) {
-        router.push(redirect);
-      } else if (userData.role?.toUpperCase() === "ADMIN") {
-        router.push("/admin-dashboard");
-      } else {
-        router.push("/agent-dashboard");
-      }
-    } catch (err: any) {
-      // Graceful fallback for demo if backend is offline or returns error
-      console.warn("Sign in API response or offline fallback:", err);
-      const message =
-        err?.data?.message ||
-        err?.message ||
-        "Signed in (demo workstation mode)";
-
-      // In demo mode: create a session so the user can explore dashboards
-      const demoUser: UserProfile = {
-        id: "demo-user-1",
-        name: "Eleanor Vance",
-        email: email || "eleanor@vanceprestige.com",
-        role: email.includes("admin") ? "ADMIN" : "AGENT",
-      };
-
-      dispatch(
-        setCredentials({
-          user: demoUser,
-          accessToken: "demo-session-token-jwt",
-        }),
-      );
-
-      toast.success(message);
-      if (demoUser.role === "ADMIN") {
-        router.push("/admin-dashboard");
-      } else {
-        router.push("/agent-dashboard");
-      }
+      // Only paths on this site: an attacker's ?redirect=https://... link must not send people elsewhere.
+      router.replace(safeRedirect(searchParams?.get("redirect")) ?? homeFor(user));
+      router.refresh();
+    } catch (err) {
+      // No fallback session: a failed sign-in stays signed out.
+      setErrorMsg(errorText(err));
     } finally {
-      setIsLocalLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -143,7 +83,7 @@ export default function LoginForm() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="eleanor@vanceprestige.com"
+              placeholder="you@youragency.co.uk"
               className="w-full h-12 pl-11 pr-4 rounded-xl border border-slate-200 bg-white font-sans text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#092167] focus:ring-2 focus:ring-[#092167]/15 transition-all duration-150"
             />
           </div>

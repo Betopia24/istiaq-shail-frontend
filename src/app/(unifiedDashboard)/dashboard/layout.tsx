@@ -20,7 +20,7 @@ export default function UnifiedDashboardLayout({
   const user = useSelector((state: RootState) => state.user?.user);
 
   // Check if current user is an Admin
-  const isSuperAdmin = user?.role?.toUpperCase() === "ADMIN";
+  const isSuperAdmin = user?.role === "super_admin";
 
   // Allow multi-role admins to toggle between Admin & Agent views on the unified route
   const [activeRoleView, setActiveRoleView] = useState<"admin" | "agent">(

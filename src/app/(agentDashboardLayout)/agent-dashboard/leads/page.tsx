@@ -190,25 +190,8 @@ export default function LeadsInquiriesPage() {
     },
   ]);
 
-  React.useEffect(() => {
-    try {
-      const stored = localStorage.getItem("pp_captured_leads");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setLeads((prev) => {
-            const existingIds = new Set(prev.map((p) => p.id));
-            const newOnes = parsed.filter(
-              (p: LeadInquiry) => !existingIds.has(p.id),
-            );
-            return [...newOnes, ...prev];
-          });
-        }
-      }
-    } catch (e) {
-      console.error("Failed to load leads from localStorage", e);
-    }
-  }, []);
+  // Buyers' personal data is never kept in the browser (GDPR): real leads come from GET /leads during API
+  // integration. Old browser copies (`pp_captured_leads`) are deleted by SessionBootstrap.
 
   const handleUpdateStatus = (leadId: string, newStatus: InquiryStatus) => {
     setLeads((prev) =>

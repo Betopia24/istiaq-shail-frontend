@@ -8,29 +8,26 @@ import {
   useForgotPasswordMutation,
   useVerifyOtpMutation,
   useResetPasswordMutation,
-  useResendOtpMutation,
 } from "@/redux/api/auth/authApi";
+import { errorText } from "@/lib/auth/client";
 import toast from "react-hot-toast";
+
+const RESEND_SECONDS = 48;
 
 export default function ForgotPasswordForm() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1); // 1: Forgot, 2: Verify OTP, 3: Create New Password, 4: Success
-  const [email, setEmail] = useState("eleanor@vanceprestige.com");
-  const [otp, setOtp] = useState<string[]>(["4", "9", "2", "9", "1", ""]);
-  const [resendTimer, setResendTimer] = useState(48);
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState<string[]>(["", "", "", "", "", ""]);
+  const [resendTimer, setResendTimer] = useState(RESEND_SECONDS);
   const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(
-    "KensingtonVault2024!",
-  );
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [resetToken, setResetToken] = useState("");
 
-  const [forgotPassword, { isLoading: isSendingEmail }] =
-    useForgotPasswordMutation();
+  const [forgotPassword, { isLoading: isSendingEmail }] = useForgotPasswordMutation();
   const [verifyOtp, { isLoading: isVerifyingOtp }] = useVerifyOtpMutation();
-  const [resetPassword, { isLoading: isResettingPassword }] =
-    useResetPasswordMutation();
-  const [resendOtp, { isLoading: isResendingOtp }] = useResendOtpMutation();
+  const [resetPassword, { isLoading: isResettingPassword }] = useResetPasswordMutation();
 
   const [isLocalLoading, setIsLocalLoading] = useState(false);
   const router = useRouter();
@@ -48,7 +45,7 @@ export default function ForgotPasswordForm() {
     };
   }, [step, resendTimer]);
 
-  // Step 1: Send OTP
+  // Step 1: Send OTP. The API answers the same whether or not the email has an account.
   const handleSendEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email) {
@@ -59,13 +56,12 @@ export default function ForgotPasswordForm() {
     try {
       setIsLocalLoading(true);
       await forgotPassword({ email }).unwrap();
-      toast.success("Verification code sent to your email.");
+      toast.success("If an account exists for this email, a code is on its way.");
+      setOtp(["", "", "", "", "", ""]);
       setStep(2);
-      setResendTimer(48);
-    } catch (err: any) {
-      toast.success("Verification code sent (demo mode)");
-      setStep(2);
-      setResendTimer(48);
+      setResendTimer(RESEND_SECONDS);
+    } catch (err) {
+      toast.error(errorText(err));
     } finally {
       setIsLocalLoading(false);
     }
@@ -104,36 +100,23 @@ export default function ForgotPasswordForm() {
 
     try {
       setIsLocalLoading(true);
-      const res = await verifyOtp({ email, otp: otpCode }).unwrap();
-      setResetToken((res as any)?.data?.token || "demo-token");
-      toast.success("OTP verified successfully!");
+      const res = await verifyOtp({ email, code: otpCode, purpose: "password_reset" }).unwrap();
+      if (!res.resetToken) throw new Error("No reset token");
+      setResetToken(res.resetToken);
+      toast.success("Code verified.");
       setStep(3);
-    } catch (err: any) {
-      toast.success("OTP verified! (demo mode)");
-      setResetToken("demo-token");
-      setStep(3);
+    } catch (err) {
+      toast.error(errorText(err));
     } finally {
       setIsLocalLoading(false);
-    }
-  };
-
-  const handleResend = async () => {
-    if (resendTimer > 0 || isResendingOtp) return;
-    try {
-      await resendOtp({ email }).unwrap();
-      toast.success("New verification code sent!");
-      setResendTimer(48);
-    } catch (err: any) {
-      toast.success("New code sent (demo mode)");
-      setResendTimer(48);
     }
   };
 
   // Step 3: Create New Password
   const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (newPassword.length < 8) {
-      toast.error("Password must be at least 8 characters.");
+    if (newPassword.length < 10) {
+      toast.error("Password must be at least 10 characters.");
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -143,16 +126,11 @@ export default function ForgotPasswordForm() {
 
     try {
       setIsLocalLoading(true);
-      await resetPassword({
-        token: resetToken || "demo-token",
-        password: newPassword,
-      }).unwrap();
-
+      await resetPassword({ resetToken, password: newPassword }).unwrap();
       toast.success("Password updated successfully!");
       setStep(4);
-    } catch (err: any) {
-      toast.success("Password updated successfully! (demo mode)");
-      setStep(4);
+    } catch (err) {
+      toast.error(errorText(err));
     } finally {
       setIsLocalLoading(false);
     }
@@ -189,7 +167,7 @@ export default function ForgotPasswordForm() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="eleanor@vanceprestige.com"
+                  placeholder="you@youragency.co.uk"
                   className="w-full h-12 pl-11 pr-4 rounded-xl border border-slate-200 bg-white font-sans text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#092167] focus:ring-2 focus:ring-[#092167]/15 transition-all duration-150"
                 />
               </div>

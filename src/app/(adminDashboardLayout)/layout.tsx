@@ -1,10 +1,9 @@
-import React from "react";
+import React, { Suspense } from "react";
 import type { Metadata } from "next";
-import { AdminAuthGuard } from "@/components/auth/AdminAuthGuard";
+import { GateFallback, RequireSession } from "@/components/auth/RequireSession";
 import { AdminLayoutShell } from "@/components/ui/dashboard/AdminLayoutShell";
 
-// Opt out of instant-navigation validation — this layout wraps a client-side
-// auth guard + interactive shell that isn't compatible with static-shell analysis.
+// Opt out of instant-navigation validation: the session is read at request time.
 export const instant = false;
 
 export const metadata: Metadata = {
@@ -21,9 +20,12 @@ export default function AdminDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Super admins only, checked on the server (proxy.ts redirects earlier; the API enforces it on every call).
   return (
-    <AdminAuthGuard>
-      <AdminLayoutShell>{children}</AdminLayoutShell>
-    </AdminAuthGuard>
+    <Suspense fallback={<GateFallback dark />}>
+      <RequireSession area="admin">
+        <AdminLayoutShell>{children}</AdminLayoutShell>
+      </RequireSession>
+    </Suspense>
   );
 }

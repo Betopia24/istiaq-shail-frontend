@@ -2,8 +2,8 @@
 
 import React, { Component, ReactNode } from "react";
 import { Provider } from "react-redux";
-import { PersistGate } from "redux-persist/integration/react";
-import { persistor, store } from "./store";
+import { store } from "./store";
+import { SessionBootstrap } from "@/components/auth/SessionBootstrap";
 import { Toaster } from "react-hot-toast";
 
 interface ErrorBoundaryProps {
@@ -50,10 +50,9 @@ const ReduxProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <ErrorBoundary>
       <Provider store={store}>
-        <PersistGate persistor={persistor}>
-          {children}
-          <Toaster position="top-right" reverseOrder={false} />
-        </PersistGate>
+        {children}
+        <SessionBootstrap />
+        <Toaster position="top-right" reverseOrder={false} />
       </Provider>
     </ErrorBoundary>
   );

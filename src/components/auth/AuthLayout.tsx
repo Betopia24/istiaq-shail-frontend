@@ -2,9 +2,8 @@
 
 import React from "react";
 import { AuthLeftHero } from "./AuthLeftHero";
-import { SignupCard } from "./SignupCard";
 
-export function AuthLayout({ children }: { children?: React.ReactNode }) {
+export function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#DFE6EF] via-[#D5DEEA] to-[#CBD5E2] flex items-center justify-center p-4 sm:p-6 lg:p-10 relative overflow-hidden">
       {/* Subtle Ambient Decorative Gradients */}
@@ -17,7 +16,7 @@ export function AuthLayout({ children }: { children?: React.ReactNode }) {
         <AuthLeftHero />
 
         {/* Right Form Card */}
-        {children || <SignupCard />}
+        {children}
       </div>
     </div>
   );
