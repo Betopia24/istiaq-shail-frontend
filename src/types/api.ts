@@ -3209,6 +3209,10 @@ export interface components {
             /** @enum {string} */
             state?: "incomplete" | "active" | "past_due" | "canceled" | "unpaid";
             creditsRemaining?: number;
+            /** @description Packs included per billing period */
+            packsAllowance?: number;
+            /** @description Price of one extra pack (POST /billing/top-up) */
+            topUpPricePencePerPack?: number;
             /** Format: date-time */
             periodEnd?: string;
             cardBrand?: string;
