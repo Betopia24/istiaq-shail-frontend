@@ -97,7 +97,7 @@ function PaymentStep({
 
   return (
     <form onSubmit={pay} className="space-y-4">
-      <PaymentElement />
+      <PaymentElement options={{ defaultValues: { billingDetails: { address: { country: "GB" } } } }} />
       {message && (
         <p role="alert" className="text-xs text-rose-600">
           {message}

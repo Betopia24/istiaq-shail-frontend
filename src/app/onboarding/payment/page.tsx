@@ -19,7 +19,7 @@ const inputClass =
   "w-full h-11 px-4 rounded-xl border border-slate-200 text-sm text-slate-900 focus:outline-none focus:border-[#092167] focus:ring-2 focus:ring-[#092167]/15";
 
 /** Stripe's card form. Rendered inside <Elements>, so the hooks have a client secret to work with. */
-function StripePayForm({ amountLabel }: { amountLabel: string }) {
+function StripePayForm({ amountLabel, billing }: { amountLabel: string; billing: Address }) {
   const stripe = useStripe();
   const elements = useElements();
   const submitting = useRef(false);
@@ -59,7 +59,12 @@ function StripePayForm({ amountLabel }: { amountLabel: string }) {
         )}
       </div>
 
-      <PaymentElement />
+      <PaymentElement
+        options={{
+          // We already collected the billing address; start Stripe's form from it instead of a guess from the visitor's IP.
+          defaultValues: { billingDetails: { address: { country: billing.country ?? "GB", postal_code: billing.postcode ?? "" } } },
+        }}
+      />
 
       <div className="pt-2">
         <button
@@ -246,7 +251,7 @@ function PaymentFormContent() {
 
             {checkout && stripePromise ? (
               <Elements stripe={stripePromise} options={{ clientSecret: checkout.clientSecret }}>
-                <StripePayForm amountLabel={amountLabel} />
+                <StripePayForm amountLabel={amountLabel} billing={{ line1: addressLine1, town: city, postcode, country }} />
               </Elements>
             ) : (
               <form onSubmit={handleContinue} className="space-y-5">

@@ -108,7 +108,7 @@ export default function PublicBuyerPropertyPage({ params }: { params: Promise<{ 
     >
       {/* TOP AGENCY HEADER BAR */}
       <header className="sticky top-0 z-40 bg-white border-b border-slate-200/90 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-20 py-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
           <div className="flex items-center gap-3">
             <ApiImage
               src={agency.logoUrl}
