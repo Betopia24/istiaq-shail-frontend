@@ -18,7 +18,7 @@ import { apiErrorInfo } from "@/components/ui/ErrorState";
 import { errorText } from "@/lib/auth/client";
 import { formatMoney } from "@/lib/format";
 import { useGeneratePackMutation } from "@/redux/api/packs/packsApi";
-import { useGetSubscriptionQuery } from "@/redux/api/billing/billingApi";
+import { useGetCreditsQuery } from "@/redux/api/billing/billingApi";
 import { BuyPacksModal } from "@/components/packs/BuyPacksModal";
 import { MAX_PHOTOS } from "./CreateStep2Photos";
 
@@ -48,7 +48,7 @@ export const CreateStep3Review: React.FC<CreateStep3ReviewProps> = ({
 }) => {
   const router = useRouter();
   const [generate, { isLoading: starting }] = useGeneratePackMutation();
-  const subscription = useGetSubscriptionQuery();
+  const creditBalances = useGetCreditsQuery();
   const [showBuyModal, setShowBuyModal] = useState(false);
   const [outOfCredits, setOutOfCredits] = useState(false);
   const [missing, setMissing] = useState<Record<string, string> | null>(null);
@@ -59,9 +59,8 @@ export const CreateStep3Review: React.FC<CreateStep3ReviewProps> = ({
     pack.status === "generating" || jobStatus === "queued" || jobStatus === "running";
   const failed = !generating && pack.status === "failed";
 
-  // 404 from /billing/subscription means the agency has no plan, so no credits.
-  const noSubscription = apiErrorInfo(subscription.error).status === 404;
-  const credits = noSubscription ? 0 : subscription.data?.creditsRemaining;
+  // Credits do not depend on a subscription: pay-as-you-go agencies have packs and no plan.
+  const credits = creditBalances.data?.total;
   const showNoCredits = outOfCredits || credits === 0;
 
   useEffect(() => {
@@ -263,7 +262,7 @@ export const CreateStep3Review: React.FC<CreateStep3ReviewProps> = ({
                 Out of Pack Credits
               </h3>
               <p className="text-xs sm:text-sm text-amber-900 leading-relaxed">
-                You currently have <strong>0 pack credits</strong> remaining on your subscription plan.
+                You currently have <strong>0 pack credits</strong> remaining.
                 Top up your allowance instantly with a one-off add-on pack bundle to generate this brochure.
               </p>
             </div>
@@ -372,7 +371,7 @@ export const CreateStep3Review: React.FC<CreateStep3ReviewProps> = ({
               This pack will be compiled into brochure copy and printable PDF immediately. You can make adjustments and regenerations anytime.
             </p>
             <p className="text-[11px] font-semibold text-slate-700">
-              Credits remaining: {credits ?? (subscription.isLoading ? "..." : "unknown")}
+              Credits remaining: {credits ?? (creditBalances.isLoading ? "..." : "unknown")}
             </p>
           </div>
         </div>

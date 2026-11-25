@@ -11,10 +11,11 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState, apiErrorInfo } from "@/components/ui/ErrorState";
 import { TableSkeleton } from "@/components/ui/skeletons/TableSkeleton";
 import { errorText } from "@/lib/auth/client";
-import { formatDate, formatMoney } from "@/lib/format";
+import { formatDate, formatMoney, formatSeats } from "@/lib/format";
 import { useAppSelector } from "@/redux/hook";
 import {
   useGetInvoicesQuery,
+  useGetCreditsQuery,
   useGetPlansQuery,
   useGetSubscriptionQuery,
   useUpdateSubscriptionMutation,
@@ -53,6 +54,7 @@ export const SubscriptionBillingTab: React.FC = () => {
   const [billingErrors, setBillingErrors] = useState<Record<string, string>>({});
 
   const sub = useGetSubscriptionQuery(undefined, { skip: !isOwner });
+  const creditBalances = useGetCreditsQuery(undefined, { skip: !isOwner });
   const invoices = useGetInvoicesQuery(undefined, { skip: !isOwner || !sub.data });
   const plans = useGetPlansQuery(undefined, { skip: !isPlanPickerOpen });
   const [updateSubscription, { isLoading: isSaving }] = useUpdateSubscriptionMutation();
@@ -70,13 +72,40 @@ export const SubscriptionBillingTab: React.FC = () => {
 
   if (sub.error) {
     if (apiErrorInfo(sub.error).code === "no_subscription") {
+      const payg = creditBalances.data?.payg ?? 0;
       return (
-        <EmptyState
-          icon={CreditCard}
-          title="No plan yet"
-          description="Choose a plan to start generating property packs for your agency."
-          primaryAction={{ label: "Choose a Plan", href: "/onboarding/plan" }}
-        />
+        <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 space-y-4 shadow-2xs">
+          <BuyPacksModal
+            isOpen={isBuyPacksOpen}
+            onClose={() => setIsBuyPacksOpen(false)}
+            onPurchased={() => creditBalances.refetch()}
+          />
+          <div>
+            <h3 className="font-heading font-medium text-lg text-slate-900">Pay as you go</h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              You are not on a monthly plan. Packs you buy never expire.
+            </p>
+          </div>
+          <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 flex items-center justify-between text-xs">
+            <span className="text-slate-600 font-medium">Pay-as-you-go packs available</span>
+            <span className="text-slate-900 font-semibold text-sm">{payg}</span>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              type="button"
+              onClick={() => setIsBuyPacksOpen(true)}
+              className="h-10 px-5 rounded-xl bg-[#092167] hover:bg-[#06143E] text-white text-xs font-semibold cursor-pointer"
+            >
+              Buy packs
+            </button>
+            <a
+              href="/onboarding/plan"
+              className="h-10 px-5 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-800 text-xs font-semibold flex items-center justify-center"
+            >
+              Choose a monthly plan
+            </a>
+          </div>
+        </div>
       );
     }
     return <ErrorState error={sub.error} onRetry={() => sub.refetch()} />;
@@ -89,7 +118,9 @@ export const SubscriptionBillingTab: React.FC = () => {
   const currency = plan?.currency ?? "GBP";
   const credits = data.creditsRemaining ?? 0;
   const allowance = data.packsAllowance ?? plan?.packAllowance ?? 0;
-  const pct = allowance > 0 ? Math.min(100, Math.round((credits / allowance) * 100)) : 0;
+  const allowanceLeft = data.allowanceCredits ?? credits;
+  const paygLeft = data.paygCredits ?? 0;
+  const pct = allowance > 0 ? Math.min(100, Math.round((allowanceLeft / allowance) * 100)) : 0;
   const isPastDue = data.state === "past_due" || data.state === "unpaid";
   const pendingPlanCode = (data as { pendingPlanCode?: string | null }).pendingPlanCode;
   const addr = data.billingAddress;
@@ -223,7 +254,7 @@ export const SubscriptionBillingTab: React.FC = () => {
                   className="h-9 px-4 rounded-lg bg-[#E8A808] hover:bg-[#FFB800] text-[#06143E] font-heading font-medium text-xs shadow-2xs transition cursor-pointer flex items-center gap-1.5"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Top-up</span>
+                  <span>Buy packs</span>
                 </button>
 
                 <button
@@ -252,7 +283,7 @@ export const SubscriptionBillingTab: React.FC = () => {
                         <p className="font-medium text-slate-900">{p.name}</p>
                         <p className="text-[11px] text-slate-500">
                           {formatMoney(p.pricePence, p.currency ?? currency)} / {p.interval} · {p.packAllowance} packs ·{" "}
-                          {p.seatLimit} seats
+                          {formatSeats(p.seatLimit).toLowerCase()}
                         </p>
                       </div>
                       <button
@@ -274,7 +305,7 @@ export const SubscriptionBillingTab: React.FC = () => {
               <div className="flex items-center justify-between text-xs font-medium">
                 <span className="text-slate-600">Monthly Pack Allowance</span>
                 <span className="text-slate-900 font-medium">
-                  {credits} / {allowance} Packs
+                  {allowanceLeft} / {allowance} Packs
                   Remaining
                 </span>
               </div>
@@ -288,6 +319,14 @@ export const SubscriptionBillingTab: React.FC = () => {
               </div>
             </div>
 
+            <div className="flex items-center justify-between text-xs font-medium rounded-xl bg-slate-50 border border-slate-200 px-3.5 py-2.5">
+              <span className="text-slate-600">Pay-as-you-go packs (never expire)</span>
+              <span className="text-slate-900 font-semibold">{paygLeft}</span>
+            </div>
+            <p className="text-[11px] text-slate-400 -mt-2">
+              Your monthly allowance is used first and does not roll over. Pay-as-you-go packs are used after it.
+            </p>
+
             {/* Low Credits Warning Banner */}
             {credits <= 15 && (
               <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-3.5 flex items-center justify-between gap-2.5 text-xs text-amber-900 font-medium">
@@ -295,7 +334,7 @@ export const SubscriptionBillingTab: React.FC = () => {
                   <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
                   <span>
                     Low credits alert: You have {credits}{" "}
-                    packs remaining this billing cycle.
+                    packs remaining in total.
                   </span>
                 </div>
                 <button
@@ -303,7 +342,7 @@ export const SubscriptionBillingTab: React.FC = () => {
                   onClick={() => setIsBuyPacksOpen(true)}
                   className="text-xs font-semibold text-[#8C6605] underline hover:no-underline cursor-pointer shrink-0"
                 >
-                  Buy Top-up
+                  Buy packs
                 </button>
               </div>
             )}

@@ -158,7 +158,9 @@ export const TeamMembersTab: React.FC<{ onOpenBilling?: () => void }> = ({ onOpe
 
   const members = team.data?.members ?? [];
   const pendingInvites = (team.data?.invitations ?? []).filter((i) => !i.status || i.status === "pending");
-  const seatLimit = team.data?.seatLimit ?? 0;
+  /** null = unlimited (Agency Pro). */
+  const seatLimit: number | null = team.data?.seatLimit ?? null;
+  const seatLimitText = seatLimit == null ? "unlimited seats" : `${seatLimit} seat${seatLimit === 1 ? "" : "s"}`;
   const seatsUsed = team.data?.seatsUsed ?? 0;
   const dangerName = dangerTarget?.member.fullName;
 
@@ -457,9 +459,9 @@ export const TeamMembersTab: React.FC<{ onOpenBilling?: () => void }> = ({ onOpe
               <span>Team Seat Allowance</span>
             </div>
             <p className="text-xs text-slate-500 leading-relaxed">
-              {team.data?.planName ? `Your ${team.data.planName} plan` : "Your plan"} includes up to{" "}
-              <strong>{seatLimit} seats</strong>. Seats: {seatsUsed} / {seatLimit} (active members plus open
-              invitations).
+              {team.data?.planName ? `Your ${team.data.planName} plan` : "Your plan"} includes{" "}
+              <strong>{seatLimitText}</strong>. Seats used: {seatsUsed}
+              {seatLimit != null ? ` / ${seatLimit}` : ""} (active members plus open invitations).
             </p>
             {isOwner && onOpenBilling && (
               <div className="pt-1">

@@ -9,14 +9,18 @@ import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { CardGridSkeleton } from "@/components/ui/skeletons/CardGridSkeleton";
-import { useGetPlansQuery } from "@/redux/api/billing/billingApi";
-import { formatMoney } from "@/lib/format";
+import { useGetBundlesQuery, useGetPlansQuery } from "@/redux/api/billing/billingApi";
+import { BuyPacksModal } from "@/components/packs/BuyPacksModal";
+import { formatMoney, formatSeats } from "@/lib/format";
 import type { Plan } from "@/types/models";
 
 export default function PlanSelectionPage() {
   const router = useRouter();
   const { data: plans, isLoading, isError, error, refetch } = useGetPlansQuery();
   const [chosenCode, setChosenCode] = useState<string | null>(null);
+  const { data: bundles } = useGetBundlesQuery();
+  const [paygOpen, setPaygOpen] = useState(false);
+  const [paygBought, setPaygBought] = useState(false);
 
   const selectedPlan: Plan | undefined =
     plans?.find((p) => p.code === chosenCode) ?? plans?.find((p) => p.isPopular) ?? plans?.[0];
@@ -42,7 +46,7 @@ export default function PlanSelectionPage() {
         </p>
       </div>
 
-      {isLoading && <CardGridSkeleton count={3} />}
+      {isLoading && <CardGridSkeleton count={4} />}
       {isError && <ErrorState error={error} onRetry={refetch} className="mb-10" />}
       {!isLoading && !isError && (!plans || plans.length === 0) && (
         <EmptyState icon={Layers} title="No plans available" description="Subscription plans are not available right now. Please try again shortly." primaryAction={{ label: "Reload plans", onClick: () => refetch() }} />
@@ -52,7 +56,7 @@ export default function PlanSelectionPage() {
       <div
         role="radiogroup"
         aria-label="Subscription Plans"
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch mb-10"
+        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-6 items-stretch mb-10"
       >
         {plans.map((plan: Plan) => {
           const isSelected = selectedPlanId === plan.code;
@@ -156,7 +160,7 @@ export default function PlanSelectionPage() {
                       Seats
                     </span>
                     <span className="font-heading font-bold text-base sm:text-lg">
-                      {plan.seatLimit} {plan.seatLimit === 1 ? "Seat" : "Seats"}
+                      {formatSeats(plan.seatLimit)}
                     </span>
                     <span className="block text-[10px] text-slate-400">team members</span>
                   </div>
@@ -230,7 +234,7 @@ export default function PlanSelectionPage() {
               • {formatMoney(selectedPlan.pricePence, selectedPlan.currency?.toUpperCase())} / {selectedPlan.interval ?? "month"}
             </span>
             <Badge variant="brand">
-              {selectedPlan.packAllowance} Packs & {selectedPlan.seatLimit} Seats
+              {selectedPlan.packAllowance} Packs & {formatSeats(selectedPlan.seatLimit)}
             </Badge>
           </div>
           <p className="text-xs text-slate-500 mt-1">
@@ -250,6 +254,36 @@ export default function PlanSelectionPage() {
           </Button>
         </div>
       </div>
+
+      {/* Pay as you go: no subscription needed */}
+      {bundles && bundles.length > 0 && (
+        <div className="mt-8 bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+              Prefer not to subscribe?
+            </span>
+            <h3 className="font-heading font-bold text-xl text-[#06143E] mt-1">Pay as you go</h3>
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl">
+              Buy packs when you need them, no monthly plan. Packs you buy never expire.{" "}
+              {bundles
+                .map((b) => `${b.packs} pack${b.packs === 1 ? "" : "s"} for ${formatMoney(b.pricePence, b.currency?.toUpperCase())}`)
+                .join(" · ")}
+              .
+            </p>
+          </div>
+          <Button size="lg" variant="outline" onClick={() => setPaygOpen(true)} className="w-full md:w-auto px-8">
+            Buy packs
+          </Button>
+        </div>
+      )}
+      <BuyPacksModal
+        isOpen={paygOpen}
+        onPurchased={() => setPaygBought(true)}
+        onClose={() => {
+          setPaygOpen(false);
+          if (paygBought) router.push("/agent-dashboard");
+        }}
+      />
       </>
       )}
     </div>

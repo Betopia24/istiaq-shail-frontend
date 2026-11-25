@@ -3,7 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { CheckCircle2, ArrowRight, ShieldCheck, Sparkles } from "lucide-react";
 import type { Plan } from "@/types/models";
-import { formatMoney } from "@/lib/format";
+import { formatMoney, formatSeats } from "@/lib/format";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 
@@ -98,7 +98,7 @@ export const PaymentSuccessModal: React.FC<PaymentSuccessModalProps> = ({
           <div className="flex items-center justify-between text-xs sm:text-sm">
             <span className="text-slate-500">Team Seats</span>
             <span className="font-semibold text-slate-800">
-              {plan.seatLimit} {plan.seatLimit === 1 ? "Seat" : "Seats"} Included
+              {formatSeats(plan.seatLimit)} Included
             </span>
           </div>
 

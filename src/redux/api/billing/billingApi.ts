@@ -1,5 +1,5 @@
 import baseApi from "../baseApi";
-import type { Address, Invoice, Plan, Subscription } from "@/types/models";
+import type { Address, CreditBalances, Invoice, PackBundle, Plan, Subscription } from "@/types/models";
 
 export interface CheckoutResult {
   clientSecret: string;
@@ -14,6 +14,15 @@ const billingApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     /** Public. */
     getPlans: builder.query<Plan[], void>({ query: () => "/plans" }),
+
+    /** Public. Pay-as-you-go bundles (1 pack, 3 packs). */
+    getBundles: builder.query<PackBundle[], void>({ query: () => "/bundles" }),
+
+    /** Monthly allowance and pay-as-you-go packs, separately. Works with no subscription. */
+    getCredits: builder.query<CreditBalances, void>({
+      query: () => "/billing/credits",
+      providesTags: ["Subscription"],
+    }),
 
     startCheckout: builder.mutation<CheckoutResult, { planCode: string; billingAddress?: Address }>({
       query: (body) => ({ url: "/billing/checkout", method: "POST", body }),
@@ -43,8 +52,8 @@ const billingApi = baseApi.injectEndpoints({
       providesTags: ["Subscription"],
     }),
 
-    /** Credits arrive after Stripe confirms the payment (webhook): refetch the subscription afterwards. */
-    topUp: builder.mutation<{ clientSecret: string; amountPence: number; packs: number }, { packs: number }>({
+    /** Pay-as-you-go purchase (no subscription needed). Packs arrive after Stripe confirms (webhook): refetch credits afterwards. */
+    topUp: builder.mutation<{ clientSecret: string; amountPence: number; packs: number; bundleCode: string }, { bundleCode: string }>({
       query: (body) => ({ url: "/billing/top-up", method: "POST", body }),
     }),
   }),
@@ -52,6 +61,8 @@ const billingApi = baseApi.injectEndpoints({
 
 export const {
   useGetPlansQuery,
+  useGetBundlesQuery,
+  useGetCreditsQuery,
   useStartCheckoutMutation,
   useGetSubscriptionQuery,
   useUpdateSubscriptionMutation,

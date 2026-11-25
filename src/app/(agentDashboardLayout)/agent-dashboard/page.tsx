@@ -70,7 +70,7 @@ export default function AgentDashboardPage() {
                 title="Click to view credits breakdown"
               >
                 <span className="w-2 h-2 rounded-full bg-[#E8A808] shrink-0 animate-pulse" />
-                <span>{formatNumber(data.creditsRemaining)} Packs Available</span>
+                <span>{formatNumber(data.creditsRemaining)} {data.creditsRemaining === 1 ? "Pack" : "Packs"} Available</span>
                 {data.planAllocation > 0 && (
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#E8A808]/25 text-[#715003] font-semibold">
                     {data.packsUsedThisPeriod} / {data.planAllocation} used
@@ -103,17 +103,25 @@ export default function AgentDashboardPage() {
                           {data.packsUsedThisPeriod} / {data.planAllocation}
                         </strong>
                       </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-500">Monthly allowance left (resets):</span>
+                        <strong className="text-slate-900 font-medium">{data.allowanceCredits ?? 0}</strong>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-500">Pay-as-you-go packs (never expire):</span>
+                        <strong className="text-slate-900 font-medium">{data.paygCredits ?? 0}</strong>
+                      </div>
                       <div className="pt-1.5 border-t border-slate-100 flex justify-between items-center font-medium text-slate-900 text-xs">
                         <span>Total Ready to Generate:</span>
-                        <span className="text-[#092167] font-medium text-sm">{data.creditsRemaining} packs</span>
+                        <span className="text-[#092167] font-medium text-sm">{data.creditsRemaining} {data.creditsRemaining === 1 ? "pack" : "packs"}</span>
                       </div>
                     </div>
                     <p className="text-[10px] text-slate-400 leading-tight">
                       {periodEnd
-                        ? `Your plan allowance renews on ${formatDate(periodEnd, "long")}. Extra packs you buy are added to this balance.`
+                        ? `Your monthly allowance renews on ${formatDate(periodEnd, "long")}; unused monthly packs do not roll over. The allowance is used first, then pay-as-you-go packs.`
                         : noSubscription
-                          ? "You have no active plan yet. Choose a plan in Settings & Billing."
-                          : "Extra packs you buy are added to this balance."}
+                          ? "You have no monthly plan. Pay-as-you-go packs never expire, or choose a plan in Settings & Billing."
+                          : "The monthly allowance is used first, then pay-as-you-go packs."}
                     </p>
                   </motion.div>
                 )}

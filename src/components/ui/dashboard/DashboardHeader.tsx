@@ -232,13 +232,13 @@ export function DashboardHeader({
                   </span>
                   {role === "agent" && chrome.creditsRemaining !== null && (
                     <p className="text-[11px] text-slate-500 mt-1.5">
-                      {chrome.noSubscription ? (
+                      {chrome.noSubscription && chrome.creditsRemaining === 0 ? (
                         <Link
                           href="/agent-dashboard/settings"
                           onClick={() => setProfileOpen(false)}
                           className="font-medium text-[#092167] hover:underline"
                         >
-                          Choose a plan
+                          Choose a plan or buy packs
                         </Link>
                       ) : (
                         <>

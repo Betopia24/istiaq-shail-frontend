@@ -411,6 +411,78 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/bundles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Pay-as-you-go pack bundles (£15 for 1 pack, £39 for 3). Bought one-off, with or without a subscription. */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PackBundle"][];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/billing/credits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Monthly allowance and pay-as-you-go packs, tracked separately. Works with no subscription. */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["CreditBalances"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/billing/checkout": {
         parameters: {
             query?: never;
@@ -660,7 +732,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Buy extra pack credits (x-open-decision - price and screen) */
+        /** Buy a pay-as-you-go bundle (no subscription needed). The price is set by the server from the bundle code. */
         post: {
             parameters: {
                 query?: never;
@@ -668,15 +740,16 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            requestBody?: {
+            requestBody: {
                 content: {
                     "application/json": {
-                        packs: number;
+                        /** @enum {string} */
+                        bundleCode: "payg_1" | "payg_3";
                     };
                 };
             };
             responses: {
-                /** @description Payment started; credits are added by the webhook once paid */
+                /** @description Payment started; the packs are added to the pay-as-you-go pool by the webhook once paid */
                 200: {
                     headers: {
                         [name: string]: unknown;
@@ -686,6 +759,7 @@ export interface paths {
                             clientSecret?: string;
                             amountPence?: number;
                             packs?: number;
+                            bundleCode?: string;
                         };
                     };
                 };
@@ -722,7 +796,10 @@ export interface paths {
                     content: {
                         "application/json": {
                             totalPacks?: number;
+                            /** @description Monthly allowance plus pay-as-you-go */
                             creditsRemaining?: number;
+                            allowanceCredits?: number;
+                            paygCredits?: number;
                             planAllocation?: number;
                             packsUsedThisPeriod?: number;
                             livePacks?: number;
@@ -3197,9 +3274,26 @@ export interface components {
             currency?: string;
             interval?: string;
             packAllowance?: number;
-            seatLimit?: number;
+            /** @description null = unlimited seats */
+            seatLimit?: number | null;
             isPopular?: boolean;
             features?: string[];
+        };
+        PackBundle: {
+            /** @enum {string} */
+            code?: "payg_1" | "payg_3";
+            name?: string;
+            packs?: number;
+            pricePence?: number;
+            currency?: string;
+            pricePerPackPence?: number;
+        };
+        CreditBalances: {
+            total?: number;
+            /** @description Monthly plan packs; reset at renewal */
+            allowance?: number;
+            /** @description Pay-as-you-go packs; never expire */
+            payg?: number;
         };
         Subscription: {
             cancelAtPeriodEnd?: boolean;
@@ -3208,11 +3302,15 @@ export interface components {
             plan?: components["schemas"]["Plan"];
             /** @enum {string} */
             state?: "incomplete" | "active" | "past_due" | "canceled" | "unpaid";
+            /** @description Monthly allowance plus pay-as-you-go */
             creditsRemaining?: number;
-            /** @description Packs included per billing period */
+            /** @description Monthly packs left; reset at renewal */
+            allowanceCredits?: number;
+            /** @description Pay-as-you-go packs left; never expire */
+            paygCredits?: number;
+            /** @description Packs included per billing period (this agency's own if one was set) */
             packsAllowance?: number;
-            /** @description Price of one extra pack (POST /billing/top-up) */
-            topUpPricePencePerPack?: number;
+            bundles?: components["schemas"]["PackBundle"][];
             /** Format: date-time */
             periodEnd?: string;
             cardBrand?: string;
@@ -3577,7 +3675,8 @@ export interface components {
         TeamList: {
             members?: components["schemas"]["Member"][];
             invitations?: components["schemas"]["Invitation"][];
-            seatLimit?: number;
+            /** @description null = unlimited */
+            seatLimit?: number | null;
             /** @description Active members plus open invitations */
             seatsUsed?: number;
             planName?: string | null;

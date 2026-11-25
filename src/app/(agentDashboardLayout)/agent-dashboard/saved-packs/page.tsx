@@ -120,7 +120,7 @@ export default function SavedPacksPage() {
           {summary.data && (
             <div className="h-9 px-3 rounded-lg border border-[#FDE68A] bg-[#FEF3C7] flex items-center gap-2 text-xs font-semibold text-[#8C6605]">
               <span className="w-2 h-2 rounded-full bg-[#E8A808] animate-pulse" />
-              <span>{formatNumber(summary.data.creditsRemaining)} Packs Available</span>
+              <span>{formatNumber(summary.data.creditsRemaining)} {summary.data.creditsRemaining === 1 ? "Pack" : "Packs"} Available</span>
             </div>
           )}
 

@@ -38,3 +38,9 @@ export function formatNumber(value: number | null | undefined): string {
 export function initials(name: string | null | undefined): string {
   return (name ?? "").split(/\s+/).filter(Boolean).map((part) => part[0]).join("").slice(0, 2).toUpperCase() || "?";
 }
+
+/** "Unlimited seats", "1 Seat", "5 Seats". `null` means the plan has no seat limit (Agency Pro). */
+export function formatSeats(limit: number | null | undefined): string {
+  if (limit == null) return "Unlimited seats";
+  return `${limit} ${limit === 1 ? "Seat" : "Seats"}`;
+}

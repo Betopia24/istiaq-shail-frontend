@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/Badge";
 import { ErrorState, apiErrorInfo } from "@/components/ui/ErrorState";
 import { PaymentSuccessModal } from "@/components/onboarding/PaymentSuccessModal";
 import { useGetSubscriptionQuery } from "@/redux/api/billing/billingApi";
-import { formatMoney } from "@/lib/format";
+import { formatMoney, formatSeats } from "@/lib/format";
 
 const POLL_MS = 2000;
 const GIVE_UP_MS = 60_000;
@@ -151,7 +151,7 @@ function SuccessContent() {
           <div className="flex items-center justify-between text-xs sm:text-sm">
             <span className="text-slate-500">Team Seats</span>
             <span className="font-semibold text-slate-800">
-              {plan.seatLimit} {plan.seatLimit === 1 ? "Seat" : "Seats"} Included
+              {formatSeats(plan.seatLimit)} Included
             </span>
           </div>
 

@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { Check, Layers } from "lucide-react";
-import { useGetPlansQuery } from "@/redux/api/billing/billingApi";
+import { useGetBundlesQuery, useGetPlansQuery } from "@/redux/api/billing/billingApi";
 import { formatMoney } from "@/lib/format";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -12,8 +12,9 @@ import { CardGridSkeleton } from "@/components/ui/skeletons/CardGridSkeleton";
 /** Pricing cards for the landing page, loaded from the public GET /plans. */
 export function PricingPlans() {
   const { data: plans, isLoading, isError, error, refetch } = useGetPlansQuery();
+  const { data: bundles } = useGetBundlesQuery();
 
-  if (isLoading) return <CardGridSkeleton count={3} className="max-w-5xl mx-auto" />;
+  if (isLoading) return <CardGridSkeleton count={4} className="max-w-6xl mx-auto" />;
   if (isError) return <ErrorState error={error} onRetry={refetch} className="max-w-xl mx-auto" />;
   if (!plans || plans.length === 0) {
     return (
@@ -27,7 +28,8 @@ export function PricingPlans() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 max-w-5xl mx-auto items-stretch">
+    <div className="max-w-6xl mx-auto">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-6 items-stretch">
       {plans.map((plan) => {
         const popular = !!plan.isPopular;
         const interval = plan.interval === "year" ? "year" : "month";
@@ -60,8 +62,7 @@ export function PricingPlans() {
                 </span>
               </div>
               <p className={`text-xs mb-6 font-medium ${popular ? "text-amber-300/90" : "text-slate-500"}`}>
-                Billed {interval === "year" ? "annually" : "monthly"} · {plan.packAllowance} Property Packs · Up to {plan.seatLimit}{" "}
-                {plan.seatLimit === 1 ? "seat" : "seats"}
+                Billed {interval === "year" ? "annually" : "monthly"} · {plan.packAllowance} Property Packs · {plan.seatLimit == null ? "Unlimited seats" : `Up to ${plan.seatLimit} ${plan.seatLimit === 1 ? "seat" : "seats"}`}
               </p>
 
               <Link
@@ -87,6 +88,36 @@ export function PricingPlans() {
           </div>
         );
       })}
+    </div>
+
+    {bundles && bundles.length > 0 && (
+      <div className="mt-10 rounded-3xl bg-white border border-slate-200 shadow-xs p-6 sm:p-8">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <h3 className="font-heading font-semibold text-xl text-slate-900">Pay as you go</h3>
+            <p className="text-xs sm:text-sm text-slate-600 mt-1">
+              No monthly plan. Buy packs when you need them; they never expire.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            {bundles.map((b) => (
+              <Link
+                key={b.code}
+                href="/sign-up"
+                className="rounded-2xl border border-slate-300 hover:border-slate-400 hover:bg-slate-50 px-6 py-3 text-center transition-all"
+              >
+                <span className="block font-heading font-bold text-2xl text-slate-900">
+                  {formatMoney(b.pricePence, b.currency?.toUpperCase())}
+                </span>
+                <span className="block text-xs font-medium text-slate-600">
+                  {b.packs} property pack{b.packs === 1 ? "" : "s"}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 }

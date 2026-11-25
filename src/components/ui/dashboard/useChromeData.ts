@@ -4,7 +4,7 @@ import { skipToken } from "@reduxjs/toolkit/query";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/redux/store";
 import { useGetBrandingQuery } from "@/redux/api/agency/agencyApi";
-import { useGetSubscriptionQuery } from "@/redux/api/billing/billingApi";
+import { useGetCreditsQuery, useGetSubscriptionQuery } from "@/redux/api/billing/billingApi";
 import { useGetLeadsQuery } from "@/redux/api/leads/leadsApi";
 import { useListPacksQuery } from "@/redux/api/packs/packsApi";
 import { apiErrorInfo } from "@/components/ui/ErrorState";
@@ -19,6 +19,8 @@ export function useChromeData(enabled = true) {
 
   const branding = useGetBrandingQuery(agencyUser ? undefined : skipToken);
   const subscription = useGetSubscriptionQuery(agencyUser ? undefined : skipToken);
+  // Credits do not depend on a subscription: pay-as-you-go agencies have packs and no plan.
+  const credits = useGetCreditsQuery(agencyUser ? undefined : skipToken);
   const packs = useListPacksQuery(agencyUser ? { pageSize: 1 } : skipToken);
   const leads = useGetLeadsQuery(agencyUser ? { limit: 1 } : skipToken);
 
@@ -26,8 +28,8 @@ export function useChromeData(enabled = true) {
 
   return {
     agencyName: branding.data?.agencyName || null,
-    /** null while loading or unavailable; 0 when the agency has no subscription yet. */
-    creditsRemaining: noSubscription ? 0 : (subscription.data?.creditsRemaining ?? null),
+    /** Monthly allowance plus pay-as-you-go. null while loading or unavailable. */
+    creditsRemaining: credits.data?.total ?? null,
     noSubscription,
     packsTotal: packs.data?.total ?? null,
     pendingLeads: leads.data?.stats?.pending ?? null,

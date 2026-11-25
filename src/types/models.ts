@@ -32,6 +32,8 @@ export type Branding = S["Branding"];
 export type Profile = S["Profile"];
 export type PublicPack = S["PublicPack"];
 export type Address = S["Address"];
+export type PackBundle = S["PackBundle"];
+export type CreditBalances = S["CreditBalances"];
 export type AdminOverview = S["AdminOverview"];
 export type AdminUser = S["AdminUser"];
 export type AdminUserList = S["AdminUserList"];
@@ -41,7 +43,10 @@ export type AuditList = S["AuditList"];
 
 export interface DashboardSummary {
   totalPacks: number;
+  /** Monthly allowance plus pay-as-you-go. */
   creditsRemaining: number;
+  allowanceCredits: number;
+  paygCredits: number;
   planAllocation: number;
   packsUsedThisPeriod: number;
   livePacks: number;

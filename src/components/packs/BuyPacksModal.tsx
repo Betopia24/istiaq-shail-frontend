@@ -25,12 +25,13 @@ import baseApi from "@/redux/api/baseApi";
 import type { RootState } from "@/redux/store";
 import { useAppDispatch } from "@/redux/hook";
 import {
-  useGetSubscriptionQuery,
+  useGetBundlesQuery,
+  useGetCreditsQuery,
   useTopUpMutation,
 } from "@/redux/api/billing/billingApi";
 import { apiErrorInfo } from "@/components/ui/ErrorState";
 import { errorText } from "@/lib/auth/client";
-import { formatDate, formatMoney } from "@/lib/format";
+import { formatMoney } from "@/lib/format";
 
 interface BuyPacksModalProps {
   isOpen: boolean;
@@ -38,12 +39,6 @@ interface BuyPacksModalProps {
   /** Called once Stripe has confirmed the payment. Credits land a moment later (webhook); the balance is refreshed for you. */
   onPurchased?: () => void;
 }
-
-const BUNDLES = [
-  { packs: 5, name: "5 Packs", badge: null },
-  { packs: 15, name: "15 Packs", badge: "Most Popular" },
-  { packs: 50, name: "50 Packs", badge: null },
-] as const;
 
 const PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 let stripePromise: Promise<Stripe | null> | null = null;
@@ -130,7 +125,7 @@ function PaymentStep({
               <Lock className="w-4 h-4 text-[#E8A808]" />
               <span>
                 Pay {formatMoney(amountPence, "GBP", { decimals: true })} for{" "}
-                {packs} Packs
+                {packs} {packs === 1 ? "Pack" : "Packs"}
               </span>
             </>
           )}
@@ -149,10 +144,11 @@ const BuyPacksModalInner: React.FC<BuyPacksModalProps> = ({
   const role = useSelector((state: RootState) => state.user?.user?.role);
   const isOwner = role === "owner";
 
-  const subscription = useGetSubscriptionQuery(undefined, { skip: !isOpen });
+  const bundlesQuery = useGetBundlesQuery(undefined, { skip: !isOpen });
+  const creditsQuery = useGetCreditsQuery(undefined, { skip: !isOpen });
   const [topUp, topUpState] = useTopUpMutation();
 
-  const [selectedPacks, setSelectedPacks] = useState<number>(15);
+  const [selectedCode, setSelectedCode] = useState<string | null>(null);
   const [stage, setStage] = useState<"select" | "pay" | "done">("select");
   const [intent, setIntent] = useState<{
     clientSecret: string;
@@ -163,10 +159,11 @@ const BuyPacksModalInner: React.FC<BuyPacksModalProps> = ({
   const [creditsArrived, setCreditsArrived] = useState(false);
   const balanceBefore = useRef<number | null>(null);
 
-  const sub = subscription.data;
-  const pricePerPack = sub?.topUpPricePencePerPack;
-  const noSubscription =
-    apiErrorInfo(subscription.error).code === "no_subscription";
+  const bundles = bundlesQuery.data ?? [];
+  const credits = creditsQuery.data;
+  // Default to the best-value bundle (the largest) once they have loaded.
+  const selected =
+    bundles.find((b) => b.code === selectedCode) ?? bundles[bundles.length - 1] ?? null;
   const stripeConfigured = !!PUBLISHABLE_KEY;
   const processing = topUpState.isLoading;
 
@@ -195,23 +192,20 @@ const BuyPacksModalInner: React.FC<BuyPacksModalProps> = ({
     [intent],
   );
 
-  const total = pricePerPack != null ? selectedPacks * pricePerPack : null;
+  const total = selected?.pricePence ?? null;
 
   const startPayment = async () => {
+    if (!selected) return;
     setError(null);
     try {
-      balanceBefore.current = sub?.creditsRemaining ?? null;
-      const result = await topUp({ packs: selectedPacks }).unwrap();
+      balanceBefore.current = credits?.total ?? null;
+      const result = await topUp({ bundleCode: selected.code ?? "" }).unwrap();
       setIntent(result);
       setStage("pay");
     } catch (err) {
-      const { status, code } = apiErrorInfo(err);
-      if (status === 409 && code === "subscription_required") {
-        setError(
-          "You need an active subscription before you can buy extra packs. Choose a plan in Settings & Billing.",
-        );
-      } else if (status === 403) {
-        setError("Only the agency owner can buy extra packs.");
+      const { status } = apiErrorInfo(err);
+      if (status === 403) {
+        setError("Only the agency owner can buy packs.");
       } else {
         setError(errorText(err));
       }
@@ -222,14 +216,14 @@ const BuyPacksModalInner: React.FC<BuyPacksModalProps> = ({
   const handlePaid = async () => {
     setStage("done");
     toast.success(
-      `Payment received for ${intent?.packs ?? selectedPacks} packs.`,
+      `Payment received for ${intent?.packs ?? selected?.packs ?? 0} pack${(intent?.packs ?? selected?.packs) === 1 ? "" : "s"}.`,
     );
     onPurchased?.();
     for (let attempt = 0; attempt < 10; attempt++) {
       await sleep(2000);
       try {
         const request = dispatch(
-          billingApi.endpoints.getSubscription.initiate(undefined, {
+          billingApi.endpoints.getCredits.initiate(undefined, {
             forceRefetch: true,
           }),
         );
@@ -238,7 +232,7 @@ const BuyPacksModalInner: React.FC<BuyPacksModalProps> = ({
           .finally(() => request.unsubscribe());
         if (
           balanceBefore.current == null ||
-          (latest.creditsRemaining ?? 0) > balanceBefore.current
+          (latest.total ?? 0) > balanceBefore.current
         ) {
           setCreditsArrived(true);
           break;
@@ -269,10 +263,10 @@ const BuyPacksModalInner: React.FC<BuyPacksModalProps> = ({
                 id="buy-packs-title"
                 className="font-heading font-semibold text-lg sm:text-xl text-slate-900"
               >
-                Buy Property Pack Credits
+                Buy Property Packs
               </h2>
               <p className="text-xs text-slate-500">
-                Top up your allowance anytime.
+                Pay as you go. Packs you buy never expire.
               </p>
             </div>
           </div>
@@ -289,28 +283,26 @@ const BuyPacksModalInner: React.FC<BuyPacksModalProps> = ({
 
         {!isOwner ? (
           <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
-            Only the agency owner can buy extra packs. Ask your owner to top up
-            the balance.
+            Only the agency owner can buy packs. Ask your owner to top up the
+            balance.
           </div>
-        ) : subscription.isLoading ? (
+        ) : bundlesQuery.isLoading || creditsQuery.isLoading ? (
           <div className="py-10 flex items-center justify-center gap-2 text-xs text-slate-500">
             <Loader2 className="w-4 h-4 animate-spin" />
-            <span>Loading your plan...</span>
+            <span>Loading pack options...</span>
           </div>
-        ) : noSubscription ? (
-          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
-            You need an active subscription before you can buy extra packs.
-            Choose a plan in Settings &amp; Billing.
-          </div>
-        ) : subscription.isError || !sub ? (
+        ) : bundlesQuery.isError || creditsQuery.isError || !credits || !selected ? (
           <div
             role="alert"
             className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800 space-y-2"
           >
-            <p>{errorText(subscription.error)}</p>
+            <p>{errorText(bundlesQuery.error ?? creditsQuery.error)}</p>
             <button
               type="button"
-              onClick={() => subscription.refetch()}
+              onClick={() => {
+                bundlesQuery.refetch();
+                creditsQuery.refetch();
+              }}
               className="h-8 px-3 rounded-lg bg-white border border-rose-200 text-rose-700 font-medium hover:bg-rose-100 cursor-pointer"
             >
               Try again
@@ -329,14 +321,12 @@ const BuyPacksModalInner: React.FC<BuyPacksModalProps> = ({
               </p>
               <p className="text-xs text-slate-500">
                 {creditsArrived
-                  ? `${intent?.packs ?? selectedPacks} packs have been added to your balance.`
+                  ? `${intent?.packs ?? selected.packs ?? 0} pack${(intent?.packs ?? selected.packs) === 1 ? " has" : "s have"} been added to your balance.`
                   : "Your packs are being added to your balance. This usually takes a few seconds."}
               </p>
-              {sub.creditsRemaining != null && (
-                <p className="text-xs font-medium text-slate-700">
-                  {sub.creditsRemaining} packs available
-                </p>
-              )}
+              <p className="text-xs font-medium text-slate-700">
+                {credits.total ?? 0} {credits.total === 1 ? "pack" : "packs"} available
+              </p>
             </div>
             <button
               type="button"
@@ -353,23 +343,24 @@ const BuyPacksModalInner: React.FC<BuyPacksModalProps> = ({
               <div className="flex justify-between font-medium">
                 <span>Packs available:</span>
                 <span className="font-semibold text-slate-900">
-                  {sub.creditsRemaining ?? 0}
+                  {credits.total ?? 0}
                 </span>
               </div>
-              {sub.packsAllowance != null && (
-                <div className="flex justify-between font-medium">
-                  <span>Included with your plan:</span>
-                  <span className="font-semibold text-slate-900">
-                    {sub.packsAllowance} per billing period
-                  </span>
-                </div>
-              )}
-              {sub.periodEnd && (
-                <p className="text-[10px] text-slate-400 pt-1 border-t border-slate-200">
-                  Your current billing period ends on{" "}
-                  {formatDate(sub.periodEnd, "long")}.
-                </p>
-              )}
+              <div className="flex justify-between">
+                <span>Monthly allowance (resets each month):</span>
+                <span className="font-semibold text-slate-900">
+                  {credits.allowance ?? 0}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Pay-as-you-go (never expire):</span>
+                <span className="font-semibold text-slate-900">
+                  {credits.payg ?? 0}
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-400 pt-1 border-t border-slate-200">
+                Your monthly allowance is used first, then pay-as-you-go packs.
+              </p>
             </div>
 
             {stage === "select" ? (
@@ -377,15 +368,17 @@ const BuyPacksModalInner: React.FC<BuyPacksModalProps> = ({
                 {/* Bundles Options */}
                 <div className="space-y-3">
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600">
-                    Select a Pack Bundle
+                    Choose how many packs
                   </label>
                   <div className="space-y-2.5">
-                    {BUNDLES.map((bundle) => {
-                      const isSelected = selectedPacks === bundle.packs;
+                    {bundles.map((bundle) => {
+                      const isSelected = selected.code === bundle.code;
+                      const full = (bundles[0]?.pricePence ?? 0) * (bundle.packs ?? 1);
+                      const saving = bundle.pricePence != null && full > bundle.pricePence ? full - bundle.pricePence : 0;
                       return (
                         <div
-                          key={bundle.packs}
-                          onClick={() => setSelectedPacks(bundle.packs)}
+                          key={bundle.code}
+                          onClick={() => setSelectedCode(bundle.code ?? null)}
                           className={`p-4 rounded-2xl border-2 transition-all flex items-center justify-between cursor-pointer select-none ${
                             isSelected
                               ? "border-[#092167] bg-blue-50/40 shadow-xs"
@@ -407,16 +400,16 @@ const BuyPacksModalInner: React.FC<BuyPacksModalProps> = ({
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="font-heading font-bold text-sm text-slate-900">
-                                  {bundle.name}
+                                  {bundle.packs} {bundle.packs === 1 ? "Pack" : "Packs"}
                                 </span>
-                                {bundle.badge && (
+                                {saving > 0 && (
                                   <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FEF3C7] text-[#8C6605] uppercase tracking-wider">
-                                    {bundle.badge}
+                                    Save {formatMoney(saving, "GBP", { decimals: true })}
                                   </span>
                                 )}
                               </div>
                               <p className="text-xs text-slate-500">
-                                {formatMoney(pricePerPack, "GBP", {
+                                {formatMoney(bundle.pricePerPackPence, "GBP", {
                                   decimals: true,
                                 })}{" "}
                                 per pack
@@ -424,13 +417,7 @@ const BuyPacksModalInner: React.FC<BuyPacksModalProps> = ({
                             </div>
                           </div>
                           <span className="font-heading font-extrabold text-base sm:text-lg text-[#092167]">
-                            {pricePerPack != null
-                              ? formatMoney(
-                                  bundle.packs * pricePerPack,
-                                  "GBP",
-                                  { decimals: true },
-                                )
-                              : "–"}
+                            {formatMoney(bundle.pricePence, "GBP", { decimals: true })}
                           </span>
                         </div>
                       );

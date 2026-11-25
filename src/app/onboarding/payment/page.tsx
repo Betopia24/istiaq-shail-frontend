@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/Badge";
 import { ErrorState, apiErrorInfo } from "@/components/ui/ErrorState";
 import { useGetPlansQuery, useStartCheckoutMutation, type CheckoutResult } from "@/redux/api/billing/billingApi";
 import { errorText } from "@/lib/auth/client";
-import { formatMoney } from "@/lib/format";
+import { formatMoney, formatSeats } from "@/lib/format";
 import type { Address } from "@/types/models";
 import toast from "react-hot-toast";
 
@@ -195,7 +195,7 @@ function PaymentFormContent() {
                     <div className="flex items-center gap-2">
                       <Sparkles className="w-3.5 h-3.5 text-[#E8A808]" />
                       <span>
-                        <strong>{plan.seatLimit}</strong> team member seats included
+                        <strong>{formatSeats(plan.seatLimit)}</strong> included
                       </span>
                     </div>
                   </div>
