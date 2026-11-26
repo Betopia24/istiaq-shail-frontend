@@ -52,7 +52,9 @@ import {
 import { useGetBrandingQuery } from "@/redux/api/agency/agencyApi";
 import type { Branding, Pack, SectionKey } from "@/types/models";
 
-type ActiveTab = "brochure" | "social" | "valuation" | "portal";
+type ActiveTab = "brochure" | "social" | "valuation" | "portal" | "outputs";
+type OutputView = "video" | "faqs" | "emails";
+const OUTPUT_KEY: Record<OutputView, SectionKey> = { video: "video_script", faqs: "buyer_faqs", emails: "email_responses" };
 type SocialPlatform = "facebook" | "instagram" | "tiktok";
 type PortalPlatform = "rightmove" | "zoopla";
 type Draft = Record<string, string>;
@@ -83,6 +85,36 @@ const parseTags = (text: string) =>
     .filter(Boolean);
 const tagsText = (tags: string[]) => tags.map((t) => `#${t}`).join(" ");
 
+/* FAQs and emails are lists; they are edited as plain text blocks and parsed back on save. */
+const EMAIL_DIVIDER = "\n=====\n";
+function faqsToText(items: unknown): string {
+  return (Array.isArray(items) ? items : [])
+    .map((i) => `Q: ${asString((i as Record<string, unknown>)?.question)}\nA: ${asString((i as Record<string, unknown>)?.answer)}`)
+    .join("\n\n");
+}
+function textToFaqs(text: string) {
+  return text
+    .split(/\n\s*\n(?=Q:)/)
+    .map((block) => block.trim().match(/^Q:\s*([\s\S]*?)\n\s*A:\s*([\s\S]*)$/))
+    .filter((m): m is RegExpMatchArray => !!m)
+    .map((m) => ({ question: m[1]!.trim(), answer: m[2]!.trim() }));
+}
+function emailsToText(emails: unknown): string {
+  return (Array.isArray(emails) ? emails : [])
+    .map((e) => {
+      const r = e as Record<string, unknown>;
+      return `Scenario: ${asString(r?.scenario)}\nSubject: ${asString(r?.subject)}\n\n${asString(r?.body)}`;
+    })
+    .join(EMAIL_DIVIDER);
+}
+function textToEmails(text: string) {
+  return text
+    .split(/\n={5,}\n/)
+    .map((block) => block.trim().match(/^Scenario:\s*(.*)\nSubject:\s*(.*)\n\s*\n([\s\S]*)$/))
+    .filter((m): m is RegExpMatchArray => !!m)
+    .map((m) => ({ scenario: m[1]!.trim(), subject: m[2]!.trim(), body: m[3]!.trim() }));
+}
+
 function toDraft(key: SectionKey, c: Record<string, unknown> | undefined): Draft {
   const content = c ?? {};
   switch (key) {
@@ -98,6 +130,12 @@ function toDraft(key: SectionKey, c: Record<string, unknown> | undefined): Draft
     case "social_facebook":
     case "social_instagram":
       return { text: asString(content.text), hashtags: tagsText(asStrings(content.hashtags)) };
+    case "video_script":
+      return { walkthrough: asString(content.walkthrough), reel: asString(content.reel) };
+    case "buyer_faqs":
+      return { items: faqsToText(content.items) };
+    case "email_responses":
+      return { emails: emailsToText(content.emails) };
     default:
       return { summary: asString(content.summary), bullets: asStrings(content.bullets).join("\n"), description: asString(content.description) };
   }
@@ -112,6 +150,12 @@ function toContent(key: SectionKey, d: Draft): Record<string, unknown> {
     case "social_facebook":
     case "social_instagram":
       return { text: d.text, hashtags: parseTags(d.hashtags ?? "") };
+    case "video_script":
+      return { walkthrough: d.walkthrough, reel: d.reel };
+    case "buyer_faqs":
+      return { items: textToFaqs(d.items ?? "") };
+    case "email_responses":
+      return { emails: textToEmails(d.emails ?? "") };
     default:
       return { summary: d.summary, bullets: parseLines(d.bullets ?? ""), description: d.description };
   }
@@ -639,6 +683,7 @@ function PackEditor() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("brochure");
   const [socialPlatform, setSocialPlatform] = useState<SocialPlatform>("instagram");
   const [portalPlatform, setPortalPlatform] = useState<PortalPlatform>("rightmove");
+  const [outputView, setOutputView] = useState<OutputView>("video");
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -905,6 +950,9 @@ function PackEditor() {
           <button onClick={() => setActiveTab("portal")} className={tabBtn("portal")}>
             Portal Specs (Rightmove)
           </button>
+          <button onClick={() => setActiveTab("outputs")} className={tabBtn("outputs")}>
+            Video, FAQs &amp; Emails
+          </button>
         </div>
       )}
 
@@ -1102,6 +1150,123 @@ function PackEditor() {
           </div>
         </div>
       )}
+
+      {/* TAB 5: VIDEO SCRIPTS, BUYER FAQS, EMAIL REPLIES */}
+      {hasContent && activeTab === "outputs" && (() => {
+        const key = OUTPUT_KEY[outputView];
+        const exists = sections.some((s) => s.key === key);
+        const d = draftOf(key);
+        const label = outputView === "video" ? "Video script" : outputView === "faqs" ? "Buyer FAQs" : "Email replies";
+        const copyText = outputView === "video" ? `${d.walkthrough}\n\n${d.reel}` : outputView === "faqs" ? d.items : d.emails;
+        return (
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 space-y-5 shadow-2xs max-w-4xl">
+            <div>
+              <h2 className="font-heading font-medium text-lg text-slate-900">Video, buyer FAQs and email replies</h2>
+              <p className="text-xs text-slate-500 mt-0.5">Written only from the facts you entered for this property. Check every answer before you use it.</p>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              {(["video", "faqs", "emails"] as const).map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setOutputView(v)}
+                  className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${outputView === v ? "bg-[#06143E] text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+                >
+                  {v === "video" ? "Video Walkthrough & Reel" : v === "faqs" ? "Buyer FAQs" : "Email Replies"}
+                </button>
+              ))}
+            </div>
+
+            {!exists ? (
+              <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center space-y-3">
+                <p className="text-sm text-slate-700">
+                  This pack was created before <strong>{label}</strong> existed. Generate it now. It does not use a pack credit.
+                </p>
+                <button
+                  type="button"
+                  disabled={busyJob}
+                  onClick={() => regenerateSection(key)}
+                  className="h-10 px-5 rounded-lg bg-[#06143E] hover:bg-[#0A2168] text-white font-medium text-xs cursor-pointer disabled:opacity-60"
+                >
+                  {busyJob ? "Generating..." : `Generate ${label}`}
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">{label}</span>
+                  <button
+                    onClick={() => copyToClipboard(copyText ?? "", `output-${outputView}`)}
+                    className="px-3 py-1 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium shadow-2xs flex items-center gap-1 cursor-pointer"
+                  >
+                    {copiedKey === `output-${outputView}` ? (
+                      <>
+                        <Check className="w-3 h-3 text-emerald-600" />
+                        <span>Copied!</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-3 h-3" />
+                        <span>Copy all</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {outputView === "video" && (
+                  <div className="space-y-2">
+                    <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider">Walkthrough (shot list and voiceover)</label>
+                    <textarea rows={10} value={d.walkthrough ?? ""} onChange={(e) => setField(key, "walkthrough", e.target.value)} className={areaCls} />
+                    <FieldError message={err(key, "walkthrough")} />
+                    <label className="block text-[11px] font-medium text-slate-500 uppercase tracking-wider pt-1">30-second reel</label>
+                    <textarea rows={7} value={d.reel ?? ""} onChange={(e) => setField(key, "reel", e.target.value)} className={areaCls} />
+                    <FieldError message={err(key, "reel")} />
+                  </div>
+                )}
+                {outputView === "faqs" && (
+                  <div className="space-y-2">
+                    <p className="text-[11px] text-slate-500">One question and answer at a time: start each with Q: and A:, and leave a blank line between them.</p>
+                    <textarea rows={16} value={d.items ?? ""} onChange={(e) => setField(key, "items", e.target.value)} className={areaCls} />
+                    <FieldError message={err(key, "items")} />
+                  </div>
+                )}
+                {outputView === "emails" && (
+                  <div className="space-y-2">
+                    <p className="text-[11px] text-slate-500">
+                      Each email starts with Scenario: and Subject:, then a blank line and the message. A line of ===== separates emails. Fill in the [square brackets] before sending.
+                    </p>
+                    <textarea rows={20} value={d.emails ?? ""} onChange={(e) => setField(key, "emails", e.target.value)} className={areaCls} />
+                    <FieldError message={err(key, "emails")} />
+                  </div>
+                )}
+
+                <div className="pt-2 flex items-center gap-3 flex-wrap">
+                  <button
+                    type="button"
+                    disabled={saving || !dirty(key)}
+                    onClick={() => save(key)}
+                    className="h-10 px-5 rounded-lg bg-[#06143E] hover:bg-[#0A2168] text-white font-medium text-xs transition cursor-pointer disabled:opacity-60"
+                  >
+                    {saving ? "Saving..." : "Save Changes"}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busyJob}
+                    onClick={() => regenerateSection(key)}
+                    className="h-10 px-5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                  >
+                    <RotateCw className="w-3.5 h-3.5 text-slate-500" />
+                    <span>Regenerate {label}</span>
+                  </button>
+                  <span className="text-xs text-slate-400">{saveState(key)}</span>
+                </div>
+
+                <VersionHistory key={key} packId={packId} sectionKey={key} disabled={saving || busyJob} onRestore={(c) => save(key, c)} />
+              </>
+            )}
+          </div>
+        );
+      })()}
 
       {/* TAB 3: PROPERTY VALUATION */}
       {activeTab === "valuation" && <ValuationTab pack={pack} packId={packId} currency={currency} />}

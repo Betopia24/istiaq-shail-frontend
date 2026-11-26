@@ -37,6 +37,7 @@ const breadcrumbTitles: Record<string, { portal: string; page: string }> = {
   "/admin-dashboard": { portal: "Super Admin", page: "Platform Overview" },
   "/admin-dashboard/agencies": { portal: "Super Admin", page: "Agency Teams" },
   "/admin-dashboard/subscriptions": { portal: "Super Admin", page: "Subscriptions & Logs" },
+  "/admin-dashboard/credits": { portal: "Super Admin", page: "Credits & Packs" },
   "/admin-dashboard/settings": { portal: "Super Admin", page: "Security & Access" },
   "/dashboard": { portal: "Unified Portal", page: "Overview" },
 };

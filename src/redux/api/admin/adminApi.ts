@@ -1,5 +1,5 @@
 import baseApi from "../baseApi";
-import type { AdminOverview, AdminSubscriptionList, AdminUser, AdminUserList, AuditList } from "@/types/models";
+import type { AdminAgencyCredits, AdminAgencyList, AdminOverview, AdminSubscriptionList, AdminUser, AdminUserList, AuditList } from "@/types/models";
 
 export interface AdminUsersQuery {
   q?: string;
@@ -41,6 +41,25 @@ const adminApi = baseApi.injectEndpoints({
       query: (id) => ({ url: `/admin/subscriptions/${id}/retry`, method: "POST" }),
       invalidatesTags: ["AdminSubscription", "Analytics"],
     }),
+    /** Every agency with its monthly-allowance and pay-as-you-go packs. */
+    getAdminAgencies: builder.query<AdminAgencyList, { q?: string; page?: number; limit?: number } | void>({
+      query: (params) => ({ url: "/admin/agencies", params: params ?? undefined }),
+      providesTags: ["AdminCredits"],
+    }),
+    getAdminAgencyCredits: builder.query<AdminAgencyCredits, string>({
+      query: (id) => `/admin/agencies/${id}/credits`,
+      providesTags: ["AdminCredits"],
+    }),
+    /** Positive adds packs, negative removes them from that pool. 402 `insufficient_credits` if the pool holds less. */
+    adjustAgencyCredits: builder.mutation<AdminAgencyCredits, { id: string; pool: "allowance" | "payg"; amount: number; note: string }>({
+      query: ({ id, ...body }) => ({ url: `/admin/agencies/${id}/credits`, method: "POST", body }),
+      invalidatesTags: ["AdminCredits", "Analytics"],
+    }),
+    /** `allowance: null` goes back to the plan's own. 409 `no_subscription`. */
+    setAgencyAllowance: builder.mutation<AdminAgencyCredits, { id: string; allowance: number | null; applyNow?: boolean }>({
+      query: ({ id, ...body }) => ({ url: `/admin/agencies/${id}/allowance`, method: "PATCH", body }),
+      invalidatesTags: ["AdminCredits"],
+    }),
     getAuditLog: builder.query<AuditList, { action?: string; actorId?: string; targetId?: string; page?: number; limit?: number } | void>({
       query: (params) => ({ url: "/admin/audit-log", params: params ?? undefined }),
     }),
@@ -54,5 +73,9 @@ export const {
   useGetAdminSubscriptionsQuery,
   useRetrySubscriptionMutation,
   useGetAuditLogQuery,
+  useGetAdminAgenciesQuery,
+  useGetAdminAgencyCreditsQuery,
+  useAdjustAgencyCreditsMutation,
+  useSetAgencyAllowanceMutation,
 } = adminApi;
 export default adminApi;

@@ -2977,6 +2977,189 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/agencies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Every agency with its monthly-allowance and pay-as-you-go packs */
+        get: {
+            parameters: {
+                query?: {
+                    /** @description Agency name or owner email */
+                    q?: string;
+                    page?: number;
+                    limit?: number;
+                };
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminAgencyList"];
+                    };
+                };
+                403: components["responses"]["Forbidden"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/agencies/{agencyId}/credits": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One agency's balances and its latest ledger rows */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    agencyId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminAgencyCredits"];
+                    };
+                };
+                /** @description Agency not found */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        put?: never;
+        /** Add (positive) or remove (negative) packs in one pool. A note is required. Writes a ledger row and an audit-log row. */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    agencyId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        /** @enum {string} */
+                        pool: "allowance" | "payg";
+                        /** @description Not 0; at most 100000 either way */
+                        amount: number;
+                        note: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description The agency after the change */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminAgencyCredits"];
+                    };
+                };
+                /** @description insufficient_credits: that pool holds fewer packs than were asked to be removed */
+                402: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                422: components["responses"]["Invalid"];
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/agencies/{agencyId}/allowance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Set this agency's own monthly allowance (Agency Pro), or null for the plan's. Writes an audit-log row. */
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    agencyId: string;
+                };
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        allowance: number | null;
+                        /**
+                         * @description Also add a raise to the balance today (a cut never takes packs back)
+                         * @default false
+                         */
+                        applyNow?: boolean;
+                    };
+                };
+            };
+            responses: {
+                /** @description The agency after the change */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminAgencyCredits"];
+                    };
+                };
+                /** @description no_subscription: nothing to set an allowance on */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        trace?: never;
+    };
     "/admin/users/{userId}": {
         parameters: {
             query?: never;
@@ -3336,7 +3519,7 @@ export interface components {
         /** @enum {string} */
         JobStatus: "queued" | "running" | "done" | "failed";
         /** @enum {string} */
-        SectionKey: "brochure" | "social_facebook" | "social_instagram" | "social_tiktok" | "portal_rightmove" | "portal_zoopla";
+        SectionKey: "brochure" | "social_facebook" | "social_instagram" | "social_tiktok" | "portal_rightmove" | "portal_zoopla" | "video_script" | "buyer_faqs" | "email_responses";
         /** @enum {string} */
         LeadStatus: "pending" | "confirmed" | "completed" | "cancelled";
         /** @enum {string} */
@@ -3757,6 +3940,47 @@ export interface components {
             lastLoginAt?: string | null;
             /** Format: date-time */
             createdAt?: string;
+        };
+        AdminAgency: {
+            id?: string;
+            name?: string;
+            owner?: {
+                id?: string;
+                name?: string;
+                email?: string;
+            } | null;
+            plan?: {
+                code?: string;
+                name?: string;
+                state?: string;
+            } | null;
+            /** @description The plan's monthly packs */
+            monthlyAllowance?: number | null;
+            allowanceOverride?: number | null;
+            credits?: components["schemas"]["CreditBalances"];
+            /** Format: date-time */
+            createdAt?: string;
+        };
+        AdminAgencyList: {
+            items?: components["schemas"]["AdminAgency"][];
+            total?: number;
+            page?: number;
+            limit?: number;
+        };
+        AdminAgencyCredits: components["schemas"]["AdminAgency"] & {
+            ledger?: {
+                id?: string;
+                /** Format: date-time */
+                createdAt?: string;
+                delta?: number;
+                /** @enum {string} */
+                pool?: "allowance" | "payg";
+                /** @enum {string} */
+                reason?: "plan_grant" | "generation_use" | "regeneration_use" | "top_up" | "refund" | "admin_grant" | "admin_deduction" | "expiry";
+                note?: string | null;
+                /** @description Name of the admin or member who caused it */
+                by?: string | null;
+            }[];
         };
         AdminUserList: {
             items?: components["schemas"]["AdminUser"][];

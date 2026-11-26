@@ -18,6 +18,7 @@ import {
   Settings,
   Users,
   CreditCard,
+  Coins,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -88,6 +89,11 @@ export const adminNavItems: NavItemConfig[] = [
     title: "Subscriptions & Logs",
     href: "/admin-dashboard/subscriptions",
     icon: CreditCard,
+  },
+  {
+    title: "Credits & Packs",
+    href: "/admin-dashboard/credits",
+    icon: Coins,
   },
   {
     title: "Settings",
