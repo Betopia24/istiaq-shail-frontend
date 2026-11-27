@@ -79,6 +79,8 @@ export interface Compliance {
   cmpScheme: string | null;
   cmpNumber: string | null;
   hmrcAmlNumber: string | null;
+  /** Buyer enquiries are anonymised this many months after they arrive; 0 = keep them. */
+  leadRetentionMonths?: number;
   [key: string]: unknown;
 }
 

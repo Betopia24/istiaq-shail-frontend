@@ -2977,6 +2977,212 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/me/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** A copy of all your personal data, as a JSON download (UK GDPR art. 15 and 20) */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description JSON file (Content-Disposition attachment) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/me/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Erase your account (UK GDPR art. 17). Agency owners must delete the agency or hand it over first. */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        password: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Erased; all sessions are signed out */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            deleted?: boolean;
+                        };
+                    };
+                };
+                /** @description cannot_delete_admin */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description owner_must_delete_agency */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description wrong_password */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/agency/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The agency's data (owner only), as a JSON download: listings and their copy, enquiries, team, invoices, credit history */
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description JSON file (Content-Disposition attachment) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": Record<string, never>;
+                    };
+                };
+                403: components["responses"]["Forbidden"];
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/agency/delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Delete the agency (owner only). Cancels the subscription, anonymises enquiries, removes listings, files and share links, erases members who belong to no other agency. Invoices are kept for 6 years (HMRC). */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": {
+                        password: string;
+                        /** @description The agency name, typed to confirm */
+                        confirmName: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Deleted */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            deleted?: boolean;
+                            kept?: string;
+                        };
+                    };
+                };
+                /** @description owner_only */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description wrong_password or confirm_name */
+                422: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description cancel_failed: Stripe could not cancel the subscription; nothing was deleted */
+                502: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/agencies": {
         parameters: {
             query?: never;
@@ -3473,7 +3679,7 @@ export interface components {
         };
         CreditBalances: {
             total?: number;
-            /** @description Monthly plan packs; reset at renewal */
+            /** @description Monthly plan packs; reset at renewal, no rollover. Spent first. */
             allowance?: number;
             /** @description Pay-as-you-go packs; never expire */
             payg?: number;
@@ -3487,7 +3693,7 @@ export interface components {
             state?: "incomplete" | "active" | "past_due" | "canceled" | "unpaid";
             /** @description Monthly allowance plus pay-as-you-go */
             creditsRemaining?: number;
-            /** @description Monthly packs left; reset at renewal */
+            /** @description Monthly packs left; reset at renewal, no rollover */
             allowanceCredits?: number;
             /** @description Pay-as-you-go packs left; never expire */
             paygCredits?: number;
@@ -3651,9 +3857,9 @@ export interface components {
              * @enum {string|null}
              */
             evidenceStrength?: "Limited" | "Moderate" | "Strong" | null;
-            /** @description What the figures rest on */
+            /** @description What the figures rest on, in plain words */
             verified?: string[];
-            /** @description What is missing or not confirmed */
+            /** @description What is missing or not confirmed, in plain words */
             missing?: string[];
             /** @description none (only agent comparables) until a provider is chosen (decision G20); stub = development demo data */
             dataSource?: string;
@@ -3983,7 +4189,7 @@ export interface components {
                 name?: string;
                 state?: string;
             } | null;
-            /** @description The plan's monthly packs */
+            /** @description The plan's monthly packs, or this agency's own number */
             monthlyAllowance?: number | null;
             allowanceOverride?: number | null;
             credits?: components["schemas"]["CreditBalances"];

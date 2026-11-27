@@ -1,5 +1,6 @@
 "use client";
 
+import { AgencyDataSection } from "@/components/settings/PrivacySettings";
 import React, { useState } from "react";
 import {
   ShieldCheck,
@@ -123,6 +124,7 @@ export const RegionalComplianceTab: React.FC = () => {
   )} (Cert: ${cmpCertificateNumber || "n/a"}). Supervised by HM Revenue & Customs for Anti-Money Laundering Regulations (AML Reg: ${amlNumber || "n/a"}). Consumer Protection from Unfair Trading Regulations 2008 (CPR): ${disclaimer}`;
 
   return (
+    <div className="space-y-6">
     <form onSubmit={handleSave} className="space-y-6">
       <fieldset disabled={!canEdit || isSaving} className="contents">
       {!canEdit && (
@@ -431,6 +433,8 @@ export const RegionalComplianceTab: React.FC = () => {
       </div>
       </fieldset>
     </form>
+      <AgencyDataSection />
+    </div>
   );
 };
 

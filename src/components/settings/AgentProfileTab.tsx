@@ -1,5 +1,6 @@
 "use client";
 
+import { PersonalDataSection } from "@/components/settings/PrivacySettings";
 import React, { useState } from "react";
 import { Check, Phone, Mail, X, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -107,6 +108,7 @@ export const AgentProfileTab: React.FC = () => {
     fieldErrors[k] ? <p className="text-[11px] text-rose-600">{fieldErrors[k]}</p> : null;
 
   return (
+    <div className="space-y-6">
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-7">
       {/* Left Column: Personal Information Form */}
       <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-7 space-y-6 shadow-2xs">
@@ -436,6 +438,8 @@ export const AgentProfileTab: React.FC = () => {
           </div>
         </div>
       )}
+    </div>
+      <PersonalDataSection />
     </div>
   );
 };

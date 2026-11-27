@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+import { CookieNotice } from "@/components/ui/CookieNotice";
 import type { Metadata } from "next";
 import ReduxProvider from "@/redux/ReduxProvider";
 import { Toaster } from "react-hot-toast";
@@ -37,6 +38,7 @@ export default function RootLayout({
         <ReduxProvider>
           <Toaster position="top-right" />
           <Suspense fallback={null}>{children}</Suspense>
+          <CookieNotice />
         </ReduxProvider>
       </body>
     </html>
