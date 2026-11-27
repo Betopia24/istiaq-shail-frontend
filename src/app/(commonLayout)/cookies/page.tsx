@@ -1,5 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
+import { DraftNotice } from "@/components/legal/LegalPage";
+import { LEGAL } from "@/content/legal";
 
 export const metadata: Metadata = {
   title: "Cookie Policy | Property Pack AI",
@@ -21,11 +23,13 @@ export default function CookiePolicyPage() {
     <div className="py-16 sm:py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
       <div className="space-y-3 pb-8 border-b border-slate-200">
         <h1 className="font-heading font-extrabold text-3xl sm:text-4xl text-[#06143E] tracking-tight">Cookie Policy</h1>
+        <p className="text-xs sm:text-sm text-slate-500">Last updated: {LEGAL.lastUpdated}</p>
         <p className="text-sm text-slate-600 leading-relaxed">
           Property Pack AI uses only <strong>strictly necessary</strong> cookies: the ones that keep you signed in, and the ones Stripe needs to
           prevent fraud when you pay. We do not use advertising, tracking or analytics cookies. Because these cookies are essential to the service,
           the law (UK PECR and UK GDPR) does not require your consent for them, but you are entitled to know what they are.
         </p>
+        <DraftNotice />
       </div>
 
       <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
@@ -65,7 +69,7 @@ export default function CookiePolicyPage() {
         </p>
         <p>
           To get a copy of your data or delete your account, use <strong>Settings → Agent Profile → Your data and privacy</strong>. For anything
-          else, see the <a href="/privacy" className="underline text-[#092167]">Privacy Policy</a>.
+          else, see the <a href="/privacy" className="underline text-[#092167]">Privacy Policy</a> or contact {LEGAL.contactEmail}.
         </p>
       </div>
     </div>
