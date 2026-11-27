@@ -417,8 +417,10 @@ function ValuationTab({ pack, packId, currency }: { pack: Pack; packId: string; 
   const recommended = strategies.find((s) => s.recommended);
   const selectedKey = chosen ?? v.chosenStrategy ?? recommended?.key ?? strategies[0]?.key;
   const selected = strategies.find((s) => s.key === selectedKey);
-  const confidence = v.confidencePct ?? 0;
-  const confidenceLabel = confidence >= 80 ? "High" : confidence >= 60 ? "Medium" : "Low";
+  const letting = v.transaction === "let";
+  const ready = v.status === "ready";
+  const verifiedCount = v.verifiedComparables ?? 0;
+  const evidenceNoun = letting ? (verifiedCount === 1 ? "let" : "lets") : verifiedCount === 1 ? "sale" : "sales";
   const price = (pence: number | undefined, kind?: string) => `${formatMoney(pence, cur)}${kind === "rent_pcm" ? " / month" : ""}`;
 
   const apply = async () => {
@@ -452,46 +454,102 @@ function ValuationTab({ pack, packId, currency }: { pack: Pack; packId: string; 
 
   return (
     <div className="space-y-6">
-      {/* Top Banner: Valuation Metrics Header */}
-      <div className="bg-[#0B1536] rounded-2xl p-6 sm:p-7 text-white shadow-md border border-[#162758]/60 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div>
-          <div className="flex items-center gap-1.5 mb-1.5">
-            <span className="w-2 h-2 rounded-full bg-amber-400" />
-            <span className="text-[11px] font-medium text-[#FFB800] uppercase tracking-wider">AI VALUATION ENGINE</span>
+      {/* Top banner: figures only when there is verified evidence */}
+      {ready ? (
+        <div className="bg-[#0B1536] rounded-2xl p-6 sm:p-7 text-white shadow-md border border-[#162758]/60 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div>
+            <span className="inline-block text-[11px] font-medium text-[#FFB800] uppercase tracking-wider mb-2">
+              {letting ? "Estimated monthly rent" : "Estimated value range"}
+            </span>
+            <p className="font-heading font-medium text-2xl sm:text-3xl text-white tracking-tight">
+              {formatMoney(v.lowPence, cur)} – {formatMoney(v.highPence, cur)}
+            </p>
+            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+              Based on {verifiedCount} verified comparable {evidenceNoun}
+            </p>
           </div>
-          <p className="font-heading font-medium text-2xl sm:text-3xl text-white tracking-tight">
-            {formatMoney(v.lowPence, cur)} – {formatMoney(v.highPence, cur)}
-          </p>
-          <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-            Estimated market value range based on {comparables.length} comparable sale{comparables.length === 1 ? "" : "s"}
-          </p>
-        </div>
 
-        <div>
-          <span className="inline-block text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-2">RECOMMENDED GUIDE PRICE</span>
-          <p className="font-heading font-medium text-2xl sm:text-3xl text-[#FFB800] tracking-tight">{formatMoney(v.recommendedPence, cur)}</p>
-          {recommended?.label && <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{recommended.label}</p>}
-        </div>
+          <div>
+            <span className="inline-block text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-2">
+              {letting ? "Recommended rent" : "Recommended guide price"}
+            </span>
+            <p className="font-heading font-medium text-2xl sm:text-3xl text-[#FFB800] tracking-tight">
+              {price(v.recommendedPence ?? undefined, letting ? "rent_pcm" : undefined)}
+            </p>
+            {recommended?.label && <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{recommended.label}</p>}
+          </div>
 
-        <div>
-          <span className="inline-block text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-2">AI ACCURACY CONFIDENCE</span>
-          <p className="font-heading font-medium text-2xl sm:text-3xl text-emerald-400 tracking-tight">
-            {confidence}% {confidenceLabel}
-          </p>
-          {v.dataSource && <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{v.dataSource}</p>}
-        </div>
+          <div>
+            <span className="inline-block text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-2">Evidence strength</span>
+            <p className={`font-heading font-medium text-2xl sm:text-3xl tracking-tight ${v.evidenceStrength === "Strong" ? "text-emerald-400" : v.evidenceStrength === "Moderate" ? "text-amber-300" : "text-rose-300"}`}>
+              {v.evidenceStrength ?? "–"}
+            </p>
+            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
+              {verifiedCount} verified · 5+ is strong
+            </p>
+          </div>
 
-        <div>
-          <span className="inline-block text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-2">AVG DAYS ON MARKET</span>
-          <p className="font-heading font-medium text-2xl sm:text-3xl text-white tracking-tight">{v.avgDaysOnMarket ?? "–"} Days</p>
+          <div>
+            <span className="inline-block text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-2">Avg days on market</span>
+            <p className="font-heading font-medium text-2xl sm:text-3xl text-white tracking-tight">
+              {v.avgDaysOnMarket != null ? `${v.avgDaysOnMarket} Days` : "Not confirmed"}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-7 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">Valuation</p>
+            <h3 className="font-heading font-medium text-xl text-slate-900 mt-1">No estimate yet: add verified comparables</h3>
+            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
+              The estimate is worked out only from comparable {letting ? "lets" : "sales"} you can vouch for. Add at least one (three or more for a
+              dependable range) and the range, the recommended {letting ? "rent" : "guide price"} and the pricing strategies appear here.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsManualCompOpen(true)}
+            className="h-10 px-4 rounded-lg bg-[#06143E] hover:bg-[#092167] text-white text-xs font-semibold cursor-pointer flex items-center gap-1.5 shrink-0"
+          >
+            <Plus className="w-3.5 h-3.5 text-[#E8A808]" />
+            <span>Add a verified comparable</span>
+          </button>
+        </div>
+      )}
+
+      {/* What the figures rest on, and what is missing */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 text-xs text-emerald-900">
+          <p className="font-semibold mb-1.5">Verified information</p>
+          {(v.verified ?? []).length ? (
+            <ul className="list-disc list-inside space-y-0.5">
+              {(v.verified ?? []).map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>Nothing verified yet.</p>
+          )}
+        </div>
+        <div className="rounded-xl border border-amber-200 bg-amber-50/80 p-4 text-xs text-amber-900">
+          <p className="font-semibold mb-1.5">Missing or not confirmed</p>
+          {(v.missing ?? []).length ? (
+            <ul className="list-disc list-inside space-y-0.5">
+              {(v.missing ?? []).map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>Nothing missing.</p>
+          )}
         </div>
       </div>
 
       {v.sampleData && (
-        <div role="alert" className="p-3.5 rounded-xl border border-amber-300 bg-amber-100/80 text-amber-900 text-xs flex items-center gap-3">
-          <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0" />
+        <div role="alert" className="p-3.5 rounded-xl border border-slate-300 bg-slate-100 text-slate-700 text-xs flex items-center gap-3">
+          <AlertTriangle className="w-4 h-4 text-slate-500 shrink-0" />
           <p className="leading-relaxed">
-            <strong>Sample data:</strong> these comparable sales are generated for demonstration, not real sales.
+            <strong>Example data:</strong> rows marked &ldquo;Example&rdquo; are generated for demonstration. They are not real sales and are not used in any figure.
           </p>
         </div>
       )}
@@ -509,8 +567,8 @@ function ValuationTab({ pack, packId, currency }: { pack: Pack; packId: string; 
         <div className="lg:col-span-8 bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 space-y-5 shadow-2xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="font-heading font-medium text-base sm:text-lg text-slate-900">Recent Comparable Sales (Comps Analysis)</h3>
-              <p className="text-xs text-slate-500 mt-0.5">Comparable sales used for this estimate</p>
+              <h3 className="font-heading font-medium text-base sm:text-lg text-slate-900">Comparable {letting ? "Lets" : "Sales"}</h3>
+              <p className="text-xs text-slate-500 mt-0.5">Only verified comparables are used in the estimate</p>
             </div>
 
             <button
@@ -519,7 +577,7 @@ function ValuationTab({ pack, packId, currency }: { pack: Pack; packId: string; 
               className="h-9 px-3.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs transition cursor-pointer flex items-center gap-1.5 shadow-2xs self-start sm:self-auto shrink-0"
             >
               <Plus className="w-3.5 h-3.5 text-[#E8A808]" />
-              <span>Add Custom Comparable</span>
+              <span>Add Verified Comparable</span>
             </button>
           </div>
 
@@ -529,8 +587,8 @@ function ValuationTab({ pack, packId, currency }: { pack: Pack; packId: string; 
                 <tr className="bg-slate-50/80 border-b border-slate-100 text-[11px] font-medium text-slate-500 uppercase tracking-wider">
                   <th className="py-2.5 px-4 rounded-l-lg">Comparable Property</th>
                   <th className="py-2.5 px-3">Distance</th>
-                  <th className="py-2.5 px-3">Sale Date</th>
-                  <th className="py-2.5 px-3">Sold Price</th>
+                  <th className="py-2.5 px-3">{letting ? "Let Date" : "Sale Date"}</th>
+                  <th className="py-2.5 px-3">{letting ? "Rent pcm" : "Sold Price"}</th>
                   <th className="py-2.5 px-4 rounded-r-lg">£/Sq Ft</th>
                 </tr>
               </thead>
@@ -538,18 +596,26 @@ function ValuationTab({ pack, packId, currency }: { pack: Pack; packId: string; 
                 {comparables.length === 0 && (
                   <tr>
                     <td colSpan={5} className="py-6 px-4 text-center text-xs text-slate-500">
-                      No comparable sales yet. Add a custom comparable to start.
+                      No verified comparables yet. Add {letting ? "lets" : "sales"} you can vouch for to get an estimate.
                     </td>
                   </tr>
                 )}
                 {comparables.map((comp) => (
-                  <tr key={comp.id} className="hover:bg-slate-50/60 transition">
+                  <tr key={comp.id} className={`transition ${comp.verified ? "hover:bg-slate-50/60" : "opacity-60 bg-slate-50/40"}`}>
                     <td className="py-3.5 px-4">
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <p className="font-medium text-slate-900 text-sm">
                             {comp.address}
-                            {comp.isManual && <span className="ml-2 px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-medium align-middle">Custom</span>}
+                            {comp.source === "agent" && (
+                              <span className="ml-2 px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 text-[10px] font-medium align-middle">Verified by you</span>
+                            )}
+                            {comp.source === "data_provider" && (
+                              <span className="ml-2 px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 text-[10px] font-medium align-middle">Data source</span>
+                            )}
+                            {comp.source === "example" && (
+                              <span className="ml-2 px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 text-[10px] font-medium align-middle">Example: not used</span>
+                            )}
                           </p>
                           <p className="text-xs text-slate-500 mt-0.5">{typeLine(comp)}</p>
                         </div>
@@ -581,8 +647,7 @@ function ValuationTab({ pack, packId, currency }: { pack: Pack; packId: string; 
             <p className="font-medium text-slate-900 text-xs sm:text-sm">Valuation Methodology</p>
             <p className="text-slate-600 text-xs whitespace-pre-line">{v.methodology}</p>
             <p className="text-[11px] text-slate-400 pt-1 border-t border-slate-100">
-              {v.dataSource}
-              {v.sizeEstimated ? " · Floor area is estimated." : ""}
+              {v.dataSource === "none" ? "No data source connected: agent comparables only" : v.dataSource}
             </p>
           </div>
         </div>
@@ -593,6 +658,12 @@ function ValuationTab({ pack, packId, currency }: { pack: Pack; packId: string; 
             <h3 className="font-heading font-medium text-base text-slate-900">Vendor Pricing Strategies</h3>
             <p className="text-xs text-slate-500 mt-0.5">Tailor the presentation pitch before meeting the owner</p>
           </div>
+
+          {!ready && (
+            <p className="text-xs text-slate-500 rounded-xl border border-dashed border-slate-300 p-4">
+              Pricing strategies appear once there is at least one verified comparable.
+            </p>
+          )}
 
           {strategies.map((s) => (
             <div
@@ -641,7 +712,7 @@ function ValuationTab({ pack, packId, currency }: { pack: Pack; packId: string; 
           {/* Apply Button */}
           <button
             type="button"
-            disabled={!selected || applying}
+            disabled={!ready || !selected || applying}
             onClick={apply}
             className="w-full h-11 rounded-lg bg-[#FFB800] hover:bg-[#E8A808] active:bg-[#D49800] text-[#06143E] font-heading font-medium text-xs sm:text-sm transition cursor-pointer shadow-sm disabled:opacity-60"
           >
@@ -649,7 +720,8 @@ function ValuationTab({ pack, packId, currency }: { pack: Pack; packId: string; 
           </button>
           <button
             type="button"
-            disabled={pdf.busy}
+            disabled={!ready || pdf.busy}
+            title={ready ? undefined : "Add verified comparables first"}
             onClick={pdf.start}
             className="w-full h-10 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium text-xs transition cursor-pointer flex items-center justify-center gap-2 disabled:opacity-60"
           >
@@ -664,7 +736,12 @@ function ValuationTab({ pack, packId, currency }: { pack: Pack; packId: string; 
         </div>
       </div>
 
-      <ManualComparableModal isOpen={isManualCompOpen} onClose={() => setIsManualCompOpen(false)} packId={pack.id ?? packId} />
+      <ManualComparableModal
+        isOpen={isManualCompOpen}
+        onClose={() => setIsManualCompOpen(false)}
+        packId={pack.id ?? packId}
+        transaction={letting ? "let" : "sale"}
+      />
     </div>
   );
 }

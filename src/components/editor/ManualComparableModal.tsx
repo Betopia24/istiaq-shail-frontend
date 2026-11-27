@@ -13,13 +13,17 @@ interface ManualComparableModalProps {
   isOpen: boolean;
   onClose: () => void;
   packId: string;
+  /** `let`: the comparable is an achieved monthly rent, not a sale price. */
+  transaction?: "sale" | "let";
 }
 
 export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
   isOpen,
   onClose,
   packId,
+  transaction = "sale",
 }) => {
+  const letting = transaction === "let";
   const modalRef = useRef<HTMLDivElement>(null);
   const [addComparable, { isLoading }] = useAddComparableMutation();
   const [address, setAddress] = useState("");
@@ -53,7 +57,7 @@ export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
     if (!address.trim() || pricePence === undefined) {
       setFieldErrors({
         ...(address.trim() ? {} : { address: "Enter the property address" }),
-        ...(pricePence === undefined ? { pricePence: "Enter the sale price" } : {}),
+        ...(pricePence === undefined ? { pricePence: letting ? "Enter the monthly rent" : "Enter the sale price" } : {}),
       });
       return;
     }
@@ -111,10 +115,12 @@ export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
               id="comparable-modal-title"
               className="font-heading font-semibold text-lg text-slate-900"
             >
-              Add Custom Comparable Sale
+              {letting ? "Add a Verified Comparable Let" : "Add a Verified Comparable Sale"}
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Include local off-market or recently completed sales in the valuation report.
+              {letting
+                ? "Add a let you can vouch for: the achieved monthly rent is used in the estimate."
+                : "Add a sale you can vouch for (for example from Land Registry or your own completions). Only verified comparables are used in the estimate."}
             </p>
           </div>
           <button
@@ -145,7 +151,7 @@ export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider">
-                Sale Price (£) <span className="text-amber-500">*</span>
+                {letting ? "Achieved Rent (£ per month)" : "Sale Price (£)"} <span className="text-amber-500">*</span>
               </label>
               <input
                 type="text"
@@ -160,7 +166,7 @@ export const ManualComparableModal: React.FC<ManualComparableModalProps> = ({
 
             <div className="space-y-1.5">
               <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider">
-                Completion Date
+                {letting ? "Let Date" : "Completion Date"}
               </label>
               <input
                 type="text"

@@ -3623,18 +3623,47 @@ export interface components {
             readonly pricePerSqFtPence?: number;
             readonly matchPct?: number;
             readonly isManual?: boolean;
+            /** @description Counts as evidence: entered by the agent or from a real data source. Never demonstration data */
+            readonly verified?: boolean;
+            /**
+             * @description example = demonstration data (development only); never used in a figure
+             * @enum {string}
+             */
+            readonly source?: "agent" | "data_provider" | "example";
         };
         Valuation: {
             packId?: string;
             /** @enum {string} */
             currency?: "GBP" | "USD";
-            /** @description stub until decision G20 */
+            /**
+             * @description needs_evidence: no verified comparables, so every figure below is null
+             * @enum {string}
+             */
+            status?: "ready" | "needs_evidence";
+            /**
+             * @description let: comparables are achieved monthly rents and the figures are rents
+             * @enum {string}
+             */
+            transaction?: "sale" | "let";
+            verifiedComparables?: number;
+            /**
+             * @description Limited 1-2, Moderate 3-4, Strong 5+ verified comparables
+             * @enum {string|null}
+             */
+            evidenceStrength?: "Limited" | "Moderate" | "Strong" | null;
+            /** @description What the figures rest on */
+            verified?: string[];
+            /** @description What is missing or not confirmed */
+            missing?: string[];
+            /** @description none (only agent comparables) until a provider is chosen (decision G20); stub = development demo data */
             dataSource?: string;
-            /** @description true: generated demo comparables. The UI must say so */
+            /** @description true: the data source is demonstration data. Its comparables are examples only and never used in a figure */
             sampleData?: boolean;
             rentalLowPence?: number | null;
             rentalHighPence?: number | null;
-            subjectSizeSqFt?: number;
+            /** @description As entered by the agent; never estimated */
+            subjectSizeSqFt?: number | null;
+            /** @description Always false (sizes are never estimated); kept for compatibility */
             sizeEstimated?: boolean;
             chosenStrategy?: string | null;
             appliedPricePence?: number | null;
@@ -3643,19 +3672,19 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
             /** Format: int64 */
-            lowPence?: number;
+            lowPence?: number | null;
             /** Format: int64 */
-            highPence?: number;
+            highPence?: number | null;
             /** Format: int64 */
-            recommendedPence?: number;
-            confidencePct?: number;
-            avgDaysOnMarket?: number;
+            recommendedPence?: number | null;
+            confidencePct?: number | null;
+            avgDaysOnMarket?: number | null;
             methodology?: string;
             disclaimer?: string;
-            strategies?: components["schemas"]["Strategy"][];
+            strategies?: components["schemas"]["Strategy"][] | null;
             /** Format: int64 */
-            rentalPcmPence?: number;
-            yieldPct?: number;
+            rentalPcmPence?: number | null;
+            yieldPct?: number | null;
             comparables?: components["schemas"]["Comparable"][];
         };
         PortalExport: {
