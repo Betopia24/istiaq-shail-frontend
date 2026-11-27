@@ -238,7 +238,8 @@ export const SubscriptionBillingTab: React.FC = () => {
                 <p className="text-xs text-slate-500">
                   {formatMoney(plan?.pricePence, currency)} / {plan?.interval ?? "month"}
                   {data.periodEnd &&
-                    ` · ${data.cancelAtPeriodEnd ? "Ends on" : "Renews on"} ${formatDate(data.periodEnd)}`}
+                    ` · ${data.cancelAtPeriodEnd ? "Ends on" : "Renews on"} ${formatDate(data.cancelAtPeriodEnd ? (data.cancelAt ?? data.periodEnd) : data.periodEnd)}`}
+                  {data.cancelAtPeriodEnd && " · Monthly packs end then; pay-as-you-go packs stay"}
                 </p>
                 {pendingPlanCode && (
                   <p className="text-[11px] text-amber-700 font-medium">

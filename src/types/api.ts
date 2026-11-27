@@ -3685,7 +3685,13 @@ export interface components {
             payg?: number;
         };
         Subscription: {
+            /** @description true when a cancellation is scheduled */
             cancelAtPeriodEnd?: boolean;
+            /**
+             * Format: date-time
+             * @description When a scheduled cancellation takes effect
+             */
+            cancelAt?: string | null;
             /** @description Set by PATCH while a plan change waits for Stripe */
             pendingPlanCode?: string | null;
             plan?: components["schemas"]["Plan"];
